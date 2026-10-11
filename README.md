@@ -14,10 +14,10 @@ This repository accompanies the technical report **"Priced Runtime Control over 
 | priced Socratic self-refinement | `pace/experiments/ssr/`, `results/ssr/`, `traces/ssr/` |
 | continual orchestrator over a frozen, growing harness (simulator calibrated to the real logs), verifier ablation, RAO credit, meta-learned init | `pace/experiments/mas_continual/`, `results/mas_continual/` |
 | skill handbook for the cheap tier, with its no-hints control | `pace/experiments/skills/`, `results/skills/`, `traces/skills_cheap_b2b.jsonl`, `traces/cheap_rerun_b2b.jsonl` |
+| the same controller task on verl (Ray, vLLM) and NeMo-RL, and the three-way comparison on the run that failed in TRL | `pace/llm/backends/`, `results/llm/backends/COMPARISON.md` |
 | tests (CPU, mocked; no network) | `python -m pytest tests -q` |
 
 Data: the CRMArena-Pro benchmark and the logs derived from it are CC BY-NC 4.0 (research use); see the "Data and licenses" section at the end of this file. Nothing here calls a paid API unless you run a collection command with an explicit `--cap`.
-
 ---
 
 # PACE — Priced Adaptive Control for Evolving harnesses
@@ -455,6 +455,8 @@ modal run pace/llm/eval_modal.py --runs phase1c
 # only tasks with all three tiers logged become prompts; the only legal op is CONTINUE
 modal run pace/llm/train_grpo_modal.py --env crm_phase2
 ```
+
+The same price-conditioned task (same prompts, same reward, fixed λ = 0.4) also has verl and NeMo-RL entry points, with 20-step smoke runs and a platform comparison, in [`pace/llm/backends/`](pace/llm/backends/README.md).
 
 Each of these ran **once**; the training logs (`train_log_*.jsonl`, one line per step with reward,
 quality, cost, λ, action histogram, invalid rate and `degenerate_group_rate`, the share of prompt

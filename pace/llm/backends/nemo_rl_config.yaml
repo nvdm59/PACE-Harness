@@ -1,0 +1,131 @@
+# NeMo-RL GRPO smoke run of the price-conditioned controller task (pace/llm/backends/nemo_rl_grpo.py).
+# Layered on NeMo-RL v0.7.0's examples/configs/grpo_math_1B.yaml (1 node, 1 GPU, DTensor/FSDP2
+# policy, colocated vLLM generation); the launcher copies this file next to it in the container.
+# The `pins` and `modal` blocks are read by the launcher and removed before NeMo-RL sees the config.
+defaults: grpo_math_1B.yaml
+pins:
+  nemo_rl: "v0.7.0"
+  image: "nvcr.io/nvidia/nemo-rl:v0.7.0"
+  model: "Qwen/Qwen3-1.7B"
+modal:
+  gpu: "A100-40GB"
+  timeout_s: 1320
+  no_step_kill_s: 900
+grpo:
+  num_prompts_per_step: 8               # x 8 generations = 64 completions, the TRL phase-1 batch
+  num_generations_per_prompt: 8
+  max_rollout_turns: 1                  # one action, then the fixed continuation inside the env
+  max_num_steps: 20
+  max_num_epochs: 1
+  normalize_rewards: true               # divide by the group std, as TRL's scale_rewards="group"
+  use_leave_one_out_baseline: false     # NeMo-RL default is true; TRL uses the plain group mean
+  val_period: 0
+  val_at_start: false
+  val_at_end: false
+  overlong_filtering: false
+  use_dynamic_sampling: false           # DAPO dynamic sampling exists; off to match TRL
+  dynamic_sampling_max_gen_batches: 4
+  seed: 0
+  reward_shaping:
+    enabled: false                      # DAPO overlong penalty exists; irrelevant at 16 tokens
+loss_fn:
+  reference_policy_kl_penalty: 0.02     # TRL beta (phase 1)
+  reference_policy_kl_type: "k3"
+  ratio_clip_min: 0.2
+  ratio_clip_max: 0.2                   # DAPO clip-higher would be 0.28
+  token_level_loss: true
+  use_importance_sampling_correction: false
+checkpointing:
+  enabled: false
+  checkpoint_dir: "/vol/backends/nemo_rl/ckpt"
+policy:
+  model_name: "/models/qwen3-1.7b"
+  tokenizer:
+    name: "/models/qwen3-1.7b"
+    chat_template_kwargs:
+      enable_thinking: false
+  train_global_batch_size: 64
+  train_micro_batch_size: 16
+  logprob_batch_size: 16
+  max_total_sequence_length: 512
+  precision: "bfloat16"
+  dtensor_cfg:
+    enabled: true
+    cpu_offload: false
+    activation_checkpointing: true
+    lora_cfg:
+      enabled: true                     # LoRA r16 / alpha 32 on the 7 projections, the TRL parametrization
+      match_all_linear: false           # true would also put an adapter on lm_head
+      target_modules: ["*.q_proj", "*.k_proj", "*.v_proj", "*.o_proj", "*.gate_proj", "*.up_proj", "*.down_proj"]  # wildcard patterns over full module names
+      dim: 16
+      alpha: 32
+      dropout: 0.0
+      use_triton: false
+  sequence_packing:
+    enabled: false
+  dynamic_batching:
+    enabled: false
+  optimizer:
+    name: "torch.optim.AdamW"
+    kwargs:
+      lr: 1.0e-5
+      weight_decay: 0.0
+      betas: [0.9, 0.999]
+      eps: 1.0e-8
+  scheduler:                            # constant lr (v0.7.0 needs the SequentialLR form with milestones)
+    - name: "torch.optim.lr_scheduler.LinearLR"
+      kwargs:
+        start_factor: 1.0
+        end_factor: 1.0
+        total_iters: 1
+    - name: "torch.optim.lr_scheduler.ConstantLR"
+      kwargs:
+        factor: 1.0
+        total_iters: 10000000000
+    - milestones: [1]
+  generation:
+    backend: "vllm"
+    max_new_tokens: 16                  # TRL max_completion_length
+    temperature: 1.0
+    top_p: 1.0
+    top_k: null
+    stop_strings: null
+    vllm_cfg:
+      gpu_memory_utilization: 0.4
+      max_model_len: 512
+      enforce_eager: true
+      use_tqdm: false
+      enable_vllm_metrics_logger: false
+cluster:
+  gpus_per_node: 1
+  num_nodes: 1
+logger:
+  log_dir: "/vol/backends/nemo_rl/logs"
+  wandb_enabled: false
+  tensorboard_enabled: false
+  mlflow_enabled: false
+  swanlab_enabled: false
+  monitor_gpus: false
+env:
+  pace_sim:
+    record_path: "/vol/backends/nemo_rl/records.jsonl"
+# Recipes: extra Hydra overrides applied by the launcher with `--recipe <name>` (removed before NeMo-RL sees the file).
+recipes:
+  # Phase-1b reproduction with the DAPO recipe (see verl_config.yaml): price 0.44, group 16, beta 0.05,
+  # dynamic sampling, clip 0.2 / 0.28, token-level loss. NeMo-RL raises once dynamic sampling exceeds
+  # dynamic_sampling_max_gen_batches, so the cap is set high. No entropy bonus exists in its GRPO loss.
+  dapo_1b:
+    lam: 0.44
+    steps: 200
+    overrides:
+      - grpo.num_prompts_per_step=4
+      - grpo.num_generations_per_prompt=16
+      - grpo.use_dynamic_sampling=true
+      - grpo.dynamic_sampling_max_gen_batches=32
+      - loss_fn.ratio_clip_min=0.2
+      - loss_fn.ratio_clip_max=0.28
+      - loss_fn.reference_policy_kl_penalty=0.05
+      - checkpointing.enabled=true
+      - checkpointing.save_period=50
+      - checkpointing.metric_name=null
+      - checkpointing.keep_top_k=1

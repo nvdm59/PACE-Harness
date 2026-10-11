@@ -1,0 +1,109 @@
+# verl GRPO smoke run of the price-conditioned controller task (pace/llm/backends/verl_grpo.py).
+# `overrides` is passed verbatim as Hydra overrides to `python -m verl.trainer.main_ppo`
+# (verl 0.9.1, V1 trainer, sync mode). Paths in {braces} are filled by the launcher.
+pins:
+  verl: "0.9.1"
+  image: "verlai/verl:vllm024.dev2"     # verl's own image for vLLM 0.24 (the vLLM pin of verl 0.9.1's [vllm] extra)
+  model: "Qwen/Qwen3-1.7B"
+modal:
+  gpu: "A100-40GB"
+  timeout_s: 1320                       # hard stop of the container (22 GPU-minutes)
+  no_step_kill_s: 900                   # kill the run if no training step is logged 15 min after container start
+overrides:
+  # ---- data: phase-1c pool, fixed price 0.4 in the prompt
+  data.train_files: "{data_dir}/train.parquet"
+  data.val_files: "{data_dir}/val.parquet"
+  data.prompt_key: prompt
+  data.train_batch_size: 8              # prompts per step; x n = 64 completions, the TRL phase-1 batch
+  data.max_prompt_length: 512
+  data.max_response_length: 16          # TRL max_completion_length
+  data.filter_overlong_prompts: true
+  data.truncation: error
+  data.shuffle: true
+  data.seed: 0
+  +data.apply_chat_template_kwargs.enable_thinking: false   # Qwen3: no thinking block (as in the TRL runs)
+  # ---- algorithm: GRPO with the KL term in the loss (no critic, no KL in reward)
+  algorithm.adv_estimator: grpo
+  algorithm.norm_adv_by_std_in_grpo: true
+  algorithm.use_kl_in_reward: false
+  # DAPO dynamic sampling (group filtering). Off in the smoke, to match TRL, which has no such option.
+  algorithm.filter_groups.enable: false
+  algorithm.filter_groups.metric: reward
+  algorithm.filter_groups.max_num_gen_batches: 4
+  # ---- model: LoRA r16 / alpha 32 on every linear projection, the TRL parametrization
+  actor_rollout_ref.model.path: "{model}"
+  actor_rollout_ref.model.lora_rank: 16
+  actor_rollout_ref.model.lora_alpha: 32
+  actor_rollout_ref.model.target_modules: all-linear
+  actor_rollout_ref.model.use_remove_padding: true
+  actor_rollout_ref.model.enable_gradient_checkpointing: true
+  # ---- actor / loss
+  actor_rollout_ref.actor.strategy: fsdp
+  actor_rollout_ref.actor.optim.lr: 1.0e-5
+  actor_rollout_ref.actor.ppo_mini_batch_size: 8     # one optimizer step per training step (on-policy, as TRL)
+  actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu: 16
+  actor_rollout_ref.actor.ppo_epochs: 1
+  actor_rollout_ref.actor.use_kl_loss: true
+  actor_rollout_ref.actor.kl_loss_coef: 0.02         # TRL beta (phase 1)
+  actor_rollout_ref.actor.kl_loss_type: low_var_kl   # k3, the estimator TRL uses
+  actor_rollout_ref.actor.clip_ratio_low: 0.2
+  actor_rollout_ref.actor.clip_ratio_high: 0.2       # DAPO clip-higher would be e.g. 0.28; 0.2 = TRL's default
+  actor_rollout_ref.actor.loss_agg_mode: token-mean  # token-level loss (TRL loss_type dapo normalizes by tokens too)
+  actor_rollout_ref.actor.entropy_coeff: 0
+  actor_rollout_ref.actor.fsdp_config.param_offload: false
+  actor_rollout_ref.actor.fsdp_config.optimizer_offload: false
+  # ---- rollout: vLLM, n = group size
+  actor_rollout_ref.rollout.name: vllm
+  actor_rollout_ref.rollout.n: 8
+  actor_rollout_ref.rollout.temperature: 1.0
+  actor_rollout_ref.rollout.top_p: 1.0
+  actor_rollout_ref.rollout.top_k: -1
+  actor_rollout_ref.rollout.tensor_model_parallel_size: 1
+  actor_rollout_ref.rollout.gpu_memory_utilization: 0.4
+  actor_rollout_ref.rollout.enforce_eager: true      # skip CUDA-graph capture: start-up time matters more than speed here
+  actor_rollout_ref.rollout.load_format: safetensors
+  actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu: 32
+  actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu: 32
+  # ---- reward: our simulator reward through verl's custom reward function hook
+  reward.custom_reward_function.path: "{reward_path}"
+  reward.custom_reward_function.name: compute_score
+  reward.num_workers: 2
+  # ---- trainer
+  trainer.n_gpus_per_node: 1
+  trainer.nnodes: 1
+  trainer.total_training_steps: 20
+  trainer.total_epochs: 1
+  trainer.val_before_train: false
+  trainer.test_freq: -1
+  trainer.save_freq: -1
+  trainer.logger: "[console,file]"
+  trainer.project_name: pace_llm_backends
+  trainer.experiment_name: verl_smoke
+  trainer.rollout_data_dir: "{rollout_dir}"
+  trainer.default_local_dir: "{ckpt_dir}"
+# Recipes: applied on top of `overrides` with `modal run ... --recipe <name>`.
+recipes:
+  # Phase-1b reproduction with the DAPO recipe: no SFT, group 16, T 1.0, beta 0.05, entropy 0.01,
+  # price fixed at 0.44 (prompt and reward), dynamic sampling on, clip 0.2 / 0.28, token-level loss.
+  dapo_1b:
+    lam: 0.44
+    steps: 200
+    timeout_s: 2700
+    overrides:
+      data.train_batch_size: 4                  # 4 prompts x 16 = 64 completions per step (as TRL 1b)
+      actor_rollout_ref.rollout.n: 16
+      actor_rollout_ref.actor.ppo_mini_batch_size: 4
+      actor_rollout_ref.actor.kl_loss_coef: 0.05
+      actor_rollout_ref.actor.clip_ratio_low: 0.2
+      actor_rollout_ref.actor.clip_ratio_high: 0.28
+      actor_rollout_ref.actor.entropy_coeff: 0.01
+      actor_rollout_ref.actor.loss_agg_mode: token-mean
+      algorithm.filter_groups.enable: true
+      algorithm.filter_groups.metric: reward
+      # verl 0.9.1's V1 replay buffer IGNORES max_num_gen_batches: it refills one prompt at a time until the
+      # batch holds 4 groups with non-constant rewards (unbounded; the container time cap is the backstop)
+      algorithm.filter_groups.max_inflight_gen_batches: 4
+      # (a first attempt with no activation checkpointing and micro-batch 64 ran out of memory on 40 GB:
+      # the full-vocabulary logits of 64 sequences; the smoke settings, checkpointing + micro-batch 16, stay)
+      trainer.save_freq: 50                     # a time-capped run still leaves an adapter
+      trainer.experiment_name: verl_dapo_1b

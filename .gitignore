@@ -1,9 +1,28 @@
-.venv*/
+traces/*.jsonl
+# the one real-API collection this repo reports on (CRMArena-Pro b2b, 50 tasks x 3 tiers) and a
+# snapshot of its spend ledger are committed so results/crmarena/* can be regenerated offline;
+# traces/spend.jsonl itself is the live ledger every run appends to and stays untracked
+!traces/crmarena_b2b_counterfactual.jsonl
+!traces/crmarena_b2b_counterfactual.spend.jsonl
+*.json
+!examples/*.json
+!results/llm/*.json
+.env
+results/*
+!results/llm/
+!results/crmarena/
+!results/crmarena/*.json
+!results/crmarena/policies/
+!results/crmarena/policies/*.json
+results/llm/**/adapter*/
+results/llm/**/*.safetensors
 __pycache__/
 *.pyc
+.venv/
 .pytest_cache/
-.env
+# CRMArena-Pro is an external dependency fetched by scripts/setup_crmarena.sh
 third_party/*
 !third_party/README.md
+.venv-crmarena/
+# paid-run artifacts (spend.jsonl is covered by traces/*.jsonl, totals by *.json)
 traces/STOPPED_AT_CAP
-*.log
