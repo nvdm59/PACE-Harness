@@ -1,0 +1,57 @@
+{
+ "run": "phase1",
+ "env": "sim",
+ "model_requested": "Qwen/Qwen3-1.7B",
+ "model_loaded": "Qwen/Qwen3-1.7B",
+ "model_load_note": null,
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "versions": {
+  "torch": "2.14.1+cu130",
+  "transformers": "5.19.0",
+  "trl": "1.15.0",
+  "peft": "0.21.2",
+  "accelerate": "1.15.0",
+  "datasets": "5.1.0"
+ },
+ "steps": 300,
+ "budget": 0.3,
+ "n_tasks": 2000,
+ "seed": 0,
+ "batch_completions": 64,
+ "micro_batch": 16,
+ "num_generations": 8,
+ "max_completion_length": 16,
+ "lr": 1e-05,
+ "beta": 0.02,
+ "lora": {
+  "r": 16,
+  "alpha": 32,
+  "dropout": 0.05,
+  "targets": [
+   "q_proj",
+   "k_proj",
+   "v_proj",
+   "o_proj",
+   "gate_proj",
+   "up_proj",
+   "down_proj"
+  ]
+ },
+ "lambda": {
+  "budget": 0.3,
+  "lr": 0.1,
+  "kp": 2.0,
+  "ema": 0.9,
+  "lam_i": 0.0,
+  "lam": 0.0,
+  "cost_ema": 0.15493380530148693
+ },
+ "trl_generation_batch_size": 64,
+ "trl_steps_per_generation": 4,
+ "trl_loss_type": "dapo",
+ "trl_scale_rewards": "group",
+ "last_saved_step": 300,
+ "lambda_final": 0.0,
+ "train_wall_s": 1391.2,
+ "total_wall_s": 1421.9
+}

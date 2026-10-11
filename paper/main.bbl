@@ -1,0 +1,338 @@
+\begin{thebibliography}{44}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Agarwal et~al.(2016)Agarwal, Bird, Cozowicz, Hoang, Langford, Lee, Li,
+  Melamed, Oshri, Ribas, Sen, and Slivkins]{agarwal2016decisionservice}
+Alekh Agarwal, Sarah Bird, Markus Cozowicz, Luong Hoang, John Langford, Stephen
+  Lee, Jiaji Li, Dan Melamed, Gal Oshri, Oswaldo Ribas, Siddhartha Sen, and
+  Alex Slivkins.
+\newblock Making contextual decisions with low technical debt.
+\newblock \emph{arXiv preprint arXiv:1606.03966}, 2016.
+
+\bibitem[Agrawal et~al.(2025)Agrawal, Tan, Soylu, Ziems, Khare, Opsahl-Ong,
+  Singhvi, Shandilya, Ryan, Jiang, Potts, Sen, Dimakis, Stoica, Klein, Zaharia,
+  and Khattab]{gepa2025}
+Lakshya~A. Agrawal, Shangyin Tan, Dilara Soylu, Noah Ziems, Rishi Khare, Krista
+  Opsahl-Ong, Arnav Singhvi, Herumb Shandilya, Michael~J. Ryan, Meng Jiang,
+  Christopher Potts, Koushik Sen, Alexandros~G. Dimakis, Ion Stoica, Dan Klein,
+  Matei Zaharia, and Omar Khattab.
+\newblock {GEPA}: Reflective prompt evolution can outperform reinforcement
+  learning.
+\newblock \emph{arXiv preprint arXiv:2507.19457}, 2025.
+
+\bibitem[Bakman et~al.(2025)Bakman, Yaldiz, Kang, Zhang, Buyukates, Avestimehr,
+  and Karimireddy]{verbalizedconf2025}
+Yavuz Bakman, Duygu~Nur Yaldiz, Sungmin Kang, Tuo Zhang, Baturalp Buyukates,
+  Salman Avestimehr, and Sai~Praneeth Karimireddy.
+\newblock {Reconsidering LLM Uncertainty Estimation Methods in the Wild}.
+\newblock \emph{arXiv preprint arXiv:2506.01114}, 2025.
+
+\bibitem[Bottou et~al.(2013)Bottou, Peters, Qui{\~n}onero-Candela, Charles,
+  Chickering, Portugaly, Ray, Simard, and Snelson]{bottou2013counterfactual}
+L{\'e}on Bottou, Jonas Peters, Joaquin Qui{\~n}onero-Candela, Denis~X. Charles,
+  D.~Max Chickering, Elon Portugaly, Dipankar Ray, Patrice Simard, and
+  Ed~Snelson.
+\newblock Counterfactual reasoning and learning systems: The example of
+  computational advertising.
+\newblock \emph{Journal of Machine Learning Research}, 14:\penalty0 3207--3260,
+  2013.
+\newblock arXiv:1209.2355.
+
+\bibitem[Chen et~al.(2023)Chen, Zaharia, and Zou]{frugalgpt2023}
+Lingjiao Chen, Matei Zaharia, and James Zou.
+\newblock {FrugalGPT}: How to use large language models while reducing cost and
+  improving performance.
+\newblock \emph{arXiv preprint arXiv:2305.05176}, 2023.
+
+\bibitem[Chen et~al.(2026)Chen, Lu, Zhao, Meng, Teng, Li, Li, Liu, Liang,
+  Zhang, Xie, Qu, Shao, and Luan]{harnessx2026}
+Tingyang Chen, Shuo Lu, Kang Zhao, Weicheng Meng, Hanlin Teng, Tianhao Li, Chao
+  Li, Xule Liu, Jian Liang, Zhizhong Zhang, Yuan Xie, Heng Qu, Kun Shao, and
+  Jian Luan.
+\newblock {HarnessX: A Composable, Adaptive, and Evolvable Agent Harness
+  Foundry}.
+\newblock \emph{arXiv preprint arXiv:2606.14249}, 2026.
+
+\bibitem[Chernozhukov et~al.(2018)Chernozhukov, Chetverikov, Demirer, Duflo,
+  Hansen, Newey, and Robins]{chernozhukov2018dml}
+Victor Chernozhukov, Denis Chetverikov, Mert Demirer, Esther Duflo, Christian
+  Hansen, Whitney Newey, and James Robins.
+\newblock Double/debiased machine learning for treatment and structural
+  parameters.
+\newblock \emph{The Econometrics Journal}, 21\penalty0 (1):\penalty0 C1--C68,
+  2018.
+\newblock arXiv:1608.00060.
+
+\bibitem[Dud{\'i}k et~al.(2011)Dud{\'i}k, Langford, and Li]{dudik2011dr}
+Miroslav Dud{\'i}k, John Langford, and Lihong Li.
+\newblock Doubly robust policy evaluation and learning.
+\newblock In \emph{Proceedings of the 28th International Conference on Machine
+  Learning (ICML)}, 2011.
+\newblock arXiv:1103.4601.
+
+\bibitem[Gandhi et~al.(2026)Gandhi, Chakraborty, Wang, Kumar, and
+  Neubig]{rao2026}
+Apurva Gandhi, Satyaki Chakraborty, Xiangjun Wang, Aviral Kumar, and Graham
+  Neubig.
+\newblock {Recursive Agent Optimization}.
+\newblock \emph{arXiv preprint arXiv:2605.06639}, 2026.
+
+\bibitem[Gauci et~al.(2018)Gauci, Conti, Liang, Virochsiri, He, Kaden,
+  Narayanan, Ye, Chen, and Fujimoto]{gauci2018horizon}
+Jason Gauci, Edoardo Conti, Yitao Liang, Kittipat Virochsiri, Yuchen He,
+  Zachary Kaden, Vivek Narayanan, Xiaohui Ye, Zhengxing Chen, and Scott
+  Fujimoto.
+\newblock Horizon: An open source applied reinforcement learning platform.
+\newblock \emph{arXiv preprint arXiv:1811.00260}, 2018.
+
+\bibitem[Hu et~al.(2022)Hu, Shen, Wallis, Allen-Zhu, Li, Wang, Wang, and
+  Chen]{hu2022lora}
+Edward~J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean
+  Wang, Lu~Wang, and Weizhu Chen.
+\newblock {LoRA}: Low-rank adaptation of large language models.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2022.
+\newblock arXiv:2106.09685.
+
+\bibitem[Huang et~al.(2026)Huang, Wang, Han, Yan, Chen, CuiZhu, Jiang, Xia, Yu,
+  Zhuang, Ming, Pan, Mishra, Huang, Gokturk, Pfister, and Lee]{envharness2026}
+Chengsong Huang, Zifeng Wang, Rujun Han, Jun Yan, Yanfei Chen, Zoey CuiZhu,
+  Ke~Jiang, Peng Xia, Han Yu, Yufan Zhuang, Yifei Ming, Jiaqi Pan,
+  Bhavana~Dalvi Mishra, Jiaxin Huang, Burak Gokturk, Tomas Pfister, and Chen-Yu
+  Lee.
+\newblock {EnvHarness: Awakening Static Worlds for Agent Learning}.
+\newblock \emph{arXiv preprint arXiv:2608.19880}, 2026.
+
+\bibitem[Huang et~al.(2025)Huang, Prabhakar, Thorat, Agarwal, Choubey, Mao,
+  Savarese, Xiong, and Wu]{crmarenapro2025}
+Kung-Hsiang Huang, Akshara Prabhakar, Onkar Thorat, Divyansh Agarwal,
+  Prafulla~Kumar Choubey, Yixin Mao, Silvio Savarese, Caiming Xiong, and
+  Chien-Sheng Wu.
+\newblock {CRMArena-Pro}: Holistic assessment of {LLM} agents across diverse
+  business scenarios and interactions.
+\newblock \emph{arXiv preprint arXiv:2505.18878}, 2025.
+
+\bibitem[Jiang and Li(2016)]{jiang2016dr}
+Nan Jiang and Lihong Li.
+\newblock Doubly robust off-policy value evaluation for reinforcement learning.
+\newblock In \emph{Proceedings of the 33rd International Conference on Machine
+  Learning (ICML)}, 2016.
+\newblock arXiv:1511.03722.
+
+\bibitem[Ke et~al.(2026{\natexlab{a}})Ke, Ming, Xu, Chin, Nguyen, Jwalapuram,
+  Wang, Yavuz, Xiong, and Joty]{masorchestra2026}
+Zixuan Ke, Yifei Ming, Austin Xu, Ryan Chin, Xuan-Phi Nguyen, Prathyusha
+  Jwalapuram, Jiayu Wang, Semih Yavuz, Caiming Xiong, and Shafiq Joty.
+\newblock {MAS-Orchestra: Understanding and Improving Multi-Agent Reasoning
+  Through Holistic Orchestration and Controlled Benchmarks}.
+\newblock \emph{arXiv preprint arXiv:2601.14652}, 2026{\natexlab{a}}.
+
+\bibitem[Ke et~al.(2026{\natexlab{b}})Ke, Patil, Shi, Li, Liu, Shekkizhar,
+  Koul, Wang, Nguyen, Yavuz, Bansal, and Joty]{evoharnessbench2026}
+Zixuan Ke, Vaidehi Patil, Haizhou Shi, Yang Li, Ye~Liu, Sarath Shekkizhar,
+  Anurag Koul, Jiayu Wang, Xuan~Phi Nguyen, Semih Yavuz, Mohit Bansal, and
+  Shafiq Joty.
+\newblock {EvoHarnessBench: Can Your Agents Keep Pace with an Evolving
+  Harness?}
+\newblock \emph{arXiv preprint arXiv:2609.04280}, 2026{\natexlab{b}}.
+
+\bibitem[Kish(1965)]{kish1965survey}
+Leslie Kish.
+\newblock \emph{Survey Sampling}.
+\newblock John Wiley \& Sons, 1965.
+
+\bibitem[Kostrikov et~al.(2021)Kostrikov, Nair, and Levine]{kostrikov2021iql}
+Ilya Kostrikov, Ashvin Nair, and Sergey Levine.
+\newblock Offline reinforcement learning with implicit {Q}-learning.
+\newblock \emph{arXiv preprint arXiv:2110.06169}, 2021.
+
+\bibitem[Kumar et~al.(2020)Kumar, Zhou, Tucker, and Levine]{kumar2020cql}
+Aviral Kumar, Aurick Zhou, George Tucker, and Sergey Levine.
+\newblock Conservative {Q}-learning for offline reinforcement learning.
+\newblock In \emph{Advances in Neural Information Processing Systems 33}, 2020.
+\newblock arXiv:2006.04779.
+
+\bibitem[Le et~al.(2019)Le, Voloshin, and Yue]{le2019batch}
+Hoang~M. Le, Cameron Voloshin, and Yisong Yue.
+\newblock Batch policy learning under constraints.
+\newblock In \emph{Proceedings of the 36th International Conference on Machine
+  Learning (ICML)}, 2019.
+\newblock arXiv:1903.08738.
+
+\bibitem[Lee et~al.(2026)Lee, Nair, Zhang, Lee, Khattab, and
+  Finn]{metaharness2026}
+Yoonho Lee, Roshen Nair, Qizheng Zhang, Kangwook Lee, Omar Khattab, and Chelsea
+  Finn.
+\newblock {Meta-Harness: End-to-End Optimization of Model Harnesses}.
+\newblock \emph{arXiv preprint arXiv:2603.28052}, 2026.
+
+\bibitem[Li et~al.(2011)Li, Chu, Langford, and Wang]{li2011unbiased}
+Lihong Li, Wei Chu, John Langford, and Xuanhui Wang.
+\newblock Unbiased offline evaluation of contextual-bandit-based news article
+  recommendation algorithms.
+\newblock In \emph{Proceedings of the 4th ACM International Conference on Web
+  Search and Data Mining (WSDM)}, 2011.
+\newblock arXiv:1003.5956.
+
+\bibitem[Lopez-Paz and Ranzato(2017)]{lopezpaz2017gem}
+David Lopez-Paz and Marc'Aurelio Ranzato.
+\newblock Gradient episodic memory for continual learning.
+\newblock In \emph{Advances in Neural Information Processing Systems 30}, 2017.
+\newblock arXiv:1706.08840.
+
+\bibitem[Luo et~al.(2025)Luo, Zhang, He, Wang, Zhao, Li, Qiu, and
+  Yang]{agentlightning}
+Xufang Luo, Yuge Zhang, Zhiyuan He, Zilong Wang, Siyun Zhao, Dongsheng Li,
+  Luna~K. Qiu, and Yuqing Yang.
+\newblock {Agent Lightning: Train ANY AI Agents with Reinforcement Learning}.
+\newblock \emph{arXiv preprint arXiv:2508.03680}, 2025.
+
+\bibitem[Nedi{\'c} and Ozdaglar(2009)]{nedic2009saddle}
+Angelia Nedi{\'c} and Asuman Ozdaglar.
+\newblock Subgradient methods for saddle-point problems.
+\newblock \emph{Journal of Optimization Theory and Applications}, 142\penalty0
+  (1):\penalty0 205--228, 2009.
+
+\bibitem[Ong et~al.(2024)Ong, Almahairi, Wu, Chiang, Wu, Gonzalez, Kadous, and
+  Stoica]{routellm2024}
+Isaac Ong, Amjad Almahairi, Vincent Wu, Wei-Lin Chiang, Tianhao Wu, Joseph~E.
+  Gonzalez, M.~Waleed Kadous, and Ion Stoica.
+\newblock {RouteLLM}: Learning to route {LLM}s with preference data.
+\newblock \emph{arXiv preprint arXiv:2406.18665}, 2024.
+
+\bibitem[Peng et~al.(2019)Peng, Kumar, Zhang, and Levine]{peng2019awr}
+Xue~Bin Peng, Aviral Kumar, Grace Zhang, and Sergey Levine.
+\newblock Advantage-weighted regression: Simple and scalable off-policy
+  reinforcement learning.
+\newblock \emph{arXiv preprint arXiv:1910.00177}, 2019.
+
+\bibitem[Precup et~al.(2000)Precup, Sutton, and Singh]{precup2000eligibility}
+Doina Precup, Richard~S. Sutton, and Satinder Singh.
+\newblock Eligibility traces for off-policy policy evaluation.
+\newblock In \emph{Proceedings of the 17th International Conference on Machine
+  Learning (ICML)}, 2000.
+
+\bibitem[Qian et~al.(2025)Qian, Liu, Kokane, Prabhakar, Qiu, Chen, Liu, Ji,
+  Yao, Heinecke, Savarese, Xiong, and Wang]{xrouter2025}
+Cheng Qian, Zuxin Liu, Shirley Kokane, Akshara Prabhakar, Jielin Qiu, Haolin
+  Chen, Zhiwei Liu, Heng Ji, Weiran Yao, Shelby Heinecke, Silvio Savarese,
+  Caiming Xiong, and Huan Wang.
+\newblock {xRouter: Training Cost-Aware LLMs Orchestration System via
+  Reinforcement Learning}.
+\newblock \emph{arXiv preprint arXiv:2510.08439}, 2025.
+
+\bibitem[{Qwen Team}(2025)]{qwen3}
+{Qwen Team}.
+\newblock {Qwen3} technical report.
+\newblock \emph{arXiv preprint arXiv:2505.09388}, 2025.
+
+\bibitem[Shao et~al.(2024)Shao, Wang, Zhu, Xu, Song, Bi, Zhang, Zhang, Li, Wu,
+  and Guo]{shao2024grpo}
+Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei
+  Zhang, Mingchuan Zhang, Y.~K. Li, Y.~Wu, and Daya Guo.
+\newblock {DeepSeekMath}: Pushing the limits of mathematical reasoning in open
+  language models.
+\newblock \emph{arXiv preprint arXiv:2402.03300}, 2024.
+
+\bibitem[Shi et~al.(2025)Shi, Liu, Pang, Liu, Wang, Savarese, Xiong, Zhou, and
+  Yavuz]{ssr2025}
+Haizhou Shi, Ye~Liu, Bo~Pang, Zeyu~Leo Liu, Hao Wang, Silvio Savarese, Caiming
+  Xiong, Yingbo Zhou, and Semih Yavuz.
+\newblock {SSR: Socratic Self-Refine for Large Language Model Reasoning}.
+\newblock \emph{arXiv preprint arXiv:2511.10621}, 2025.
+
+\bibitem[Stooke et~al.(2020)Stooke, Achiam, and Abbeel]{stooke2020pid}
+Adam Stooke, Joshua Achiam, and Pieter Abbeel.
+\newblock Responsive safety in reinforcement learning by {PID} lagrangian
+  methods.
+\newblock In \emph{Proceedings of the 37th International Conference on Machine
+  Learning (ICML)}, 2020.
+\newblock arXiv:2007.03964.
+
+\bibitem[Swaminathan and Joachims(2015)]{swaminathan2015snips}
+Adith Swaminathan and Thorsten Joachims.
+\newblock The self-normalized estimator for counterfactual learning.
+\newblock In \emph{Advances in Neural Information Processing Systems 28}, 2015.
+
+\bibitem[Tandon et~al.(2025)Tandon, Dalal, Li, Koceja, R{\o}d, Buchanan, Wang,
+  Leskovec, Koyejo, Hashimoto, Guestrin, McCaleb, Choi, and
+  Sun]{tandon2025e2ettt}
+Arnuv Tandon, Karan Dalal, Xinhao Li, Daniel Koceja, Marcel R{\o}d, Sam
+  Buchanan, Xiaolong Wang, Jure Leskovec, Sanmi Koyejo, Tatsunori Hashimoto,
+  Carlos Guestrin, Jed McCaleb, Yejin Choi, and Yu~Sun.
+\newblock {End-to-End Test-Time Training for Long Context}.
+\newblock \emph{arXiv preprint arXiv:2512.23675}, 2025.
+
+\bibitem[Tessler et~al.(2018)Tessler, Mankowitz, and Mannor]{tessler2018rcpo}
+Chen Tessler, Daniel~J. Mankowitz, and Shie Mannor.
+\newblock Reward constrained policy optimization.
+\newblock \emph{arXiv preprint arXiv:1805.11074}, 2018.
+
+\bibitem[Thomas and Brunskill(2016)]{thomas2016magic}
+Philip~S. Thomas and Emma Brunskill.
+\newblock Data-efficient off-policy policy evaluation for reinforcement
+  learning.
+\newblock In \emph{Proceedings of the 33rd International Conference on Machine
+  Learning (ICML)}, 2016.
+\newblock arXiv:1604.00923.
+
+\bibitem[Tsang et~al.(2026)Tsang, Zhao, Venkataramani, Shi, Ke, Yavuz, Joty,
+  and Wang]{rmorchestration2026}
+King~Yeung Tsang, Zihao Zhao, Vishal Venkataramani, Haizhou Shi, Zixuan Ke,
+  Semih Yavuz, Shafiq Joty, and Hao Wang.
+\newblock {Reward Modeling for Multi-Agent Orchestration}.
+\newblock \emph{arXiv preprint arXiv:2606.13598}, 2026.
+
+\bibitem[Venkataramani et~al.(2026)Venkataramani, Shi, Ke, Xu, He, Zhou, Yavuz,
+  Wang, and Joty]{masprove2026}
+Vishal Venkataramani, Haizhou Shi, Zixuan Ke, Austin Xu, Xiaoxiao He, Yingbo
+  Zhou, Semih Yavuz, Hao Wang, and Shafiq Joty.
+\newblock {MAS-ProVe: Understanding the Process Verification of Multi-Agent
+  Systems}.
+\newblock \emph{arXiv preprint arXiv:2602.03053}, 2026.
+
+\bibitem[Wang et~al.(2026)Wang, Ming, Ke, Joty, Albarghouthi, and
+  Sala]{skillorchestra2026}
+Jiayu Wang, Yifei Ming, Zixuan Ke, Shafiq Joty, Aws Albarghouthi, and Frederic
+  Sala.
+\newblock {SkillOrchestra: Learning to Route Agents via Skill Transfer}.
+\newblock \emph{arXiv preprint arXiv:2602.19672}, 2026.
+
+\bibitem[Yan et~al.(2026)Yan, Fu, Li, Xu, Mei, Gao, Zhang, Zhang, Dai, Shen,
+  He, Pu, Mei, Lin, Wang, Ding, Zhang, Wang, Xu, Dong, Jiang, Wu, Yang, and
+  Yuan]{areal2}
+Ran Yan, Wei Fu, Jiale Li, Shusheng Xu, Zhiyu Mei, Jiaxuan Gao, Jiarui Zhang,
+  Wentai Zhang, Hao Dai, Xujie Shen, Chuyi He, Zhen Pu, Jun Mei, Zhiyao Lin,
+  Haitao Wang, Zhiqiang Ding, Jiawei Zhang, Huaijie Wang, Ruida Xu, Honghua
+  Dong, Youhe Jiang, Yi~Wu, Tongkai Yang, and Binhang Yuan.
+\newblock {Next-Generation Agentic Reinforcement Learning Systems Enable
+  Self-Evolving Agents}.
+\newblock \emph{arXiv preprint arXiv:2607.01120}, 2026.
+
+\bibitem[Yao et~al.(2023)Yao, Zhao, Yu, Du, Shafran, Narasimhan, and
+  Cao]{yao2023react}
+Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan,
+  and Yuan Cao.
+\newblock {ReAct}: Synergizing reasoning and acting in language models.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2023.
+\newblock arXiv:2210.03629.
+
+\bibitem[Zhang et~al.(2025)Zhang, Hu, Lu, Lange, and Clune]{dgm2025}
+Jenny Zhang, Shengran Hu, Cong Lu, Robert Lange, and Jeff Clune.
+\newblock Darwin g{\"o}del machine: Open-ended evolution of self-improving
+  agents.
+\newblock \emph{arXiv preprint arXiv:2505.22954}, 2025.
+
+\bibitem[Zhang et~al.(2026)Zhang, Dai, Tan, Yang, Mullur, Hoang, Hu, Zhu, Mui,
+  Savarese, Xu, and Chen]{darwinx2026}
+Yifan Zhang, Yutong Dai, Juntao Tan, Luyu Yang, Rishi Mullur, Thai Hoang,
+  Zhiyuan Hu, James Zhu, Phil Mui, Silvio Savarese, Ran Xu, and Zeyuan Chen.
+\newblock {DarwinX: Evolving Agent Harnesses Through Natural Selection}.
+\newblock \emph{arXiv preprint arXiv:2608.07545}, 2026.
+
+\end{thebibliography}

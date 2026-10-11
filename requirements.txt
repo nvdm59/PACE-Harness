@@ -1,0 +1,7 @@
+numpy>=1.24
+# optional, only for pace/harness/react_api.py (real API runs):
+# anthropic
+# CRMArena-Pro runs (litellm, simple-salesforce, datasets, ...) are installed into
+# .venv-crmarena by scripts/setup_crmarena.sh, not from this file.
+# optional, for running the tests under pytest (they also run as plain python):
+# pytest

@@ -1,0 +1,30 @@
+policy,family,tier,tau,split,quality,q_se,cost,eval_usd,rounds,J2,J5,pareto,n
+never,never,,,all,0.439763,0.078367,0.067502,0.000000,0.000000,0.304760,0.102254,True,41
+always_1:cheap,always,cheap,,all,0.390994,0.077037,0.166657,0.000625,1.000000,0.057681,-0.442290,False,41
+always_1:mid,always,mid,,all,0.488512,0.078927,0.308469,0.000371,1.000000,-0.128426,-1.053833,False,41
+uncertainty_gated:0.3:cheap,uncertainty_gated,cheap,0.300000,all,0.488555,0.078921,0.119614,0.000222,0.463415,0.249328,-0.109513,False,41
+uncertainty_gated:0.4:cheap,uncertainty_gated,cheap,0.400000,all,0.464165,0.078738,0.136120,0.000297,0.634146,0.191925,-0.216434,False,41
+uncertainty_gated:0.5:cheap,uncertainty_gated,cheap,0.500000,all,0.415385,0.077800,0.140541,0.000330,0.682927,0.134303,-0.287319,False,41
+uncertainty_gated:0.6:cheap,uncertainty_gated,cheap,0.600000,all,0.415385,0.077800,0.154556,0.000547,0.853659,0.106272,-0.357396,False,41
+uncertainty_gated:0.7:cheap,uncertainty_gated,cheap,0.700000,all,0.390994,0.077037,0.160382,0.000583,0.926829,0.070230,-0.410916,False,41
+uncertainty_gated:0.8:cheap,uncertainty_gated,cheap,0.800000,all,0.390994,0.077037,0.166657,0.000625,1.000000,0.057681,-0.442290,False,41
+uncertainty_gated:0.9:cheap,uncertainty_gated,cheap,0.900000,all,0.390994,0.077037,0.166657,0.000625,1.000000,0.057681,-0.442290,False,41
+uncertainty_gated:0.3:mid,uncertainty_gated,mid,0.300000,all,0.512902,0.078922,0.192734,0.000108,0.463415,0.127434,-0.450767,False,41
+uncertainty_gated:0.4:mid,uncertainty_gated,mid,0.400000,all,0.488512,0.078927,0.231368,0.000137,0.634146,0.025776,-0.668327,False,41
+uncertainty_gated:0.5:mid,uncertainty_gated,mid,0.500000,all,0.488512,0.078927,0.241515,0.000159,0.682927,0.005483,-0.719061,False,41
+uncertainty_gated:0.6:mid,uncertainty_gated,mid,0.600000,all,0.488512,0.078927,0.276888,0.000341,0.853659,-0.065265,-0.895929,False,41
+uncertainty_gated:0.7:mid,uncertainty_gated,mid,0.700000,all,0.488512,0.078927,0.292409,0.000361,0.926829,-0.096306,-0.973533,False,41
+uncertainty_gated:0.8:mid,uncertainty_gated,mid,0.800000,all,0.488512,0.078927,0.308469,0.000371,1.000000,-0.128426,-1.053833,False,41
+uncertainty_gated:0.9:mid,uncertainty_gated,mid,0.900000,all,0.488512,0.078927,0.308469,0.000371,1.000000,-0.128426,-1.053833,False,41
+"controller (B=$0.10, learned λ), in-sample",controller,,,in-sample,0.533295,0.078144,0.099928,0.000056,0.201716,0.333440,0.033657,False,41
+"controller (B=$0.10, learned λ), 5-fold held-out",controller,,,held-out,0.479564,0.077330,0.101058,0.000062,0.197334,0.277447,-0.025727,True,41
+"controller (λ=2/USD), in-sample",controller,,,in-sample,0.439805,0.078325,0.070681,0.000001,0.001495,0.298442,0.086399,False,41
+"controller (λ=2/USD), 5-fold held-out",controller,,,held-out,0.439760,0.078323,0.070695,0.000001,0.001590,0.298370,0.086286,False,41
+"controller (λ=5/USD), in-sample",controller,,,in-sample,0.439768,0.078346,0.070573,0.000000,0.000783,0.298623,0.086905,False,41
+"controller (λ=5/USD), 5-fold held-out",controller,,,held-out,0.439761,0.078345,0.070576,0.000000,0.000806,0.298609,0.086880,False,41
+"buy cheap up front (single agent, counterfactual log)",tier_arm,cheap,,all,0.439763,0.078367,0.067502,0.000000,0.000000,0.304760,0.102254,True,41
+"buy mid up front (single agent, counterfactual log)",tier_arm,mid,,all,0.662602,0.074191,0.115254,0.000000,0.000000,0.432094,0.086332,True,41
+"buy frontier up front (single agent, counterfactual log)",tier_arm,frontier,,all,0.686133,0.072863,0.155952,0.000000,0.000000,0.374229,-0.093627,True,41
+"oracle (max quality, cheapest)",oracle,,,all,0.537336,,0.083669,0.000000,nan,0.369998,0.118992,False,41
+oracle (argmax q - 2·cost),oracle,,,all,0.537324,,0.080782,0.000000,nan,0.375761,0.133415,False,41
+oracle (argmax q - 5·cost),oracle,,,all,0.512934,,0.074787,0.000000,nan,0.363360,0.138998,False,41

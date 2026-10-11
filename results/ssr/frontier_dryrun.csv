@@ -1,0 +1,29 @@
+policy,family,tier,tau,split,quality,cost,eval_usd,rounds,J2,J5,pareto,n
+never,never,,,all,0.360000,0.030707,0.000000,0.000000,0.298587,0.206467,True,50
+always_1:cheap,always,cheap,,all,0.700000,0.104703,0.000000,1.000000,0.490593,0.176483,False,50
+always_2:cheap,always,cheap,,all,0.740000,0.177251,0.000000,2.000000,0.385498,-0.146255,False,50
+always_1:mid,always,mid,,all,0.860000,0.198132,0.000000,1.000000,0.463736,-0.130659,True,50
+always_2:mid,always,mid,,all,0.900000,0.361521,0.000000,2.000000,0.176958,-0.907604,False,50
+uncertainty_gated:0.3:cheap,uncertainty_gated,cheap,0.300000,all,0.440000,0.042639,0.000000,0.120000,0.354723,0.226807,True,50
+uncertainty_gated:0.4:cheap,uncertainty_gated,cheap,0.400000,all,0.640000,0.069882,0.000000,0.460000,0.500237,0.290591,True,50
+uncertainty_gated:0.5:cheap,uncertainty_gated,cheap,0.500000,all,0.660000,0.103448,0.000000,0.940000,0.453103,0.142758,True,50
+uncertainty_gated:0.6:cheap,uncertainty_gated,cheap,0.600000,all,0.680000,0.139182,0.000000,1.440000,0.401635,-0.015911,False,50
+uncertainty_gated:0.7:cheap,uncertainty_gated,cheap,0.700000,all,0.760000,0.162342,0.000000,1.780000,0.435317,-0.051709,True,50
+uncertainty_gated:0.8:cheap,uncertainty_gated,cheap,0.800000,all,0.760000,0.173659,0.000000,1.940000,0.412681,-0.108297,False,50
+uncertainty_gated:0.9:cheap,uncertainty_gated,cheap,0.900000,all,0.740000,0.177251,0.000000,2.000000,0.385498,-0.146255,False,50
+uncertainty_gated:0.3:mid,uncertainty_gated,mid,0.300000,all,0.460000,0.050679,0.000000,0.100000,0.358641,0.206603,True,50
+uncertainty_gated:0.4:mid,uncertainty_gated,mid,0.400000,all,0.700000,0.103787,0.000000,0.400000,0.492426,0.181065,True,50
+uncertainty_gated:0.5:mid,uncertainty_gated,mid,0.500000,all,0.800000,0.183370,0.000000,0.880000,0.433259,-0.116852,True,50
+uncertainty_gated:0.6:mid,uncertainty_gated,mid,0.600000,all,0.840000,0.271143,0.000000,1.420000,0.297715,-0.515713,False,50
+uncertainty_gated:0.7:mid,uncertainty_gated,mid,0.700000,all,0.900000,0.333751,0.000000,1.820000,0.232498,-0.768755,True,50
+uncertainty_gated:0.8:mid,uncertainty_gated,mid,0.800000,all,0.900000,0.353350,0.000000,1.940000,0.193301,-0.866748,False,50
+uncertainty_gated:0.9:mid,uncertainty_gated,mid,0.900000,all,0.900000,0.361521,0.000000,2.000000,0.176958,-0.907604,False,50
+"controller (B=$0.10, learned λ), in-sample",controller,,,in-sample,0.834167,0.100162,0.000000,0.742594,0.633842,0.333355,False,50
+"controller (B=$0.10, learned λ), 5-fold held-out",controller,,,held-out,0.655930,0.104375,0.000000,0.722098,0.447181,0.134057,False,50
+"controller (λ=2/USD), in-sample",controller,,,in-sample,0.930824,0.138055,0.000000,1.236394,0.654715,0.240551,False,50
+"controller (λ=2/USD), 5-fold held-out",controller,,,held-out,0.724305,0.133921,0.000000,1.010970,0.456462,0.054699,True,50
+"controller (λ=5/USD), in-sample",controller,,,in-sample,0.640058,0.063089,0.000000,0.392335,0.513879,0.324611,False,50
+"controller (λ=5/USD), 5-fold held-out",controller,,,held-out,0.495246,0.065513,0.000000,0.411450,0.364220,0.167680,True,50
+"oracle (max quality, cheapest)",oracle,,,all,0.960000,0.095078,0.000000,nan,0.769844,0.484610,False,50
+oracle (argmax q - 2·cost),oracle,,,all,0.960000,0.095078,0.000000,nan,0.769844,0.484610,False,50
+oracle (argmax q - 5·cost),oracle,,,all,0.880000,0.078413,0.000000,nan,0.723174,0.487936,False,50

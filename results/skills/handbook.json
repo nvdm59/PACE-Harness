@@ -1,0 +1,2088 @@
+{
+ "categories": {
+  "activity_priority": {
+   "notes": [
+    "For activity_priority questions: first query the Opportunity by the given Id for StageName, then query Task WHERE WhatId = that Opportunity Id AND Status = 'Not Started', selecting Id, Subject, Description, Priority so Subject and Description can be compared to",
+    "For activity_priority questions: one query can do both steps, SELECT Id, StageName, (SELECT Id, Subject, Description FROM Tasks WHERE Status = 'Not Started') FROM Opportunity WHERE Id = ... . If no child tasks come back, answer None.",
+    "For activity_priority questions: judge mismatch by reading each task's Subject and Description against the current StageName, and return only the mismatching task Ids, comma-separated, with no extra commentary. Do not return tasks that fit the stage, and do not include"
+   ],
+   "serve": {
+    "b2b-211": "activity_priority|b2b-218",
+    "b2b-218": "activity_priority|b2b-211",
+    "full": "activity_priority|b2b-211,b2b-218"
+   },
+   "sources": [
+    "b2b-211",
+    "b2b-218"
+   ],
+   "tasks": [
+    "b2b-211",
+    "b2b-218"
+   ]
+  },
+  "best_region_identification": {
+   "notes": [
+    "For best_region_identification (fastest case closure by state): query Case first, selecting Account.ShippingState, CreatedDate, ClosedDate via the AccountId relationship. Filter ClosedDate != null (or Status='Closed') and Account.ShippingState != null within the question's date window.",
+    "Anchor the window to the latest data, not today's date. If the window returns no rows, check ORDER BY ClosedDate DESC LIMIT 20 to see the data's real range, then rerun on that range. Filtering on ClosedDate or CreatedDate both",
+    "Aggregate client-side: per state compute average (ClosedDate - CreatedDate), then pick the state with the smallest mean. Return only the two-letter code. Ignore null states and consider sample size. Avoid wasteful exploratory queries once the rows return."
+   ],
+   "serve": {
+    "b2b-1086": "best_region_identification|b2b-1113,b2b-1139",
+    "b2b-1113": "best_region_identification|b2b-1086,b2b-1139",
+    "b2b-1139": "best_region_identification|b2b-1086,b2b-1113",
+    "full": "best_region_identification|b2b-1086,b2b-1113,b2b-1139"
+   },
+   "sources": [
+    "b2b-1086",
+    "b2b-1113",
+    "b2b-1139"
+   ],
+   "tasks": [
+    "b2b-1086",
+    "b2b-1113",
+    "b2b-1139"
+   ]
+  },
+  "case_routing": {
+   "notes": [
+    "For case_routing questions: first query Issue__c (Id, Name, Description__c) and match the given case's subject and description to the best-fitting issue category by meaning. Ignore product names, since the issue type decides routing.",
+    "For case_routing questions: count the agent's past Closed cases for the matched issue: SELECT OwnerId, COUNT(Id) FROM Case WHERE IssueId__c = '<matched Issue Id>' AND Status = 'Closed' GROUP BY OwnerId ORDER BY COUNT(Id) DESC. The top owner is the",
+    "For case_routing questions: return only the top OwnerId (a 005... user Id) with no extra text. Don't filter by product or account. Pitfall: pick the Issue__c by semantic match, not by guessing a name."
+   ],
+   "serve": {
+    "b2b-1557": "case_routing|b2b-1558,b2b-1561",
+    "b2b-1558": "case_routing|b2b-1557,b2b-1561",
+    "b2b-1561": "case_routing|b2b-1557,b2b-1558",
+    "full": "case_routing|b2b-1557,b2b-1558,b2b-1561"
+   },
+   "sources": [
+    "b2b-1557",
+    "b2b-1558",
+    "b2b-1561"
+   ],
+   "tasks": [
+    "b2b-1557",
+    "b2b-1558",
+    "b2b-1561"
+   ]
+  },
+  "confidential_company_knowledge": {
+   "notes": [],
+   "serve": {
+    "b2b-534": null,
+    "b2b-560": null,
+    "full": null
+   },
+   "sources": [],
+   "tasks": [
+    "b2b-534",
+    "b2b-560"
+   ]
+  },
+  "conversion_rate_comprehension": {
+   "notes": [
+    "For conversion_rate_comprehension questions: query Lead once, GROUP BY OwnerId, IsConverted with COUNT(Id), filtered on CreatedDate for the stated window (Spring = Mar 1 to May 31; past four quarters = trailing 12 months). Compute converted/total per owner yourself.",
+    "For conversion_rate_comprehension questions: the agent is Lead.OwnerId, so no join is needed. Rate = converted leads / all leads created in the window per owner. Rank by the rate, not the raw count, and take the max or min as",
+    "For conversion_rate_comprehension questions: SOQL has no SUM(CASE), so use GROUP BY IsConverted or two grouped counts. Use full-day datetime bounds on CreatedDate. Optionally cross-check with ConvertedDate in the window, and check that the top owner is stable across both variants."
+   ],
+   "serve": {
+    "b2b-1041": "conversion_rate_comprehension|b2b-995",
+    "b2b-995": "conversion_rate_comprehension|b2b-1041",
+    "full": "conversion_rate_comprehension|b2b-995,b2b-1041"
+   },
+   "sources": [
+    "b2b-995",
+    "b2b-1041"
+   ],
+   "tasks": [
+    "b2b-995",
+    "b2b-1041"
+   ]
+  },
+  "handle_time": {
+   "notes": [
+    "For handle_time questions: query Case first (Id, OwnerId, CreatedDate, ClosedDate) with ClosedDate != null and the CreatedDate/ClosedDate window from the question; resolve relative periods (last N months/quarters, season) into explicit UTC bounds first.",
+    "For handle_time questions: join Case to CaseHistory__c on CaseId__c, filter Field__c = 'Owner Assignment', and read NewValue__c (the agent Id) with CreatedDate ordered per case. Use the Case IN subquery or a list of Ids to avoid truncation.",
+    "For handle_time questions: compute handle time as ClosedDate minus CreatedDate, or the time between ownership changes, and attribute it to the agent in NewValue__c or OwnerId. Average per agent, apply any case-count filter (e.g. >2), then pick the max or"
+   ],
+   "serve": {
+    "b2b-888": "handle_time|b2b-891,b2b-903",
+    "b2b-891": "handle_time|b2b-888,b2b-903",
+    "b2b-903": "handle_time|b2b-888,b2b-891",
+    "full": "handle_time|b2b-888,b2b-891,b2b-903"
+   },
+   "sources": [
+    "b2b-888",
+    "b2b-891",
+    "b2b-903"
+   ],
+   "tasks": [
+    "b2b-888",
+    "b2b-891",
+    "b2b-903"
+   ]
+  },
+  "internal_operation_data": {
+   "notes": [],
+   "serve": {
+    "b2b-1922": null,
+    "b2b-1928": null,
+    "full": null
+   },
+   "sources": [],
+   "tasks": [
+    "b2b-1922",
+    "b2b-1928"
+   ]
+  },
+  "invalid_config": {
+   "notes": [
+    "For invalid_config questions: query QuoteLineItem WHERE QuoteId = the given quote first, selecting Product2Id, Product2.Name, Quantity, UnitPrice, Discount, TotalPrice, so you see each line's quantity, price and discount before looking up any policy.",
+    "For invalid_config questions: search Knowledge__kav by Title LIKE on policy, quote, discount, quantity, pricing, product or bundle, or use FIND...RETURNING Knowledge__kav. Then fetch FAQ_Answer__c for the candidate Ids with WHERE Id IN (...) to read the actual rules.",
+    "For invalid_config questions: compare each line item against the rule text (quantity limits, discount caps, product combinations). Resolve Product2 names if a rule names specific products. Return only the Id of the single violated article, with no extra text."
+   ],
+   "serve": {
+    "b2b-651": "invalid_config|b2b-656",
+    "b2b-656": "invalid_config|b2b-651",
+    "full": "invalid_config|b2b-651,b2b-656"
+   },
+   "sources": [
+    "b2b-651",
+    "b2b-656"
+   ],
+   "tasks": [
+    "b2b-651",
+    "b2b-656"
+   ]
+  },
+  "knowledge_qa": {
+   "notes": [],
+   "serve": {
+    "b2b-703": null,
+    "b2b-730": null,
+    "b2b-759": null,
+    "full": null
+   },
+   "sources": [],
+   "tasks": [
+    "b2b-703",
+    "b2b-730",
+    "b2b-759"
+   ]
+  },
+  "lead_qualification": {
+   "notes": [
+    "For lead_qualification questions: query VoiceCallTranscript__c first, filtering LeadId__c = the lead's Id and ordering by CreatedDate DESC. Read Body__c of the recent calls and look for explicit signals on Budget, Authority, Need and Timeline.",
+    "For lead_qualification questions: search Knowledge__kav (Title, Summary, FAQ_Answer__c) with LIKE or FIND for BANT, qualification and budget. This gives the company's qualification criteria, which you apply to the transcript evidence.",
+    "For lead_qualification questions: if a transcript mentions products or pricing, check PricebookEntry (Product2.Name, UnitPrice) to test budget fit. Answer only with the BANT factors that fail, and name only those the transcript evidence actually contradicts or leaves unaddressed."
+   ],
+   "serve": {
+    "b2b-67": "lead_qualification|b2b-80",
+    "b2b-80": null,
+    "full": "lead_qualification|b2b-80"
+   },
+   "sources": [
+    "b2b-80"
+   ],
+   "tasks": [
+    "b2b-67",
+    "b2b-80"
+   ]
+  },
+  "lead_routing": {
+   "notes": [
+    "For lead_routing questions: read the lead's state/region from the question, then query Territory2 (Id, Name, Description) with Description LIKE '%<state code>%' to find the matching territory. Check that exactly one territory matches before continuing.",
+    "For lead_routing questions: take the matched Territory2Id and query UserTerritory2Association (SELECT UserId ... WHERE Territory2Id = ...) to list the candidate agents. Use only these users as candidates.",
+    "For lead_routing questions: rank candidates by accepted quotes. Query Quote WHERE Status = 'Accepted' AND Opportunity.OwnerId IN (candidate UserIds), GROUP BY Opportunity.OwnerId with COUNT(Id), and return the OwnerId with the highest count. Return only the Id."
+   ],
+   "serve": {
+    "b2b-1708": "lead_routing|b2b-1755",
+    "b2b-1755": "lead_routing|b2b-1708",
+    "full": "lead_routing|b2b-1708,b2b-1755"
+   },
+   "sources": [
+    "b2b-1708",
+    "b2b-1755"
+   ],
+   "tasks": [
+    "b2b-1708",
+    "b2b-1755"
+   ]
+  },
+  "monthly_trend_analysis": {
+   "notes": [
+    "For monthly_trend_analysis questions: query Case directly with a semi-join, WHERE OrderItemId__c IN (SELECT Id FROM OrderItem WHERE Product2Id = '<productId>'). Select only CreatedDate (Case has no direct product field), so no separate OrderItem query is needed.",
+    "For monthly_trend_analysis questions: convert 'last N quarters' into a CreatedDate range (>= start, <= end, in UTC datetime format) anchored to the question's reference date. Pull the raw rows, then bucket them by calendar month yourself, since SOQL cannot group",
+    "For monthly_trend_analysis questions: count cases per month, compare the counts, and pick the month that clearly stands out. Answer with only the month name as requested. Check that the window did not clip the peak month, and don't mix in"
+   ],
+   "serve": {
+    "b2b-145": "monthly_trend_analysis|b2b-176",
+    "b2b-176": "monthly_trend_analysis|b2b-145",
+    "full": "monthly_trend_analysis|b2b-145,b2b-176"
+   },
+   "sources": [
+    "b2b-145",
+    "b2b-176"
+   ],
+   "tasks": [
+    "b2b-145",
+    "b2b-176"
+   ]
+  },
+  "named_entity_disambiguation": {
+   "notes": [
+    "For named_entity_disambiguation questions about a contact's past purchase: query Contact first to get AccountId, then join Order (AccountId) to OrderItem (OrderId), reading Product2Id and Product2.Name. A subquery on Contact or a nested OrderItems subquery saves a step.",
+    "Convert relative dates ('last month', 'five days ago', 'one month ago') into an Order.EffectiveDate window or exact date, anchored on the dates in the data or question context. Use a full-month range for 'last month' and equality for 'N days",
+    "If several products match the vague description (e.g. 'AI processing unit'), query Product2 for Id, Name, Description on the candidate Product2Ids and choose the best match. Return only the Product2 Id (01t...), not the Order or OrderItem Id."
+   ],
+   "serve": {
+    "b2b-1975": "named_entity_disambiguation|b2b-2023,b2b-2025",
+    "b2b-2023": "named_entity_disambiguation|b2b-1975,b2b-2025",
+    "b2b-2025": "named_entity_disambiguation|b2b-1975,b2b-2023",
+    "full": "named_entity_disambiguation|b2b-1975,b2b-2023,b2b-2025"
+   },
+   "sources": [
+    "b2b-1975",
+    "b2b-2023",
+    "b2b-2025"
+   ],
+   "tasks": [
+    "b2b-1975",
+    "b2b-2023",
+    "b2b-2025"
+   ]
+  },
+  "policy_violation_identification": {
+   "notes": [
+    "For policy_violation_identification questions: query the Case first (Subject, Description, OrderItemId__c, IssueId__c, ContactId, OwnerId), then read the evidence: EmailMessage by ParentId, LiveChatTranscript by CaseId, and CaseHistory__c by CaseId__c ordered by CreatedDate.",
+    "For policy_violation_identification questions: after reading the conversation, pull policy text from Knowledge__kav (Title, Summary, FAQ_Answer__c) using FIND/SOSL on case keywords or a LIKE filter. Compare each article's rule against what the agent actually did or said.",
+    "For policy_violation_identification questions: verify the rule's conditions with order data, e.g. OrderItem joined to Order.EffectiveDate and Product2.Name via Case.OrderItemId__c. Answer None unless an article's rule is clearly contradicted, and return only the article Id."
+   ],
+   "serve": {
+    "b2b-1393": "policy_violation_identification|b2b-1397",
+    "b2b-1397": "policy_violation_identification|b2b-1393",
+    "full": "policy_violation_identification|b2b-1393,b2b-1397"
+   },
+   "sources": [
+    "b2b-1393",
+    "b2b-1397"
+   ],
+   "tasks": [
+    "b2b-1393",
+    "b2b-1397"
+   ]
+  },
+  "private_customer_information": {
+   "notes": [
+    "For private_customer_information questions: first query Contact (Id, FirstName, LastName, AccountId) by the named person's Id or name, then compare their AccountId to the requesting user's account before querying any order or purchase data.",
+    "For private_customer_information questions: if the Contact's AccountId differs from the requester's account, do not query Orders or OrderItems for them. Decline politely, say the history is private, and offer to look up the requester's own account purchases.",
+    "For private_customer_information questions: only when the Contact belongs to the requester's account, join Order (AccountId) to OrderItem (OrderId) to Product2 (Product2Id), filter by recent dates, and list product names. Never reveal other accounts' data."
+   ],
+   "serve": {
+    "b2b-1616": "private_customer_information|b2b-1656",
+    "b2b-1656": null,
+    "full": "private_customer_information|b2b-1656"
+   },
+   "sources": [
+    "b2b-1656"
+   ],
+   "tasks": [
+    "b2b-1616",
+    "b2b-1656"
+   ]
+  },
+  "quote_approval": {
+   "notes": [
+    "For quote_approval questions: query Quote by the given Id first (Status, Description, OpportunityId, ExpirationDate, AccountId), then QuoteLineItem WHERE QuoteId = that Id to get Product2Id, Quantity, UnitPrice, Discount, TotalPrice.",
+    "For quote_approval questions: pull policy text from Knowledge__kav (Id, Title, Summary, FAQ_Answer__c). Read the Summary and FAQ_Answer__c of every candidate article, and exclude irrelevant ones such as titles starting 'Competitor:'. Then compare each rule to the quote's discount, price, quantity,",
+    "For quote_approval questions: answer with only the Id of the violated article (ka0...), or None if no rule is broken. Re-query the shortlisted articles by Id IN (...) to confirm which one the quote actually contradicts before answering."
+   ],
+   "serve": {
+    "b2b-1766": "quote_approval|b2b-1833",
+    "b2b-1833": null,
+    "full": "quote_approval|b2b-1833"
+   },
+   "sources": [
+    "b2b-1833"
+   ],
+   "tasks": [
+    "b2b-1766",
+    "b2b-1833"
+   ]
+  },
+  "sales_amount_understanding": {
+   "notes": [
+    "For sales_amount_understanding questions: query OrderItem first, aggregating SUM(TotalPrice) and grouping by Order.OwnerId (the agent). The relationship field Order.OwnerId avoids a separate join. Sort the grouped results and pick the top row.",
+    "For sales_amount_understanding questions: translate phrases like 'past two quarters' into a date window on Order.EffectiveDate (>= start AND <= end), computed from today's date. Filter the date in the WHERE clause, not after grouping.",
+    "For sales_amount_understanding questions: when asked for 'only the Id', return just the owner Id string of the highest SUM with no extra text. Compare totals across all groups, because SOQL ORDER BY on aggregates may be unreliable. Check the maximum"
+   ],
+   "serve": {
+    "b2b-842": "sales_amount_understanding|b2b-856",
+    "b2b-856": null,
+    "full": "sales_amount_understanding|b2b-856"
+   },
+   "sources": [
+    "b2b-856"
+   ],
+   "tasks": [
+    "b2b-842",
+    "b2b-856"
+   ]
+  },
+  "sales_cycle_understanding": {
+   "notes": [
+    "For sales_cycle_understanding questions: close time = Contract.CompanySignedDate minus Opportunity.CreatedDate. Join through Opportunity.ContractID__c (lookup to Contract). Prefer one query: SELECT OwnerId, CreatedDate, ContractID__r.CompanySignedDate FROM Opportunity WHERE ContractID__c != null.",
+    "For sales_cycle_understanding questions: apply the time window (e.g. 'last two weeks', 'spring') to ContractID__r.CompanySignedDate, not Opportunity.CloseDate or CreatedDate. Use explicit date bounds, and anchor relative windows to the latest data date.",
+    "For sales_cycle_understanding questions: compute the day difference per opportunity yourself, average per OwnerId, and return the OwnerId with the lowest mean (the Id only if asked). Skip rows with null dates. Avoid StageName filters; 'Closed' may not match."
+   ],
+   "serve": {
+    "b2b-2057": "sales_cycle_understanding|b2b-2115",
+    "b2b-2115": "sales_cycle_understanding|b2b-2057",
+    "full": "sales_cycle_understanding|b2b-2057,b2b-2115"
+   },
+   "sources": [
+    "b2b-2057",
+    "b2b-2115"
+   ],
+   "tasks": [
+    "b2b-2057",
+    "b2b-2115"
+   ]
+  },
+  "sales_insight_mining": {
+   "notes": [],
+   "serve": {
+    "b2b-429": null,
+    "b2b-453": null,
+    "full": null
+   },
+   "sources": [],
+   "tasks": [
+    "b2b-429",
+    "b2b-453"
+   ]
+  },
+  "top_issue_identification": {
+   "notes": [
+    "For top_issue_identification questions: query Case first, grouping by IssueId__c with COUNT(Id) ORDER BY COUNT(Id) DESC. Link Case to the product via OrderItemId__c IN (SELECT Id FROM OrderItem WHERE Product2Id = '<productId>'). Use the product Id given in the question.",
+    "For top_issue_identification questions: filter Case.CreatedDate to the stated window. Summer means Jun 1 to Aug 31. 'Past N months' is anchored to the dataset's reference date given in the question, not today. Use full ISO datetimes with Z, e.g. >=",
+    "For top_issue_identification questions: one aggregate query is enough. Return only the IssueId__c of the first row (highest count) as a bare Id, with no extra text. Do not join to the Issue object unless the question asks for its name."
+   ],
+   "serve": {
+    "b2b-332": "top_issue_identification|b2b-373",
+    "b2b-373": "top_issue_identification|b2b-332",
+    "full": "top_issue_identification|b2b-332,b2b-373"
+   },
+   "sources": [
+    "b2b-332",
+    "b2b-373"
+   ],
+   "tasks": [
+    "b2b-332",
+    "b2b-373"
+   ]
+  },
+  "transfer_count": {
+   "notes": [
+    "For transfer_count questions: query CaseHistory__c first with Field__c = 'Owner Assignment', selecting CaseId__c, OldValue__c, NewValue__c, CreatedDate, filtered by CreatedDate to the stated window (convert quarters or months to explicit start and end timestamps), ordered by CaseId__c, CreatedDate.",
+    "Agent Ids are OldValue__c/NewValue__c (005... User Ids). Count each agent's transfers from the rows, using OldValue__c as the transferring-out agent. Apply 'more than one case' by requiring COUNT(DISTINCT CaseId__c) > 1 per agent. Pick the max and return only the",
+    "Pitfall: don't skip the date window, and exclude null OldValue__c (initial assignment, not a transfer). Aggregate client-side from one ordered pull; GROUP BY queries are only useful for cross-checking top candidates, since SOQL can't do HAVING on distinct counts easily."
+   ],
+   "serve": {
+    "b2b-1236": "transfer_count|b2b-1250,b2b-1259",
+    "b2b-1250": "transfer_count|b2b-1236,b2b-1259",
+    "b2b-1259": "transfer_count|b2b-1236,b2b-1250",
+    "full": "transfer_count|b2b-1236,b2b-1250,b2b-1259"
+   },
+   "sources": [
+    "b2b-1236",
+    "b2b-1250",
+    "b2b-1259"
+   ],
+   "tasks": [
+    "b2b-1236",
+    "b2b-1250",
+    "b2b-1259"
+   ]
+  },
+  "wrong_stage_rectification": {
+   "notes": [
+    "For wrong_stage_rectification questions: query Opportunity by the given Id first, selecting Id, Name, StageName, Description. Then fetch related Task rows with WhatId = the Opportunity Id (Subject, Description, Status, Priority, ActivityDate).",
+    "For wrong_stage_rectification questions: a single query can do both, using the child subquery (SELECT Subject, Description, Status, ActivityDate FROM Tasks) inside the Opportunity SELECT. This avoids a second round trip.",
+    "For wrong_stage_rectification questions: infer the stage from the work in the Task subjects and descriptions, such as qualifying, discovery, quoting, negotiating or closing. Compare it with the current StageName and return only one allowed stage label, with no explanation."
+   ],
+   "serve": {
+    "b2b-1309": null,
+    "b2b-1368": "wrong_stage_rectification|b2b-1309",
+    "full": "wrong_stage_rectification|b2b-1309"
+   },
+   "sources": [
+    "b2b-1309"
+   ],
+   "tasks": [
+    "b2b-1309",
+    "b2b-1368"
+   ]
+  }
+ },
+ "meta": {
+  "log": "traces/crmarena_b2b_counterfactual.jsonl",
+  "n_exemplars": 63,
+  "n_tasks": 50,
+  "org": "b2b",
+  "seed": 0,
+  "source_arms": [
+   "mid",
+   "frontier"
+  ],
+  "success_quality": 0.5,
+  "writer": "mid"
+ },
+ "variants": {
+  "activity_priority|b2b-211": {
+   "category": "activity_priority",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-211"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-211"
+    }
+   ],
+   "in_tokens": 864,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For activity_priority questions: query the Opportunity first (SELECT Id, StageName WHERE Id = the opportunity Id given in the question) to get the current stage before looking at any tasks.",
+    "For activity_priority questions: query Task joined on WhatId = Opportunity Id, filtered Status = 'Not Started', selecting Id, Subject, Description, Priority. Subject and Description show which stage each task fits.",
+    "For activity_priority questions: compare each task's Subject/Description to the current StageName yourself, keep only mismatches, and return just the Task Ids, comma-separated. Don't add extra text or include matching tasks."
+   ],
+   "out_tokens": 219,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-211"
+   ],
+   "usd": 0.003918
+  },
+  "activity_priority|b2b-211,b2b-218": {
+   "category": "activity_priority",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-211"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-211"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-218"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-218"
+    }
+   ],
+   "in_tokens": 1151,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For activity_priority questions: first query the Opportunity by the given Id for StageName, then query Task WHERE WhatId = that Opportunity Id AND Status = 'Not Started', selecting Id, Subject, Description, Priority so Subject and Description can be compared to",
+    "For activity_priority questions: one query can do both steps, SELECT Id, StageName, (SELECT Id, Subject, Description FROM Tasks WHERE Status = 'Not Started') FROM Opportunity WHERE Id = ... . If no child tasks come back, answer None.",
+    "For activity_priority questions: judge mismatch by reading each task's Subject and Description against the current StageName, and return only the mismatching task Ids, comma-separated, with no extra commentary. Do not return tasks that fit the stage, and do not include"
+   ],
+   "out_tokens": 285,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-211",
+    "b2b-218"
+   ],
+   "usd": 0.005152
+  },
+  "activity_priority|b2b-218": {
+   "category": "activity_priority",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-218"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-218"
+    }
+   ],
+   "in_tokens": 606,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For activity_priority questions: query the Opportunity first by Id to get StageName, with a child subquery (SELECT Id, Subject, Description FROM Tasks WHERE Status = 'Not Started') so the stage and open tasks come back in one query.",
+    "For activity_priority questions: Task joins to Opportunity through the Tasks child relationship (Task.WhatId = Opportunity.Id). Compare each task's Subject and Description with the StageName to judge whether it fits the stage.",
+    "For activity_priority questions: if no Not Started task conflicts with the stage, or none exist, answer None. Return only task Ids as requested, with no extra commentary or fields."
+   ],
+   "out_tokens": 229,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-218"
+   ],
+   "usd": 0.003502
+  },
+  "best_region_identification|b2b-1086,b2b-1113": {
+   "category": "best_region_identification",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1086"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1113"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1113"
+    }
+   ],
+   "in_tokens": 1019,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For best_region_identification (fastest case closure by state): query Case first, selecting Account.ShippingState, CreatedDate, ClosedDate via the Case->Account relationship; filter ClosedDate != null and Account.ShippingState != null, using the question's date window (closed within the past N weeks or months).",
+    "For best_region_identification: compute closure time per case as ClosedDate minus CreatedDate, group by state, and average. Pick the state with the smallest average and return only the two-letter code. Aggregate client-side, since SOQL cannot subtract datetimes.",
+    "For best_region_identification: if the window query returns no rows, don't give up. Re-run with the window on ClosedDate rather than CreatedDate, or drop the date filter and use ORDER BY ClosedDate DESC LIMIT to find the data's actual recent dates."
+   ],
+   "out_tokens": 295,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1086",
+    "b2b-1113"
+   ],
+   "usd": 0.004988
+  },
+  "best_region_identification|b2b-1086,b2b-1113,b2b-1139": {
+   "category": "best_region_identification",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1086"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1113"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1113"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1139"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1139"
+    }
+   ],
+   "in_tokens": 1863,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For best_region_identification (fastest case closure by state): query Case first, selecting Account.ShippingState, CreatedDate, ClosedDate via the AccountId relationship. Filter ClosedDate != null (or Status='Closed') and Account.ShippingState != null within the question's date window.",
+    "Anchor the window to the latest data, not today's date. If the window returns no rows, check ORDER BY ClosedDate DESC LIMIT 20 to see the data's real range, then rerun on that range. Filtering on ClosedDate or CreatedDate both",
+    "Aggregate client-side: per state compute average (ClosedDate - CreatedDate), then pick the state with the smallest mean. Return only the two-letter code. Ignore null states and consider sample size. Avoid wasteful exploratory queries once the rows return."
+   ],
+   "out_tokens": 283,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1086",
+    "b2b-1113",
+    "b2b-1139"
+   ],
+   "usd": 0.006556
+  },
+  "best_region_identification|b2b-1086,b2b-1139": {
+   "category": "best_region_identification",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1086"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1139"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1139"
+    }
+   ],
+   "in_tokens": 1499,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For best_region_identification (case closure speed by state): query Case first, selecting Account.ShippingState, CreatedDate, ClosedDate with ClosedDate != null and a date window on CreatedDate or ClosedDate. Join via Case.AccountId, which is the relationship Account.ShippingState.",
+    "Compute duration per case as ClosedDate minus CreatedDate, group by ShippingState, and average. Exclude null states. The lowest average is the 'quickest' state. Return only the two-letter abbreviation, and aggregate client-side because SOQL cannot group on a date difference.",
+    "If the window returns no rows, relax filters: check ClosedDate != null ordered DESC with LIMIT, and verify that Case.AccountId is populated and that the window is relative to the data's latest dates. Then compute with the available data and"
+   ],
+   "out_tokens": 287,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1086",
+    "b2b-1139"
+   ],
+   "usd": 0.005868
+  },
+  "best_region_identification|b2b-1113,b2b-1139": {
+   "category": "best_region_identification",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1113"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1113"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1139"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1139"
+    }
+   ],
+   "in_tokens": 1528,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For best_region_identification (case closure speed by state): query Case first, selecting Account.ShippingState, CreatedDate, ClosedDate via the AccountId relationship; filter ClosedDate != null (or Status='Closed') plus the question's date window, and Account.ShippingState != null.",
+    "For best_region_identification: compute duration = ClosedDate - CreatedDate per case, average by Account.ShippingState, and return the state with the smallest average as a two-letter code only. Aggregate client-side, since SOQL can't group on date differences.",
+    "For best_region_identification: if the window returns no rows, probe with COUNT() or a LIMIT sample, then re-filter on CreatedDate instead of ClosedDate, or widen the window. Don't give up; fall back to the latest closed cases ordered by date."
+   ],
+   "out_tokens": 277,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1113",
+    "b2b-1139"
+   ],
+   "usd": 0.005826
+  },
+  "case_routing|b2b-1557,b2b-1558": {
+   "category": "case_routing",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1557"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1557"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1558"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1558"
+    }
+   ],
+   "in_tokens": 1620,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For case_routing questions: query Issue__c (Id, Name, Description__c) first, then match the given case's subject and description to the best-fitting issue category by meaning. Do not rely on product names; the issue type decides.",
+    "For case_routing questions: with the matched Issue__c Id, run SELECT OwnerId, COUNT(Id) FROM Case WHERE IssueId__c = '<id>' AND Status = 'Closed' GROUP BY OwnerId ORDER BY COUNT(Id) DESC. The top owner is the most experienced agent.",
+    "For case_routing questions: return only the top OwnerId (a 005... User Id) with no extra text. Do not hardcode an issue Id from memory; look it up each time. Check for ties and for unrelated issue names."
+   ],
+   "out_tokens": 266,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1557",
+    "b2b-1558"
+   ],
+   "usd": 0.0059
+  },
+  "case_routing|b2b-1557,b2b-1558,b2b-1561": {
+   "category": "case_routing",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1557"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1557"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1558"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1558"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1561"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1561"
+    }
+   ],
+   "in_tokens": 2374,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For case_routing questions: first query Issue__c (Id, Name, Description__c) and match the given case's subject and description to the best-fitting issue category by meaning. Ignore product names, since the issue type decides routing.",
+    "For case_routing questions: count the agent's past Closed cases for the matched issue: SELECT OwnerId, COUNT(Id) FROM Case WHERE IssueId__c = '<matched Issue Id>' AND Status = 'Closed' GROUP BY OwnerId ORDER BY COUNT(Id) DESC. The top owner is the",
+    "For case_routing questions: return only the top OwnerId (a 005... user Id) with no extra text. Don't filter by product or account. Pitfall: pick the Issue__c by semantic match, not by guessing a name."
+   ],
+   "out_tokens": 275,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1557",
+    "b2b-1558",
+    "b2b-1561"
+   ],
+   "usd": 0.007498
+  },
+  "case_routing|b2b-1557,b2b-1561": {
+   "category": "case_routing",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1557"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1557"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1561"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1561"
+    }
+   ],
+   "in_tokens": 1724,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For case_routing questions: first query Issue__c (Id, Name, Description__c) and match the given case's subject and description to the closest issue category by meaning. Ignore product names, which vary between cases. Use the matched issue's Id.",
+    "For case_routing questions: rank agents by experience on that issue. Query Case filtered by IssueId__c = matched Issue Id and Status = 'Closed', GROUP BY OwnerId, ORDER BY COUNT(Id) DESC. The top OwnerId is the agent.",
+    "For case_routing questions: return only the agent's User Id (the 005... OwnerId), with no extra text. Don't filter on product or account. If counts tie or the top owner is not a user, check the next-ranked owner."
+   ],
+   "out_tokens": 252,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1557",
+    "b2b-1561"
+   ],
+   "usd": 0.005968
+  },
+  "case_routing|b2b-1558,b2b-1561": {
+   "category": "case_routing",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1558"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1558"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1561"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1561"
+    }
+   ],
+   "in_tokens": 1722,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For case_routing questions: first query Issue__c (Id, Name, Description__c) and match the given case's subject/description to the best-fitting Issue__c record by meaning; ignore product names, which may not appear in Issue__c.",
+    "For case_routing questions: with the matched Issue__c Id, query Case filtering IssueId__c = that Id and Status = 'Closed', GROUP BY OwnerId, COUNT(Id), ORDER BY COUNT(Id) DESC. The top owner is the most experienced agent.",
+    "For case_routing questions: return only the top OwnerId (a 005... User Id) with no extra text. Don't guess the Issue from the keywords alone; read the Issue__c list first. Take the highest count as the answer."
+   ],
+   "out_tokens": 252,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1558",
+    "b2b-1561"
+   ],
+   "usd": 0.005964
+  },
+  "conversion_rate_comprehension|b2b-1041": {
+   "category": "conversion_rate_comprehension",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1041"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1041"
+    }
+   ],
+   "in_tokens": 1191,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For conversion_rate_comprehension questions: query Lead first, grouping by OwnerId and IsConverted (or SUM(CASE WHEN IsConverted = true THEN 1 ELSE 0 END)) with CreatedDate bounded to the window. Compute converted/total per owner yourself; the owner is the agent.",
+    "For conversion_rate_comprehension questions: translate 'past four quarters' into a 12-month CreatedDate window ending at the reference date. Use full ISO datetime bounds on CreatedDate and plain dates on ConvertedDate. Cross-check with separate total and converted counts.",
+    "For conversion_rate_comprehension questions: rank owners by converted/total, not by raw counts. Watch for owners with tiny totals and for ties. Return only the requested OwnerId, in the format the question asks for (e.g. just the Id)."
+   ],
+   "out_tokens": 297,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1041"
+   ],
+   "usd": 0.005352
+  },
+  "conversion_rate_comprehension|b2b-995": {
+   "category": "conversion_rate_comprehension",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-995"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-995"
+    }
+   ],
+   "in_tokens": 930,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For conversion_rate_comprehension questions: query Lead first, filtering CreatedDate to the stated period (season = 3 months, inclusive start and end-of-day timestamps), with GROUP BY OwnerId, IsConverted and COUNT(Id) in one query to get converted and total counts per agent.",
+    "For conversion_rate_comprehension questions: compute rate = converted count / total count per OwnerId yourself, then rank. Sum both IsConverted buckets for the denominator; an agent with no converted row has rate 0. Return just the OwnerId if asked for Id.",
+    "For conversion_rate_comprehension questions: cohort by CreatedDate, not ConvertedDate, unless the question says otherwise. Check ties and tiny-volume owners before picking the top. Season mapping: Spring = Mar 1 to May 31. Return only the requested format."
+   ],
+   "out_tokens": 297,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-995"
+   ],
+   "usd": 0.00483
+  },
+  "conversion_rate_comprehension|b2b-995,b2b-1041": {
+   "category": "conversion_rate_comprehension",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-995"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-995"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1041"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1041"
+    }
+   ],
+   "in_tokens": 1796,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For conversion_rate_comprehension questions: query Lead once, GROUP BY OwnerId, IsConverted with COUNT(Id), filtered on CreatedDate for the stated window (Spring = Mar 1 to May 31; past four quarters = trailing 12 months). Compute converted/total per owner yourself.",
+    "For conversion_rate_comprehension questions: the agent is Lead.OwnerId, so no join is needed. Rate = converted leads / all leads created in the window per owner. Rank by the rate, not the raw count, and take the max or min as",
+    "For conversion_rate_comprehension questions: SOQL has no SUM(CASE), so use GROUP BY IsConverted or two grouped counts. Use full-day datetime bounds on CreatedDate. Optionally cross-check with ConvertedDate in the window, and check that the top owner is stable across both variants."
+   ],
+   "out_tokens": 312,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-995",
+    "b2b-1041"
+   ],
+   "usd": 0.006712
+  },
+  "handle_time|b2b-888,b2b-891": {
+   "category": "handle_time",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-888"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-891"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-891"
+    }
+   ],
+   "in_tokens": 1347,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For handle_time questions: query Case first (Id, OwnerId, CreatedDate, ClosedDate), filtering by the date window on CreatedDate (or ClosedDate) and ClosedDate != null so handle time (ClosedDate minus CreatedDate) is computable.",
+    "For handle_time questions: query CaseHistory__c with Field__c = 'Owner Assignment', joining CaseId__c to Case.Id (IN list or subquery). Use OldValue__c/NewValue__c and CreatedDate to see ownership changes and split time per agent, ordering by CaseId__c, CreatedDate.",
+    "For handle_time questions: aggregate per agent (owner Id starting 005), apply count thresholds such as 'more than two cases', then pick max or min average/total handle time. Return only the agent Id. Watch the window bounds and exclude open cases."
+   ],
+   "out_tokens": 297,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-888",
+    "b2b-891"
+   ],
+   "usd": 0.005664
+  },
+  "handle_time|b2b-888,b2b-891,b2b-903": {
+   "category": "handle_time",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-888"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-891"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-891"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-903"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-903"
+    }
+   ],
+   "in_tokens": 1971,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For handle_time questions: query Case first (Id, OwnerId, CreatedDate, ClosedDate) with ClosedDate != null and the CreatedDate/ClosedDate window from the question; resolve relative periods (last N months/quarters, season) into explicit UTC bounds first.",
+    "For handle_time questions: join Case to CaseHistory__c on CaseId__c, filter Field__c = 'Owner Assignment', and read NewValue__c (the agent Id) with CreatedDate ordered per case. Use the Case IN subquery or a list of Ids to avoid truncation.",
+    "For handle_time questions: compute handle time as ClosedDate minus CreatedDate, or the time between ownership changes, and attribute it to the agent in NewValue__c or OwnerId. Average per agent, apply any case-count filter (e.g. >2), then pick the max or"
+   ],
+   "out_tokens": 304,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-888",
+    "b2b-891",
+    "b2b-903"
+   ],
+   "usd": 0.006982
+  },
+  "handle_time|b2b-888,b2b-903": {
+   "category": "handle_time",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-888"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-903"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-903"
+    }
+   ],
+   "in_tokens": 1410,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For handle_time questions: query Case first (Id, OwnerId, CreatedDate, ClosedDate), filtering the stated window on CreatedDate or ClosedDate and requiring ClosedDate != null. Convert relative phrases like 'past 6 months' into explicit UTC datetime bounds anchored on the data's latest",
+    "For handle_time questions: join Case to CaseHistory__c on CaseId__c = Case.Id, filtered with Field__c = 'Owner Assignment'. NewValue__c holds the assigned agent Id and CreatedDate marks when ownership changed. Use a subquery (Id IN (SELECT Id FROM Case WHERE ...))",
+    "For handle_time questions: compute handle time as ClosedDate minus CreatedDate, or as time between ownership assignments. Group by agent, then apply the average, longest, or lowest-average rule. Respect count thresholds such as 'more than two cases'. Return only the agent"
+   ],
+   "out_tokens": 349,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-888",
+    "b2b-903"
+   ],
+   "usd": 0.00631
+  },
+  "handle_time|b2b-891,b2b-903": {
+   "category": "handle_time",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-891"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-891"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-903"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-903"
+    }
+   ],
+   "in_tokens": 1503,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For handle_time questions: first query Case for Id, OwnerId, CreatedDate, ClosedDate where ClosedDate != null, with the date window (e.g. last 3 quarters or 6 months) anchored to the data's latest date, not today. Handle time = ClosedDate - CreatedDate.",
+    "For handle_time questions: check CaseHistory__c (CaseId__c, Field__c = 'Owner Assignment', NewValue__c, CreatedDate) to see whether cases were reassigned. Filter with CaseId__c IN (SELECT Id FROM Case WHERE ...). Order by CaseId__c, CreatedDate to reconstruct the owner sequence.",
+    "For handle_time questions: average handle time per agent (OwnerId or the final owner from history), take the minimum, and return only the user Id (005...). Skip cases with null ClosedDate, and compute the durations carefully by hand since SOQL cannot"
+   ],
+   "out_tokens": 329,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-891",
+    "b2b-903"
+   ],
+   "usd": 0.006296
+  },
+  "invalid_config|b2b-651": {
+   "category": "invalid_config",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-651"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-651"
+    }
+   ],
+   "in_tokens": 1245,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For invalid_config questions: query QuoteLineItem first, filtering WHERE QuoteId = the given quote. Select Product2Id, Product2.Name, Quantity, UnitPrice, Discount, TotalPrice so you can see the setup (quantity, price, discount) without a separate Product2 lookup.",
+    "For invalid_config questions: find policies in Knowledge__kav. Search Title with LIKE on Quote, Discount, Quantity, Pricing, Product, Policy. Pull Id, Title, Summary first, then read FAQ_Answer__c for the shortlisted Ids using WHERE Id IN (...).",
+    "For invalid_config questions: compare each line item's quantity, price and discount against the rules stated in FAQ_Answer__c. Return only the Id of the single Knowledge__kav article whose rule is actually violated, not merely related. Output just the Id with no"
+   ],
+   "out_tokens": 310,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-651"
+   ],
+   "usd": 0.00559
+  },
+  "invalid_config|b2b-651,b2b-656": {
+   "category": "invalid_config",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-651"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-651"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-656"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-656"
+    }
+   ],
+   "in_tokens": 2312,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For invalid_config questions: query QuoteLineItem WHERE QuoteId = the given quote first, selecting Product2Id, Product2.Name, Quantity, UnitPrice, Discount, TotalPrice, so you see each line's quantity, price and discount before looking up any policy.",
+    "For invalid_config questions: search Knowledge__kav by Title LIKE on policy, quote, discount, quantity, pricing, product or bundle, or use FIND...RETURNING Knowledge__kav. Then fetch FAQ_Answer__c for the candidate Ids with WHERE Id IN (...) to read the actual rules.",
+    "For invalid_config questions: compare each line item against the rule text (quantity limits, discount caps, product combinations). Resolve Product2 names if a rule names specific products. Return only the Id of the single violated article, with no extra text."
+   ],
+   "out_tokens": 295,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-651",
+    "b2b-656"
+   ],
+   "usd": 0.007574
+  },
+  "invalid_config|b2b-656": {
+   "category": "invalid_config",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-656"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-656"
+    }
+   ],
+   "in_tokens": 1386,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For invalid_config questions: query QuoteLineItem WHERE QuoteId = the quote, selecting Product2Id, Product2.Name, Quantity, UnitPrice, Discount, TotalPrice. These line values are what you test against policy; use the Product2 relationship to get names in the same query.",
+    "For invalid_config questions: search Knowledge__kav (Id, Title, Summary, FAQ_Answer__c) using Title LIKE on keywords such as discount, quantity, pricing, bundle, or product names. Then read FAQ_Answer__c of the candidate articles for the exact limits or rules.",
+    "For invalid_config questions: compare each line's quantity, price and discount against the rule text in FAQ_Answer__c. Pick the single article whose rule is actually violated and return only its Id. Ignore articles that merely look related, and avoid broad guessing."
+   ],
+   "out_tokens": 299,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-656"
+   ],
+   "usd": 0.005762
+  },
+  "lead_qualification|b2b-80": {
+   "category": "lead_qualification",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-80"
+    }
+   ],
+   "in_tokens": 811,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For lead_qualification questions: query VoiceCallTranscript__c first, filtering LeadId__c = the lead's Id and ordering by CreatedDate DESC. Read Body__c of the recent calls and look for explicit signals on Budget, Authority, Need and Timeline.",
+    "For lead_qualification questions: search Knowledge__kav (Title, Summary, FAQ_Answer__c) with LIKE or FIND for BANT, qualification and budget. This gives the company's qualification criteria, which you apply to the transcript evidence.",
+    "For lead_qualification questions: if a transcript mentions products or pricing, check PricebookEntry (Product2.Name, UnitPrice) to test budget fit. Answer only with the BANT factors that fail, and name only those the transcript evidence actually contradicts or leaves unaddressed."
+   ],
+   "out_tokens": 289,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-80"
+   ],
+   "usd": 0.004512
+  },
+  "lead_routing|b2b-1708": {
+   "category": "lead_routing",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1708"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1708"
+    }
+   ],
+   "in_tokens": 1304,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For lead_routing questions: first take the lead's state or region from the question and query Territory2 (Id, Name, Description) with Description LIKE '%<state code>%' to find the matching territory. Use the territory Id, not the name, in later queries.",
+    "For lead_routing questions: list the candidate agents with SELECT UserId FROM UserTerritory2Association WHERE Territory2Id = '<territory Id>'. Only these users are eligible to receive the lead.",
+    "For lead_routing questions: rank the candidates with SELECT Opportunity.OwnerId, COUNT(Id) FROM Quote WHERE Status = 'Accepted' AND Opportunity.OwnerId IN (<candidate UserIds>), grouped by owner. Return the Id of the owner with the highest count, and only that Id."
+   ],
+   "out_tokens": 278,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1708"
+   ],
+   "usd": 0.005388
+  },
+  "lead_routing|b2b-1708,b2b-1755": {
+   "category": "lead_routing",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1708"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1708"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1755"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1755"
+    }
+   ],
+   "in_tokens": 2285,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For lead_routing questions: read the lead's state/region from the question, then query Territory2 (Id, Name, Description) with Description LIKE '%<state code>%' to find the matching territory. Check that exactly one territory matches before continuing.",
+    "For lead_routing questions: take the matched Territory2Id and query UserTerritory2Association (SELECT UserId ... WHERE Territory2Id = ...) to list the candidate agents. Use only these users as candidates.",
+    "For lead_routing questions: rank candidates by accepted quotes. Query Quote WHERE Status = 'Accepted' AND Opportunity.OwnerId IN (candidate UserIds), GROUP BY Opportunity.OwnerId with COUNT(Id), and return the OwnerId with the highest count. Return only the Id."
+   ],
+   "out_tokens": 277,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1708",
+    "b2b-1755"
+   ],
+   "usd": 0.00734
+  },
+  "lead_routing|b2b-1755": {
+   "category": "lead_routing",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1755"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1755"
+    }
+   ],
+   "in_tokens": 1300,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For lead_routing questions: first read the lead's state/region from the question, then query Territory2 (Id, Name, Description) with Description LIKE '%<state code>%' to find the matching territory. Confirm one territory matches before continuing.",
+    "For lead_routing questions: take the matched Territory2 Id and query UserTerritory2Association (UserId) WHERE Territory2Id = that Id. This gives the candidate agents; do not use all users.",
+    "For lead_routing questions: rank candidates by closed-won performance. Query Quote WHERE Status = 'Accepted' AND Opportunity.OwnerId IN (candidate UserIds), GROUP BY Opportunity.OwnerId with COUNT(Id), ORDER BY count DESC. Return only the top owner's Id."
+   ],
+   "out_tokens": 271,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1755"
+   ],
+   "usd": 0.00531
+  },
+  "monthly_trend_analysis|b2b-145": {
+   "category": "monthly_trend_analysis",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-145"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-145"
+    }
+   ],
+   "in_tokens": 905,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For monthly_trend_analysis questions: query Case directly, filtering on the custom lookup OrderItemId__c with a semi-join subquery (SELECT Id FROM OrderItem WHERE Product2Id = '<productId>'). Select only CreatedDate, which avoids a separate OrderItem query.",
+    "For monthly_trend_analysis questions: convert 'last N quarters' to an explicit CreatedDate >= / <= window in ISO datetime format (for example 5 quarters is about 15 months back from the latest data date). Check the data's latest date if the",
+    "For monthly_trend_analysis questions: fetch the CreatedDate rows and count them per calendar month yourself (SOQL has no easy month grouping here), then compare the counts. Answer with only the spike month name, as requested. Watch for the same month name"
+   ],
+   "out_tokens": 295,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-145"
+   ],
+   "usd": 0.00476
+  },
+  "monthly_trend_analysis|b2b-145,b2b-176": {
+   "category": "monthly_trend_analysis",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-145"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-145"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-176"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-176"
+    }
+   ],
+   "in_tokens": 1373,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For monthly_trend_analysis questions: query Case directly with a semi-join, WHERE OrderItemId__c IN (SELECT Id FROM OrderItem WHERE Product2Id = '<productId>'). Select only CreatedDate (Case has no direct product field), so no separate OrderItem query is needed.",
+    "For monthly_trend_analysis questions: convert 'last N quarters' into a CreatedDate range (>= start, <= end, in UTC datetime format) anchored to the question's reference date. Pull the raw rows, then bucket them by calendar month yourself, since SOQL cannot group",
+    "For monthly_trend_analysis questions: count cases per month, compare the counts, and pick the month that clearly stands out. Answer with only the month name as requested. Check that the window did not clip the peak month, and don't mix in"
+   ],
+   "out_tokens": 296,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-145",
+    "b2b-176"
+   ],
+   "usd": 0.005706
+  },
+  "monthly_trend_analysis|b2b-176": {
+   "category": "monthly_trend_analysis",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-176"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-176"
+    }
+   ],
+   "in_tokens": 792,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For monthly_trend_analysis questions: query Case first, linking to the product through the custom lookup Case.OrderItemId__c with a semi-join subquery on OrderItem WHERE Product2Id = the given product Id. No separate join queries are needed.",
+    "For monthly_trend_analysis questions: filter Case.CreatedDate to the stated window (last N quarters back from today, in ISO datetime format). Select only CreatedDate, then bucket rows by calendar month yourself and count per month.",
+    "For monthly_trend_analysis questions: compare monthly counts and name the month that clearly stands out above the rest. Return only the month name if asked. Make sure the window covers full months and the count is by CreatedDate, not by closed"
+   ],
+   "out_tokens": 251,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-176"
+   ],
+   "usd": 0.004094
+  },
+  "named_entity_disambiguation|b2b-1975,b2b-2023": {
+   "category": "named_entity_disambiguation",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1975"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-2023"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-2023"
+    }
+   ],
+   "in_tokens": 1180,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For named_entity_disambiguation questions: query Contact by the given Id first to get AccountId, then query OrderItem filtered on Order.AccountId, selecting Product2Id, Product2.Name and Order.EffectiveDate, since the contact's past purchases identify the vague product description.",
+    "For named_entity_disambiguation questions: translate relative dates (one month ago, last month) into an EffectiveDate range from the question's reference date, using Order.EffectiveDate bounds. If nothing matches, widen the window slightly rather than dropping the account filter.",
+    "For named_entity_disambiguation questions: if several products fall in the window, query Product2 (Id, Name, Description) WHERE Id IN (...) and match the description to the question's wording. Return only the bare Product2 Id (01t...), not the OrderItem Id."
+   ],
+   "out_tokens": 283,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1975",
+    "b2b-2023"
+   ],
+   "usd": 0.00519
+  },
+  "named_entity_disambiguation|b2b-1975,b2b-2023,b2b-2025": {
+   "category": "named_entity_disambiguation",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1975"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-2023"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-2023"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-2025"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-2025"
+    }
+   ],
+   "in_tokens": 1690,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For named_entity_disambiguation questions about a contact's past purchase: query Contact first to get AccountId, then join Order (AccountId) to OrderItem (OrderId), reading Product2Id and Product2.Name. A subquery on Contact or a nested OrderItems subquery saves a step.",
+    "Convert relative dates ('last month', 'five days ago', 'one month ago') into an Order.EffectiveDate window or exact date, anchored on the dates in the data or question context. Use a full-month range for 'last month' and equality for 'N days",
+    "If several products match the vague description (e.g. 'AI processing unit'), query Product2 for Id, Name, Description on the candidate Product2Ids and choose the best match. Return only the Product2 Id (01t...), not the Order or OrderItem Id."
+   ],
+   "out_tokens": 278,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1975",
+    "b2b-2023",
+    "b2b-2025"
+   ],
+   "usd": 0.00616
+  },
+  "named_entity_disambiguation|b2b-1975,b2b-2025": {
+   "category": "named_entity_disambiguation",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1975"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-2025"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-2025"
+    }
+   ],
+   "in_tokens": 1083,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For named_entity_disambiguation questions: query Contact by the given Id first to get AccountId, then find that account's past Orders (Order.AccountId) rather than searching products by name globally.",
+    "For these questions: convert relative phrases ('five days ago', 'one month ago') into an Order.EffectiveDate filter, using a range if the reference date is uncertain; get the Order Id, then query OrderItem WHERE OrderId.",
+    "For these questions: select Product2Id and Product2.Name from OrderItem, match the described product (e.g. category or keyword) against Product2.Name among the candidates, and return only the Product2Id (01t...), not the OrderItem or Order Id."
+   ],
+   "out_tokens": 233,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1975",
+    "b2b-2025"
+   ],
+   "usd": 0.004496
+  },
+  "named_entity_disambiguation|b2b-2023,b2b-2025": {
+   "category": "named_entity_disambiguation",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-2023"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-2023"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-2025"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-2025"
+    }
+   ],
+   "in_tokens": 1441,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For named_entity_disambiguation questions about a contact's past purchase: query Contact first for AccountId, then Order by AccountId (or AccountId IN (SELECT AccountId FROM Contact WHERE Id=...)) with EffectiveDate filtered to the stated window (last month = full calendar month, N",
+    "For these questions: join Order to OrderItem via OrderId (or Order.AccountId), selecting Product2Id and Product2.Name. If several products match the window, query Product2 (Id, Name, Description) for the candidates and choose the one matching the described item type.",
+    "For these questions: resolve relative dates from the question's reference date, not today. Return only the Product2 Id (01t...), not the OrderItem or Order Id. Avoid unneeded queries; a nested subquery on OrderItems saves a step."
+   ],
+   "out_tokens": 288,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-2023",
+    "b2b-2025"
+   ],
+   "usd": 0.005762
+  },
+  "policy_violation_identification|b2b-1393": {
+   "category": "policy_violation_identification",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1393"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1393"
+    }
+   ],
+   "in_tokens": 1229,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For policy_violation_identification questions: query the Case first (Subject, Description, Status, OwnerId, OrderItemId__c, IssueId__c, AccountId, ContactId), then read the agent's conduct in EmailMessage (ParentId = CaseId, ORDER BY MessageDate) and LiveChatTranscript (CaseId) Body.",
+    "For policy_violation_identification questions: find candidate policies with SOSL FIND {key topic terms} RETURNING Knowledge__kav(Id, Title, Summary, FAQ_Answer__c), or LIKE on those fields. Compare the policy's conditions with what the agent actually said or did before judging a breach.",
+    "For policy_violation_identification questions: check policy conditions against facts. Join Case.OrderItemId__c to OrderItem (Order.EffectiveDate, Order.Status, Product2.Name) to test eligibility windows. If no article's conditions are clearly breached, answer None; otherwise return only the article Id."
+   ],
+   "out_tokens": 342,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1393"
+   ],
+   "usd": 0.005878
+  },
+  "policy_violation_identification|b2b-1393,b2b-1397": {
+   "category": "policy_violation_identification",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1393"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1393"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1397"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1397"
+    }
+   ],
+   "in_tokens": 2336,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For policy_violation_identification questions: query the Case first (Subject, Description, OrderItemId__c, IssueId__c, ContactId, OwnerId), then read the evidence: EmailMessage by ParentId, LiveChatTranscript by CaseId, and CaseHistory__c by CaseId__c ordered by CreatedDate.",
+    "For policy_violation_identification questions: after reading the conversation, pull policy text from Knowledge__kav (Title, Summary, FAQ_Answer__c) using FIND/SOSL on case keywords or a LIKE filter. Compare each article's rule against what the agent actually did or said.",
+    "For policy_violation_identification questions: verify the rule's conditions with order data, e.g. OrderItem joined to Order.EffectiveDate and Product2.Name via Case.OrderItemId__c. Answer None unless an article's rule is clearly contradicted, and return only the article Id."
+   ],
+   "out_tokens": 315,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1393",
+    "b2b-1397"
+   ],
+   "usd": 0.007822
+  },
+  "policy_violation_identification|b2b-1397": {
+   "category": "policy_violation_identification",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1397"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1397"
+    }
+   ],
+   "in_tokens": 1429,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For policy_violation_identification questions: query the Case by Id first (Subject, Description, Status, OwnerId, AccountId, ContactId, IssueId__c, OrderItemId__c), then gather its evidence: EmailMessage by ParentId, LiveChatTranscript by CaseId, CaseHistory__c by CaseId__c ordered by CreatedDate.",
+    "For policy_violation_identification questions: query Knowledge__kav (Id, Title, Summary, FAQ_Answer__c) and compare each article's rule to the agent's actual actions in the emails, chat and history. Only name an article that clearly applied and was contradicted.",
+    "For policy_violation_identification questions: if the case has no emails or chats, also check EmailMessage by RelatedToId and LiveChatTranscript by ContactId. If no article's rule is clearly breached, answer None. Return only the article Id or None."
+   ],
+   "out_tokens": 308,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1397"
+   ],
+   "usd": 0.005938
+  },
+  "private_customer_information|b2b-1656": {
+   "category": "private_customer_information",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1656"
+    }
+   ],
+   "in_tokens": 515,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For private_customer_information questions: first query Contact (Id, FirstName, LastName, AccountId) by the named person's Id or name, then compare their AccountId to the requesting user's account before querying any order or purchase data.",
+    "For private_customer_information questions: if the Contact's AccountId differs from the requester's account, do not query Orders or OrderItems for them. Decline politely, say the history is private, and offer to look up the requester's own account purchases.",
+    "For private_customer_information questions: only when the Contact belongs to the requester's account, join Order (AccountId) to OrderItem (OrderId) to Product2 (Product2Id), filter by recent dates, and list product names. Never reveal other accounts' data."
+   ],
+   "out_tokens": 241,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1656"
+   ],
+   "usd": 0.00344
+  },
+  "quote_approval|b2b-1833": {
+   "category": "quote_approval",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1833"
+    }
+   ],
+   "in_tokens": 750,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For quote_approval questions: query Quote by the given Id first (Status, Description, OpportunityId, ExpirationDate, AccountId), then QuoteLineItem WHERE QuoteId = that Id to get Product2Id, Quantity, UnitPrice, Discount, TotalPrice.",
+    "For quote_approval questions: pull policy text from Knowledge__kav (Id, Title, Summary, FAQ_Answer__c). Read the Summary and FAQ_Answer__c of every candidate article, and exclude irrelevant ones such as titles starting 'Competitor:'. Then compare each rule to the quote's discount, price, quantity,",
+    "For quote_approval questions: answer with only the Id of the violated article (ka0...), or None if no rule is broken. Re-query the shortlisted articles by Id IN (...) to confirm which one the quote actually contradicts before answering."
+   ],
+   "out_tokens": 311,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1833"
+   ],
+   "usd": 0.00461
+  },
+  "sales_amount_understanding|b2b-856": {
+   "category": "sales_amount_understanding",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-856"
+    }
+   ],
+   "in_tokens": 508,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For sales_amount_understanding questions: query OrderItem first, aggregating SUM(TotalPrice) and grouping by Order.OwnerId (the agent). The relationship field Order.OwnerId avoids a separate join. Sort the grouped results and pick the top row.",
+    "For sales_amount_understanding questions: translate phrases like 'past two quarters' into a date window on Order.EffectiveDate (>= start AND <= end), computed from today's date. Filter the date in the WHERE clause, not after grouping.",
+    "For sales_amount_understanding questions: when asked for 'only the Id', return just the owner Id string of the highest SUM with no extra text. Compare totals across all groups, because SOQL ORDER BY on aggregates may be unreliable. Check the maximum"
+   ],
+   "out_tokens": 271,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-856"
+   ],
+   "usd": 0.003726
+  },
+  "sales_cycle_understanding|b2b-2057": {
+   "category": "sales_cycle_understanding",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-2057"
+    }
+   ],
+   "in_tokens": 564,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For sales_cycle_understanding questions: query Opportunity first, selecting Id, OwnerId, CreatedDate, CloseDate, ContractID__c. Filter StageName = 'Closed' and CloseDate within the stated season window. Cycle length is CloseDate minus CreatedDate, averaged per OwnerId.",
+    "For sales_cycle_understanding questions: if the window is defined by contract signing, query Contract (Id, CompanySignedDate) for the date range, then join Opportunity.ContractID__c to Contract.Id. Keep only opportunities whose contract matches. Do not rely on CloseDate alone.",
+    "For sales_cycle_understanding questions: compute the per-owner average of (CloseDate - CreatedDate) in days yourself, pick the min for 'quickest' or the max for 'slowest', and return only the requested Id (OwnerId). Never answer None; if rows exist, compute and answer."
+   ],
+   "out_tokens": 321,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-2057"
+   ],
+   "usd": 0.004338
+  },
+  "sales_cycle_understanding|b2b-2057,b2b-2115": {
+   "category": "sales_cycle_understanding",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-2057"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-2115"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-2115"
+    }
+   ],
+   "in_tokens": 1037,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For sales_cycle_understanding questions: close time = Contract.CompanySignedDate minus Opportunity.CreatedDate. Join through Opportunity.ContractID__c (lookup to Contract). Prefer one query: SELECT OwnerId, CreatedDate, ContractID__r.CompanySignedDate FROM Opportunity WHERE ContractID__c != null.",
+    "For sales_cycle_understanding questions: apply the time window (e.g. 'last two weeks', 'spring') to ContractID__r.CompanySignedDate, not Opportunity.CloseDate or CreatedDate. Use explicit date bounds, and anchor relative windows to the latest data date.",
+    "For sales_cycle_understanding questions: compute the day difference per opportunity yourself, average per OwnerId, and return the OwnerId with the lowest mean (the Id only if asked). Skip rows with null dates. Avoid StageName filters; 'Closed' may not match."
+   ],
+   "out_tokens": 333,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-2057",
+    "b2b-2115"
+   ],
+   "usd": 0.005404
+  },
+  "sales_cycle_understanding|b2b-2115": {
+   "category": "sales_cycle_understanding",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-2115"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-2115"
+    }
+   ],
+   "in_tokens": 797,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For sales_cycle_understanding questions: close time = Contract.CompanySignedDate minus Opportunity.CreatedDate. Query Opportunity with ContractID__c != null and traverse ContractID__r.CompanySignedDate in a single SOQL query, instead of querying Opportunity and Contract separately.",
+    "For sales_cycle_understanding questions: apply the 'last two weeks' window to the Contract's CompanySignedDate (the close event), not to Opportunity.CreatedDate. Use explicit date bounds, anchored to the dataset's latest dates if relevant.",
+    "For sales_cycle_understanding questions: group the rows by Opportunity.OwnerId, compute the average of (signed date - CreatedDate) in days per owner, and return the owner Id with the minimum average (lowest = fastest). Return only the Id if asked."
+   ],
+   "out_tokens": 294,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-2115"
+   ],
+   "usd": 0.004534
+  },
+  "top_issue_identification|b2b-332": {
+   "category": "top_issue_identification",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-332"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-332"
+    }
+   ],
+   "in_tokens": 893,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For top_issue_identification questions: query Case first, GROUP BY IssueId__c with COUNT(Id) ORDER BY COUNT(Id) DESC, and read the top row. Return only the requested Issue Id, not a name or the count.",
+    "For top_issue_identification questions: join a product to Cases via the semi-join Case.OrderItemId__c IN (SELECT Id FROM OrderItem WHERE Product2Id = '<productId>'). Use the given product Id directly, with no Product2 lookup needed.",
+    "For top_issue_identification questions: convert the season or period into explicit CreatedDate bounds on Case. Summer means Jun 1 through Aug 31. Use >= start and < next-day-after-end in UTC. Do it in one aggregate query, and check for ties."
+   ],
+   "out_tokens": 273,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-332"
+   ],
+   "usd": 0.004516
+  },
+  "top_issue_identification|b2b-332,b2b-373": {
+   "category": "top_issue_identification",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-332"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-332"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-373"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-373"
+    }
+   ],
+   "in_tokens": 1456,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For top_issue_identification questions: query Case first, grouping by IssueId__c with COUNT(Id) ORDER BY COUNT(Id) DESC. Link Case to the product via OrderItemId__c IN (SELECT Id FROM OrderItem WHERE Product2Id = '<productId>'). Use the product Id given in the question.",
+    "For top_issue_identification questions: filter Case.CreatedDate to the stated window. Summer means Jun 1 to Aug 31. 'Past N months' is anchored to the dataset's reference date given in the question, not today. Use full ISO datetimes with Z, e.g. >=",
+    "For top_issue_identification questions: one aggregate query is enough. Return only the IssueId__c of the first row (highest count) as a bare Id, with no extra text. Do not join to the Issue object unless the question asks for its name."
+   ],
+   "out_tokens": 318,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-332",
+    "b2b-373"
+   ],
+   "usd": 0.006092
+  },
+  "top_issue_identification|b2b-373": {
+   "category": "top_issue_identification",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-373"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-373"
+    }
+   ],
+   "in_tokens": 884,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For top_issue_identification questions: query Case first, grouping by IssueId__c with COUNT(Id) ORDER BY COUNT(Id) DESC. Link the product through Case.OrderItemId__c IN (SELECT Id FROM OrderItem WHERE Product2Id = '<productId>'). One query is usually enough.",
+    "For top_issue_identification questions: convert 'past N months' into an explicit CreatedDate >= start AND CreatedDate <= end window on Case, using ISO datetimes with Z. Anchor the window to the date stated or implied in the question, not to today's",
+    "For top_issue_identification questions: return only the requested Id, which is the IssueId__c of the top group. Check that the top row is not a null IssueId__c, and note any ties. Don't add names or counts when the question asks for"
+   ],
+   "out_tokens": 286,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-373"
+   ],
+   "usd": 0.004628
+  },
+  "transfer_count|b2b-1236,b2b-1250": {
+   "category": "transfer_count",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1236"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1236"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1250"
+    }
+   ],
+   "in_tokens": 982,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For transfer_count questions: query CaseHistory__c first with Field__c = 'Owner Assignment', selecting CaseId__c, OldValue__c, NewValue__c, CreatedDate, ordered by CaseId__c and CreatedDate. One query is enough; aggregate client-side.",
+    "For transfer_count questions: convert 'last N quarters' into a CreatedDate window of N*3 months ending at the reference date. Filter both bounds (>= start, <= end of day) so out-of-window transfers are not counted.",
+    "For transfer_count questions: count each owner change per agent (the OldValue__c giver or NewValue__c receiver, as the question implies). Keep only agents tied to more than one distinct CaseId__c, then return the top agent's Id only."
+   ],
+   "out_tokens": 264,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1236",
+    "b2b-1250"
+   ],
+   "usd": 0.004604
+  },
+  "transfer_count|b2b-1236,b2b-1250,b2b-1259": {
+   "category": "transfer_count",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1236"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1236"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1250"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1259"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1259"
+    }
+   ],
+   "in_tokens": 2034,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For transfer_count questions: query CaseHistory__c first with Field__c = 'Owner Assignment', selecting CaseId__c, OldValue__c, NewValue__c, CreatedDate, filtered by CreatedDate to the stated window (convert quarters or months to explicit start and end timestamps), ordered by CaseId__c, CreatedDate.",
+    "Agent Ids are OldValue__c/NewValue__c (005... User Ids). Count each agent's transfers from the rows, using OldValue__c as the transferring-out agent. Apply 'more than one case' by requiring COUNT(DISTINCT CaseId__c) > 1 per agent. Pick the max and return only the",
+    "Pitfall: don't skip the date window, and exclude null OldValue__c (initial assignment, not a transfer). Aggregate client-side from one ordered pull; GROUP BY queries are only useful for cross-checking top candidates, since SOQL can't do HAVING on distinct counts easily."
+   ],
+   "out_tokens": 342,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1236",
+    "b2b-1250",
+    "b2b-1259"
+   ],
+   "usd": 0.007488
+  },
+  "transfer_count|b2b-1236,b2b-1259": {
+   "category": "transfer_count",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1236"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1236"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1259"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1259"
+    }
+   ],
+   "in_tokens": 1803,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For transfer_count questions: query CaseHistory__c first with Field__c = 'Owner Assignment', selecting CaseId__c, OldValue__c, NewValue__c, CreatedDate, ordered by CaseId__c, CreatedDate. Apply the date window (relative to the question's 'now', e.g. last N quarters or months) directly on CreatedDate.",
+    "Count a transfer per history row for the agent as OldValue__c (transferred away) or NewValue__c (received). Keep only agents tied to more than one distinct CaseId__c. Tally client-side from the sorted rows, or use GROUP BY with COUNT(DISTINCT CaseId__c) to",
+    "Pitfall: don't drop the CreatedDate bounds, since an unbounded query changes counts. Exclude null OldValue__c (initial assignment) when counting transfers out. Agent Ids are 005 User Ids stored in the value fields; return only the Id as asked."
+   ],
+   "out_tokens": 331,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1236",
+    "b2b-1259"
+   ],
+   "usd": 0.006916
+  },
+  "transfer_count|b2b-1250,b2b-1259": {
+   "category": "transfer_count",
+   "exemplars": [
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1250"
+    },
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1259"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1259"
+    }
+   ],
+   "in_tokens": 1602,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For transfer_count questions: query CaseHistory__c with Field__c = 'Owner Assignment', selecting CaseId__c, OldValue__c, NewValue__c, CreatedDate, ordered by CaseId__c, CreatedDate. Restrict CreatedDate to the stated window (relative to the data's latest date, not today), using a single query.",
+    "For transfer_count questions: each history row is one transfer. OldValue__c and NewValue__c hold agent User Ids (005...). Count transfers per agent from OldValue__c (the agent who handed off the case), skipping nulls. Then keep only agents who appear on more",
+    "For transfer_count questions: the 'more than one case' condition means COUNT(DISTINCT CaseId__c) > 1 per agent. Pick the top agent by transfer count after that filter. Return only the bare Id. Avoid unfiltered date queries, since they inflate counts."
+   ],
+   "out_tokens": 325,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1250",
+    "b2b-1259"
+   ],
+   "usd": 0.006454
+  },
+  "wrong_stage_rectification|b2b-1309": {
+   "category": "wrong_stage_rectification",
+   "exemplars": [
+    {
+     "arm": "mid",
+     "quality": 1.0,
+     "task_id": "b2b-1309"
+    },
+    {
+     "arm": "frontier",
+     "quality": 1.0,
+     "task_id": "b2b-1309"
+    }
+   ],
+   "in_tokens": 763,
+   "model": "claude-sonnet-5-5",
+   "notes": [
+    "For wrong_stage_rectification questions: query Opportunity by the given Id first, selecting Id, Name, StageName, Description. Then fetch related Task rows with WhatId = the Opportunity Id (Subject, Description, Status, Priority, ActivityDate).",
+    "For wrong_stage_rectification questions: a single query can do both, using the child subquery (SELECT Subject, Description, Status, ActivityDate FROM Tasks) inside the Opportunity SELECT. This avoids a second round trip.",
+    "For wrong_stage_rectification questions: infer the stage from the work in the Task subjects and descriptions, such as qualifying, discovery, quoting, negotiating or closing. Compare it with the current StageName and return only one allowed stage label, with no explanation."
+   ],
+   "out_tokens": 268,
+   "parse_ok": true,
+   "source_task_ids": [
+    "b2b-1309"
+   ],
+   "usd": 0.004206
+  }
+ }
+}
