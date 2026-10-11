@@ -110,3 +110,14 @@ that budget. They are not a design choice.
 Files: `trl_dapo_1b.jsonl`, `verl_dapo_1b.jsonl`, `nemo_rl_dapo_1b.jsonl` (per step) with their
 `_meta.json`; `eval_phase1b_repro.json` (all eval numbers, including the easy/hard mixes). Tables are
 regenerated with `python -m pace.llm.backends.compare`. Every run is a single seed.
+
+## Control (added after the first write-up): TRL at the fixed price, WITHOUT dynamic sampling
+
+The missing control: TRL phase-1b settings (Qwen3-1.7B + LoRA, group 16, temperature 1.0, symmetric clip 0.2, 150 steps) with λ FIXED at 0.44 in the prompt line and the reward, and no dynamic sampling. Run `trl_fixedprice_1b` (adapter_final, 150 steps; train log `trl_fixedprice_1b.train_log.jsonl`; eval `eval_fixedprice_control.json`).
+
+| arm | quality | cost | J (λ=0.44) | within B=0.30 | invalid | easy → | hard → |
+|---|---|---|---|---|---|---|---|
+| TRL fixed price, no dynamic sampling (step 150), greedy | 0.796 | 0.268 | 0.679 | yes | 0.0% | mid RETRIEVE 95%, frontier RETRIEVE 4% | frontier RETRIEVE 53%, mid RETRIEVE 43%, frontier ESCALATE 2% |
+| same, sampled | 0.794 | 0.268 | 0.676 | yes | 0.05% | | |
+
+**What this changes.** The control learns a split too — sharp on easy (mid 95%), partial on hard (frontier 53%, mid 43%) — at the same priced J as the dynamic-sampling arms (0.679 vs 0.681/0.682) and inside the budget, where the dynamic-sampling arms split hard tasks sharply (frontier 98%) and overshoot it. Its degenerate-group rate was 75–100% for most of training — the same starvation TRL-1b had — and it learned anyway. So the difference between TRL-1b (all-frontier, cost 0.434, never splits) and every arm here is **first the price, not the platform**: a fixed price is what makes learning possible; dynamic sampling then sharpens the hard-task split (53% → 98% frontier) without changing priced J. In 1b the price λ was moved by dual ascent every step (0 → 1.0 → 0.75, the primal–dual orbit); the reward the policy was optimizing kept changing under it. With λ held fixed, GRPO on TRL's defaults finds the mapping in 150 steps. Dynamic sampling and the asymmetric clip bought a sharper split but no priced-J gain (+0.002) and a budget overshoot of 0.03. The platform claim stands (TRL+DS and verl agree within 0.001 J); the recipe claim is reduced to "sharpens, does not enable"; the correct statement of the phase-1b failure is: *a moving price prevented learning; a fixed price lets a 1.7B policy learn the difficulty→tier mapping with no warm start, and dynamic sampling makes the mapping crisper.* The remaining question for a budgeted deployment is then how to learn λ without destabilizing the policy — slower dual steps, or learning λ on a schedule between policy phases.
