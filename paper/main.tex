@@ -42,7 +42,7 @@
 \definecolor{pacegrey}{HTML}{4A5568}
 \definecolor{pacelight}{HTML}{EBF4FF}
 \definecolor{pacefrozen}{HTML}{EDF2F7}
-\lstset{basicstyle=\promptfont\scriptsize,breaklines=true,columns=fullflexible,keepspaces=true,extendedchars=true,frame=single,framesep=3pt,rulecolor=\color{pacegrey},backgroundcolor=\color{gray!6}}
+\lstset{basicstyle=\promptfont\scriptsize,breaklines=true,columns=fullflexible,keepspaces=true,extendedchars=true,frame=single,framesep=3pt,rulecolor=\color{pacegrey},backgroundcolor=\color{gray!6},aboveskip=4pt,belowskip=6pt}
 \usepackage[colorlinks=true,linkcolor=pace,citecolor=pace,urlcolor=pace]{hyperref}
 \captionsetup{font=small,labelfont=bf,skip=5pt}
 \setlength{\abovecaptionskip}{5pt}
@@ -53,6 +53,7 @@
 \newcommand{\PROMOTE}{\textsc{promote}}
 \newcommand{\REVERT}{\textsc{revert}}
 \newcommand{\finding}[1]{\textbf{\textcolor{pace}{#1}}}
+\newcommand{\prompttitle}[1]{\par\vspace{7pt}\noindent\textbf{#1}\par\nopagebreak\vspace{3pt}}
 
 \title{\textbf{PACE: Priced Adaptive Control for Evolving Harnesses}}
 \author{Navid Mehrdad}
@@ -1066,12 +1067,12 @@ It has learned that \code{lead\_routing} tasks, on average over the log, are wor
 The templates below are copied from the code. Text in braces, \code{\{like\_this\}}, is filled at run time; everything else is literal. Where a prompt is assembled by a function rather than stored as a constant, the listing is the exact output of that function on a seeded example, with the variable fields named in the paragraph heading. The CRMArena-Pro agent's own system prompt (the benchmark's ReAct prompt with the rendered org schema and metadata, built by \code{system\_prompt()} in \code{pace/harness/crmarena.py} from the vendored \code{crm\_sandbox.agents.prompts}) is the benchmark's text under its licence and is not reproduced; the planner and the worker run inside that system prompt, and the verifier and the self-refinement roles do not.
 
 
-\paragraph{Controller, system message (\code{pace/llm/env\_text.py}, \code{SYSTEM}).}
+\prompttitle{Controller, system message (\code{pace/llm/env\_text.py}, \code{SYSTEM}).}
 \begin{lstlisting}
 You are the routing controller of an agent harness. You pick which model tier runs the next operation. Reply with exactly one action tag and nothing else.
 \end{lstlisting}
 
-\paragraph{Controller, simulator user message (\code{sim\_prompt}; rendered for sim task 0, seed 0, $B=0.30$; difficulty proxy, state, prices, the shuffled legal list and the example action vary per task).}
+\prompttitle{Controller, simulator user message (\code{sim\_prompt}; rendered for sim task 0, seed 0, $B=0.30$; difficulty proxy, state, prices, the shuffled legal list and the example action vary per task).}
 \begin{lstlisting}
 Task: answer one question. Observed difficulty: hard (a noisy estimate, right about 85% of the time).
 State: step 0, evidence 0, verified no, cost so far 0.000.
@@ -1084,13 +1085,13 @@ Choose the action that maximizes expected answer quality within the budget.
 Reply with exactly one tag, for example <action>frontier VERIFY</action>.
 \end{lstlisting}
 
-\paragraph{Controller, price-conditioned variant (phase 1c and the backend runs): the lines that differ, at $\lambda=0.44$ (shown rounded to 0.1).}
+\prompttitle{Controller, price-conditioned variant (phase 1c and the backend runs): the lines that differ, at $\lambda=0.44$ (shown rounded to 0.1).}
 \begin{lstlisting}
 Price of cost: λ=0.4 (your reward is quality − λ·cost).
 Choose the action that maximizes expected quality − λ·cost.
 \end{lstlisting}
 
-\paragraph{Controller, CRMArena-Pro lookup mode (\code{lookup\_prompt}; $B=\$0.10$, typical episode costs from the 50-task log, legal list unshuffled; an optional \code{Query:} line follows the first line when the task text is included).}
+\prompttitle{Controller, CRMArena-Pro lookup mode (\code{lookup\_prompt}; $B=\$0.10$, typical episode costs from the 50-task log, legal list unshuffled; an optional \code{Query:} line follows the first line when the task text is included).}
 \begin{lstlisting}
 Task: a CRM agent task (org {org}, category {category}, scored by {reward_metric}).
 Budget: average cost per task must stay at or below $0.100.
@@ -1101,7 +1102,7 @@ Choose the tier that maximizes expected answer quality within the budget.
 Reply with exactly one tag of the form <action>TIER OP</action> naming one legal action.
 \end{lstlisting}
 
-\paragraph{Planner, user message (\code{pace/experiments/mas/roles.py}; system message: the benchmark's ReAct prompt).}
+\prompttitle{Planner, user message (\code{pace/experiments/mas/roles.py}; system message: the benchmark's ReAct prompt).}
 \begin{lstlisting}
 Request: {query}
 
@@ -1109,7 +1110,7 @@ Request: {query}
 {"subqueries": [{"goal": "...", "soql": "..."}], "rationale": "one sentence"}
 \end{lstlisting}
 
-\paragraph{Planner, re-plan user message.}
+\prompttitle{Planner, re-plan user message.}
 \begin{lstlisting}
 Request: {query}
 
@@ -1120,14 +1121,14 @@ Evidence so far:
 [MAS PLANNER] You are re-planning. The evidence gathered so far is listed below, with the verifier's findings. Produce the REMAINING sub-queries (1 to 3) needed to answer the request; do not repeat sub-queries whose results were verified. Same JSON format.
 \end{lstlisting}
 
-\paragraph{Worker, steering text appended to the agent's running ReAct context (the \code{Candidate SOQL} line only when the plan gave one).}
+\prompttitle{Worker, steering text appended to the agent's running ReAct context (the \code{Candidate SOQL} line only when the plan gave one).}
 \begin{lstlisting}
 [MAS WORKER] Sub-query {k} of {n}: {goal}
 Candidate SOQL: {soql}
 Run exactly one query now with <execute>...</execute> (adapt the candidate if needed).
 \end{lstlisting}
 
-\paragraph{Worker, steering text on a retry after a verifier fail.}
+\prompttitle{Worker, steering text on a retry after a verifier fail.}
 \begin{lstlisting}
 [MAS WORKER] Sub-query {k} of {n}: {goal}
 Candidate SOQL: {soql}
@@ -1135,7 +1136,7 @@ The verifier found a problem with your previous attempt: {reason}. Fix the query
 Run exactly one query now with <execute>...</execute> (adapt the candidate if needed).
 \end{lstlisting}
 
-\paragraph{Verifier, single user message (no system message).}
+\prompttitle{Verifier, single user message (no system message).}
 \begin{lstlisting}
 Request: {query}
 Sub-query goal: {goal}
@@ -1145,17 +1146,17 @@ Output: {Salesforce output, truncated to 3,000 characters}
 [MAS VERIFIER] You verify one step of a CRM data worker. Given the user's request, the sub-query goal, the query that was run and the Salesforce output, decide whether this step's result is usable: well-formed, non-empty when the goal needs rows, and consistent with the goal (right object, right filter, right field). Reply with JSON only: {"pass": true|false, "reason": "one sentence"}
 \end{lstlisting}
 
-\paragraph{Answer: the harness's \code{ANSWER@tier} op appends this to the last user turn of the agent's context (\code{pace/harness/crmarena.py}, \code{FORCE\_ANSWER}).}
+\prompttitle{Answer: the harness's \code{ANSWER@tier} op appends this to the last user turn of the agent's context (\code{pace/harness/crmarena.py}, \code{FORCE\_ANSWER}).}
 \begin{lstlisting}
 You must give your final answer now, without running more queries. Output only <respond> your final answer </respond>.
 \end{lstlisting}
 
-\paragraph{Self-refinement, decompose: system message (\code{pace/experiments/ssr/refine.py}).}
+\prompttitle{Self-refinement, decompose: system message (\code{pace/experiments/ssr/refine.py}).}
 \begin{lstlisting}
 You audit answers produced by a CRM assistant that queries a Salesforce instance with SOQL/SOSL. You do not run queries yourself. You decompose a proposed answer into verifiable sub-claims and estimate how likely each is to be true. Be calibrated: a confidence of 0.9 should be wrong about one time in ten.
 \end{lstlisting}
 
-\paragraph{Self-refinement, decompose: user message (a Python format string: single braces are fields, doubled braces are literal braces).}
+\prompttitle{Self-refinement, decompose: user message (a Python format string: single braces are fields, doubled braces are literal braces).}
 \begin{lstlisting}
 Task: {task_id}
 Question asked of the assistant:
@@ -1172,17 +1173,17 @@ Output JSON only, no prose:
 {{"claims": [{{"claim": "...", "question": "...", "expected": "...", "confidence": 0.0}}], "answer_confidence": 0.0}}
 \end{lstlisting}
 
-\paragraph{Self-refinement, re-solve: suffix appended to each Socratic question run as a worker mini-episode.}
+\prompttitle{Self-refinement, re-solve: suffix appended to each Socratic question run as a worker mini-episode.}
 \begin{lstlisting}
 Answer this sub-question only. Run the queries you need, then reply with <respond> the value </respond> and nothing else in the response.
 \end{lstlisting}
 
-\paragraph{Self-refinement, refine: system message.}
+\prompttitle{Self-refinement, refine: system message.}
 \begin{lstlisting}
 You finalize answers produced by a CRM assistant that queries a Salesforce instance. You are given the question, the proposed answer, and the findings of independent workers who re-checked each sub-claim with their own queries. Keep the proposed answer when the findings support it; correct it when they contradict it; keep a refusal when the request concerns confidential data. Do not hedge, do not run queries, and output exactly one <respond> ... </respond> block with the final answer in the same format as the proposed answer.
 \end{lstlisting}
 
-\paragraph{Self-refinement, refine: user message (format string).}
+\prompttitle{Self-refinement, refine: user message (format string).}
 \begin{lstlisting}
 Task: {task_id}
 Question:
