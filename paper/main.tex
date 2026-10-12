@@ -942,8 +942,8 @@ hardware & CPU client; models served by the provider's API \\
 \toprule
 setting & \code{phase1} & \code{phase1b} & \code{phase1c} \\
 \midrule
-model & \multicolumn{3}{l}{Qwen3-1.7B, bf16, LoRA $r=16$, $\alpha=32$, dropout 0.05 on q, k, v, o, gate, up, down projections} \\
-library & \multicolumn{3}{l}{TRL 1.15.0 (loss type \code{dapo}, group-scaled rewards), Transformers 5.19.0, PEFT 0.21.2, PyTorch 2.14.1} \\
+model & \multicolumn{3}{p{11.4cm}}{Qwen3-1.7B, bf16, LoRA $r=16$, $\alpha=32$, dropout 0.05 on q, k, v, o, gate, up, down projections (all three phases)} \\
+library & \multicolumn{3}{p{11.4cm}}{TRL 1.15.0 (loss type \code{dapo}, group-scaled rewards), Transformers 5.19.0, PEFT 0.21.2, PyTorch 2.14.1 (all three phases)} \\
 prompts $\times$ group size & $8\times8$ & $8\times8$ & $4\times16$ \\
 completions per step; micro-batch & 64; 16 & 64; 16 & 64; 16 \\
 steps per generation & 4 & 4 & 4 \\
