@@ -22,6 +22,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+import matplotlib.ticker  # noqa: E402
 import numpy as np  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -110,6 +111,10 @@ def fig_gate_power():
     n = np.linspace(25, 2500, 400)
     a.plot(n, width50 * np.sqrt(50.0 / n), color=C[0], label="DR cost 90% CI width, $1/\\sqrt{n}$ extrapolation\n(back-of-envelope)")
     a.scatter([50], [width50], color=C[0], zorder=3, label=f"measured at n = 50 (${width50:.4f})")
+    for n_m, w_m in ((150, 0.036), (300, 0.024)):
+        a.scatter([n_m], [w_m], marker="D", s=22, color=C[0], edgecolor="k", linewidth=0.5, zorder=4)
+        a.annotate(f"n={n_m}\n(measured)", (n_m, w_m), xytext=(6, 0), textcoords="offset points",
+                   fontsize=6.8, color=C[0], ha="left", va="center")
     a.axhline(2 * tol, color=C[1], ls="--", lw=0.9, label=f"2 x budget tolerance (${2*tol:.3f})")
     n_need = 50 * (width50 / (2 * tol)) ** 2
     a.axvline(n_need, color=C[1], ls=":", lw=0.9)
@@ -506,6 +511,68 @@ def tab_continual_days():
     print("wrote tab_continual_days.tex")
 
 
+# --------------------------------------------------------------------------------------
+# 12. Seven suites: quality vs cost per fixed tier, per-task oracle, learned policies
+# --------------------------------------------------------------------------------------
+SUITES = [  # (title, cached prices?, {entity: (quality, cost USD)})
+    ("CRMArena-Pro B2B, 300 tasks", False, {"cheap": (0.434, 0.057), "mid": (0.482, 0.126), "frontier": (0.614, 0.131),
+                                            "learned": (0.644, 0.079), "constrained": (0.644, 0.103), "oracle": (0.708, 0.058)}),
+    ("CRMArena-Pro B2C, 150 tasks", False, {"cheap": (0.469, 0.056), "mid": (0.508, 0.126), "frontier": (0.638, 0.143),
+                                            "learned": (0.636, 0.081), "constrained": (0.677, 0.105), "oracle": (0.727, 0.061)}),
+    ("\u03c4-bench retail, 60 tasks", False, {"cheap": (0.583, 0.117), "mid": (0.683, 0.229), "frontier": (0.717, 0.487), "oracle": (0.867, 0.171)}),
+    ("\u03c4-bench airline, 49 tasks", False, {"cheap": (0.449, 0.099), "mid": (0.551, 0.261), "frontier": (0.531, 0.523), "oracle": (0.735, 0.159)}),
+    ("EvoHarnessBench H1, 50 tasks", True, {"cheap": (0.491, 0.062), "mid": (0.702, 0.146), "frontier": (0.619, 0.298), "oracle": (0.753, 0.136)}),
+    ("EvoHarnessBench H2, 50 tasks", True, {"cheap": (0.370, 0.044), "mid": (0.699, 0.114), "frontier": (0.610, 0.227), "oracle": (0.741, 0.106)}),
+    ("EvoHarnessBench H4, 50 tasks", True, {"cheap": (0.403, 0.056), "mid": (0.643, 0.147), "frontier": (0.631, 0.262), "oracle": (0.738, 0.138)}),
+]
+SUITE_STYLE = {  # entity: (marker, colour, legend label)
+    "cheap": ("o", "#8A99A8", "cheap tier"),
+    "mid": ("o", "#2B6CB0", "mid tier"),
+    "frontier": ("o", "#1A202C", "frontier tier"),
+    "oracle": ("*", "#DD6B20", "per-task oracle"),
+    "learned": ("D", "#2F855A", "learned per-category policy"),
+    "constrained": ("s", "#6B46C1", "constrained controller"),
+}
+# direct-label offsets in points, (dx, dy, ha); overrides per (panel index, entity) avoid collisions
+SUITE_LABEL = {"cheap": (6, 0, "left"), "mid": (0, -9, "center"), "frontier": (0, 5, "center"),
+               "oracle": (0, 6, "center"), "learned": (0, 5, "center"), "constrained": (0, 5, "center")}
+SUITE_LABEL_FIX = {(0, "learned"): (0, -8, "center"), (1, "learned"): (0, -8, "center")}
+
+
+def fig_suites():
+    fig = plt.figure(figsize=(6.44, 4.25))  # bbox "tight" adds ~0.06 in: lands at 6.5 in
+    gs = fig.add_gridspec(2, 8, hspace=0.62, wspace=1.6, left=0.07, right=0.99, top=0.93, bottom=0.17)
+    axes = [fig.add_subplot(gs[0, 2 * i:2 * i + 2]) for i in range(4)] + \
+           [fig.add_subplot(gs[1, 2 * i + 1:2 * i + 3]) for i in range(3)]
+    for k, (ax, (title, cached, pts)) in enumerate(zip(axes, SUITES)):
+        for ent, (q, c) in pts.items():
+            m, col, _ = SUITE_STYLE[ent]
+            ax.scatter(c, q, marker=m, s=50 if m == "*" else 26, color=col, edgecolors="white", linewidths=0.4, zorder=3)
+            dx, dy, ha = SUITE_LABEL_FIX.get((k, ent), SUITE_LABEL[ent])
+            ax.annotate(ent, (c, q), textcoords="offset points", xytext=(dx, dy), ha=ha, va="center",
+                        fontsize=6, color=col, zorder=4)
+        cs = [c for _, c in pts.values()]
+        qs = [q for q, _ in pts.values()]
+        cpad, qpad = 0.16 * (max(cs) - min(cs)), 0.18 * (max(qs) - min(qs))
+        ax.set_xlim(min(cs) - cpad, max(cs) + cpad)
+        ax.set_ylim(min(qs) - qpad, max(qs) + qpad)
+        ax.set_title(title + ("\n(cached prices)" if cached else ""), fontsize=6.8, pad=3)
+        ax.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(3))
+        ax.tick_params(labelsize=6, length=2, width=0.5)
+        for sp in ax.spines.values():
+            sp.set_linewidth(0.5)
+        ax.grid(True, lw=0.4, color="0.88", zorder=0)
+        ax.set_axisbelow(True)
+        if k in (0, 4):
+            ax.set_ylabel("quality", fontsize=7)
+        ax.set_xlabel("cost per task (USD)", fontsize=6.5, labelpad=1)
+    handles = [plt.Line2D([], [], marker=m, ls="", color=col, markersize=7.5 if m == "*" else 5, label=lab)
+               for m, col, lab in SUITE_STYLE.values()]
+    fig.legend(handles=handles, loc="lower center", ncol=6, frameon=False, fontsize=6.5,
+               bbox_to_anchor=(0.5, 0.0), handletextpad=0.2, columnspacing=1.0)
+    save(fig, "fig_suites")
+
+
 if __name__ == "__main__":
     tab_continual_days()
     fig_crm_tiers()
@@ -519,3 +586,4 @@ if __name__ == "__main__":
     fig_continual_bwt()
     fig_continual_mild()
     fig_sim_gate()
+    fig_suites()

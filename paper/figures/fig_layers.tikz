@@ -1,0 +1,30 @@
+% Figure 2: three layers, two loops.
+\begin{tikzpicture}[
+  font=\small,
+  >={Stealth[length=5pt]},
+  layer/.style={draw, rounded corners=3pt, minimum width=100mm, minimum height=13mm, align=left, inner sep=5pt, line width=0.6pt, text width=94mm},
+  loop/.style={draw, rounded corners=3pt, fill=white, text width=46mm, align=center, inner sep=4pt, font=\footnotesize},
+  flow/.style={->, line width=0.8pt},
+  lab/.style={font=\footnotesize, fill=white, inner sep=1.5pt},
+  node distance=5mm]
+
+\node[layer, fill=pacefrozen, draw=pacegrey] (weights)
+  {\textbf{Layer 1: model weights} (cheap, mid, frontier)\hfill\textcolor{pacegrey}{\emph{frozen throughout}}\\
+   The tiers are arms; nothing in them is trained.};
+\node[layer, fill=pacefrozen, draw=pacegrey, below=of weights] (harness)
+  {\textbf{Layer 2: harness structure $H_t$}\hfill\textcolor{pacegrey}{\emph{frozen within a generation}}\\
+   Tools, skills, agent pool, prompts, prices. Changes only between generations:\\ a repricing, a new version, a grown pool.};
+\node[layer, fill=pacelight, draw=pace, line width=0.9pt, below=of harness] (ctrl)
+  {\textbf{Layer 3: controller $\pi_\theta$} at the decision points of $H_t$\hfill\textcolor{pace}{\emph{learns}}\\
+   Chooses (op, tier) per step under a learned price $\lambda$;\\ logs every decision with its propensity.};
+
+\coordinate (mid12) at ($(weights.east)!0.5!(harness.east)$);
+\node[loop, draw=pacegrey, dashed, right=9mm of mid12] (design)
+  {\textbf{design-time loop}, per generation\\ $H_t\to H_{t+1}$ at design time;\\ the controller is measured by\\ priced BWT / FWT under $H_{t+1}$};
+\node[loop, draw=pace, line width=0.9pt, right=9mm of ctrl.east] (serve)
+  {\textbf{serve-time loop}, seconds to a day\\ within one generation:\\ log $\to$ train $\to$ gate $\to$ serve};
+
+\draw[<->, line width=0.8pt, dashed, draw=pacegrey] (harness.east |- design.west) -- (design.west);
+\draw[<->, line width=0.8pt, draw=pace] (ctrl.east) -- (serve.west);
+\draw[flow, dashed, draw=pacegrey] (design.south) -- node[lab, right] {re-gate under $H_{t+1}$} (serve.north);
+\end{tikzpicture}

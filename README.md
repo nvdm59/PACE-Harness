@@ -70,7 +70,7 @@ All CPU pipelines are seeded end to end; the CRMArena-Pro offline script is byte
 | Simulator pipeline | `bash scripts/run_v0.sh` | `results/` |
 | Simulator, five seeds | `bash scripts/run_sim_seeds.sh 0 1 2 3 4` | `results/sim_seeds/` |
 | CRMArena-Pro (50 tasks) | `python scripts/crmarena_offline.py` | `results/crmarena/` |
-| CRMArena-Pro B2B, 300 tasks | `python scripts/crmarena_offline.py --log traces/crmarena_b2b_counterfactual.jsonl --spend traces/spend.jsonl --out results/crmarena_300` | `results/crmarena_300/` |
+| CRMArena-Pro B2B, 300 tasks | `python scripts/crmarena_offline.py --log traces/crmarena_b2b_counterfactual.jsonl --spend traces/crmarena_b2b_counterfactual.spend.jsonl --out results/crmarena_300` | `results/crmarena_300/` |
 | CRMArena-Pro B2C, 150 tasks | `python scripts/crmarena_offline.py --log traces/crmarena_b2c_counterfactual.jsonl --spend traces/b2c/spend.jsonl --out results/crmarena_b2c` | `results/crmarena_b2c/` |
 | τ-bench retail | `python -m pace.experiments.taubench.run analyze --log traces/taubench_retail_counterfactual.jsonl --out results/taubench/retail_RESULTS.md` | `results/taubench/` |
 | τ-bench airline | `python -m pace.experiments.taubench.run analyze --log traces/taubench_airline_counterfactual.jsonl --out results/taubench/airline_RESULTS.md` | `results/taubench/` |
