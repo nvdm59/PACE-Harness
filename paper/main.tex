@@ -967,7 +967,7 @@ seeds; hardware & \multicolumn{3}{l}{one run each, seed 0; one NVIDIA A100-SXM4-
 
 \begin{table}[H]
 \centering\footnotesize
-\caption{Platform and recipe controls on the phase-1b setup (Appendix~\ref{sec:llm}, platform controls; \code{results/llm/backends/COMPARISON.md}). Shared by all arms: Qwen3-1.7B with LoRA $r=16$, $\alpha=32$; temperature 1.0; KL coefficient 0.05 against the base model (k3 estimator in the loss for verl and NeMo-RL); entropy coefficient 0.01; learning rate $10^{-5}$; at most 16 completion tokens; price fixed at $\lambda=0.44$ in the prompt and the reward; the phase-1c task pool (2{,}000 tasks, seed 0); one A100-40GB; one run each. Evaluation for every adapter: one evaluator (HF \code{generate}), greedy and sampled at $T=1$, on the 2{,}000 seed-777 tasks with the $\lambda=0.44$ prompt.}
+\caption{Platform and recipe controls on the phase-1b setup (Appendix~\ref{sec:llm}, platform controls; \code{results/\allowbreak llm/\allowbreak backends/\allowbreak COMPARISON.md}). Shared by all arms: Qwen3-1.7B with LoRA $r=16$, $\alpha=32$; temperature 1.0; KL coefficient 0.05 against the base model (k3 estimator in the loss for verl and NeMo-RL); entropy coefficient 0.01; learning rate $10^{-5}$; at most 16 completion tokens; price fixed at $\lambda=0.44$ in the prompt and the reward; the phase-1c task pool (2{,}000 tasks, seed 0); one A100-40GB; one run each. Evaluation for every adapter: one evaluator (HF \code{generate}), greedy and sampled at $T=1$, on the 2{,}000 seed-777 tasks with the $\lambda=0.44$ prompt.}
 \label{tab:det-backends}
 \begin{tabular}{p{2.7cm}p{3.0cm}p{3.0cm}p{3.0cm}p{3.0cm}}
 \toprule
