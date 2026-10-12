@@ -1,0 +1,349 @@
+{
+ "results": {
+  "base zero-shot": {
+   "adapter": null,
+   "greedy": {
+    "n": 2000,
+    "quality": 0.5938,
+    "cost": 0.0555,
+    "J": 0.5694,
+    "lambda": 0.44,
+    "within_budget": true,
+    "invalid_rate": 0.091,
+    "mix": {
+     "cheap RETRIEVE": 0.604,
+     "cheap ANSWER": 0.143,
+     "mid RETRIEVE": 0.127,
+     "INVALID": 0.091,
+     "frontier RETRIEVE": 0.009,
+     "mid ANSWER": 0.009,
+     "cheap VERIFY": 0.009,
+     "frontier ANSWER": 0.004,
+     "frontier ESCALATE": 0.002,
+     "mid ESCALATE": 0.002,
+     "cheap ESCALATE": 0.001
+    },
+    "by_proxy": {
+     "easy": {
+      "n": 1199,
+      "quality": 0.7033,
+      "cost": 0.0438,
+      "mix": {
+       "cheap RETRIEVE": 0.626,
+       "cheap ANSWER": 0.214,
+       "mid RETRIEVE": 0.072,
+       "INVALID": 0.058,
+       "cheap VERIFY": 0.012,
+       "mid ANSWER": 0.01,
+       "frontier ANSWER": 0.003,
+       "frontier ESCALATE": 0.003,
+       "frontier RETRIEVE": 0.002,
+       "mid ESCALATE": 0.001,
+       "cheap ESCALATE": 0.001
+      }
+     },
+     "hard": {
+      "n": 801,
+      "quality": 0.4299,
+      "cost": 0.0731,
+      "mix": {
+       "cheap RETRIEVE": 0.571,
+       "mid RETRIEVE": 0.208,
+       "INVALID": 0.14,
+       "cheap ANSWER": 0.039,
+       "frontier RETRIEVE": 0.021,
+       "mid ANSWER": 0.006,
+       "frontier ANSWER": 0.006,
+       "cheap VERIFY": 0.004,
+       "mid ESCALATE": 0.002,
+       "frontier ESCALATE": 0.001,
+       "cheap ESCALATE": 0.001
+      }
+     }
+    },
+    "acts_by_difficulty": false,
+    "support_by_proxy_differs": true
+   },
+   "sampled": {
+    "n": 2000,
+    "quality": 0.5932,
+    "cost": 0.0554,
+    "J": 0.5689,
+    "lambda": 0.44,
+    "within_budget": true,
+    "invalid_rate": 0.0905,
+    "mix": {
+     "cheap RETRIEVE": 0.584,
+     "cheap ANSWER": 0.154,
+     "mid RETRIEVE": 0.132,
+     "INVALID": 0.09,
+     "mid ANSWER": 0.011,
+     "cheap VERIFY": 0.009,
+     "frontier RETRIEVE": 0.009,
+     "frontier ANSWER": 0.004,
+     "mid ESCALATE": 0.003,
+     "cheap ESCALATE": 0.003,
+     "frontier ESCALATE": 0.001
+    },
+    "by_proxy": {
+     "easy": {
+      "n": 1199,
+      "quality": 0.7047,
+      "cost": 0.0454,
+      "mix": {
+       "cheap RETRIEVE": 0.598,
+       "cheap ANSWER": 0.231,
+       "mid RETRIEVE": 0.084,
+       "INVALID": 0.053,
+       "cheap VERIFY": 0.013,
+       "mid ANSWER": 0.011,
+       "frontier RETRIEVE": 0.003,
+       "frontier ANSWER": 0.003,
+       "frontier ESCALATE": 0.002,
+       "mid ESCALATE": 0.002,
+       "cheap ESCALATE": 0.002
+      }
+     },
+     "hard": {
+      "n": 801,
+      "quality": 0.4264,
+      "cost": 0.0702,
+      "mix": {
+       "cheap RETRIEVE": 0.563,
+       "mid RETRIEVE": 0.202,
+       "INVALID": 0.147,
+       "cheap ANSWER": 0.04,
+       "frontier RETRIEVE": 0.017,
+       "mid ANSWER": 0.01,
+       "frontier ANSWER": 0.007,
+       "cheap VERIFY": 0.005,
+       "mid ESCALATE": 0.004,
+       "cheap ESCALATE": 0.004
+      }
+     }
+    },
+    "acts_by_difficulty": false,
+    "support_by_proxy_differs": true
+   },
+   "lora_tensors": null,
+   "examples": [
+    "<action>ANSWER</action>",
+    "<action>RETRIEVE</action>",
+    "<action>cheap ANSWER</action>",
+    "<action>cheap ESCALATE</action>",
+    "<action>cheap RETRIEVE</action>",
+    "<action>cheap VERIFY</action>"
+   ]
+  },
+  "TRL+DS (step 150)": {
+   "adapter": "/vol/backends/trl/trl_dapo_1b/adapter_last",
+   "greedy": {
+    "n": 2000,
+    "quality": 0.8276,
+    "cost": 0.3327,
+    "J": 0.6812,
+    "lambda": 0.44,
+    "within_budget": false,
+    "invalid_rate": 0.0,
+    "mix": {
+     "mid RETRIEVE": 0.601,
+     "frontier RETRIEVE": 0.35,
+     "frontier VERIFY": 0.034,
+     "frontier ESCALATE": 0.011,
+     "mid ESCALATE": 0.004
+    },
+    "by_proxy": {
+     "easy": {
+      "n": 1199,
+      "quality": 0.8399,
+      "cost": 0.1565,
+      "mix": {
+       "mid RETRIEVE": 0.99,
+       "mid ESCALATE": 0.007,
+       "frontier ESCALATE": 0.003,
+       "frontier RETRIEVE": 0.001
+      }
+     },
+     "hard": {
+      "n": 801,
+      "quality": 0.8093,
+      "cost": 0.5966,
+      "mix": {
+       "frontier RETRIEVE": 0.874,
+       "frontier VERIFY": 0.084,
+       "frontier ESCALATE": 0.025,
+       "mid RETRIEVE": 0.017
+      }
+     }
+    },
+    "acts_by_difficulty": true,
+    "support_by_proxy_differs": true
+   },
+   "sampled": {
+    "n": 2000,
+    "quality": 0.824,
+    "cost": 0.3253,
+    "J": 0.6808,
+    "lambda": 0.44,
+    "within_budget": false,
+    "invalid_rate": 0.001,
+    "mix": {
+     "mid RETRIEVE": 0.611,
+     "frontier RETRIEVE": 0.332,
+     "frontier VERIFY": 0.036,
+     "frontier ESCALATE": 0.011,
+     "mid ESCALATE": 0.009,
+     "INVALID": 0.001,
+     "frontier ANSWER": 0.001
+    },
+    "by_proxy": {
+     "easy": {
+      "n": 1199,
+      "quality": 0.8396,
+      "cost": 0.156,
+      "mix": {
+       "mid RETRIEVE": 0.986,
+       "mid ESCALATE": 0.011,
+       "frontier ESCALATE": 0.002,
+       "INVALID": 0.001,
+       "frontier RETRIEVE": 0.001
+      }
+     },
+     "hard": {
+      "n": 801,
+      "quality": 0.8006,
+      "cost": 0.5787,
+      "mix": {
+       "frontier RETRIEVE": 0.828,
+       "frontier VERIFY": 0.09,
+       "mid RETRIEVE": 0.05,
+       "frontier ESCALATE": 0.025,
+       "mid ESCALATE": 0.005,
+       "frontier ANSWER": 0.001,
+       "INVALID": 0.001
+      }
+     }
+    },
+    "acts_by_difficulty": true,
+    "support_by_proxy_differs": true
+   },
+   "lora_tensors": 392,
+   "examples": [
+    "<action>frontier ESCALATE</action>",
+    "<action>frontier RETRIEVE</action>",
+    "<action>frontier VERIFY</action>",
+    "<action>mid ESCALATE</action>",
+    "<action>mid RETRIEVE</action>"
+   ]
+  },
+  "verl DAPO (step 100)": {
+   "adapter": "/vol/backends/verl/verl_dapo_1b/merged/lora_adapter",
+   "greedy": {
+    "n": 2000,
+    "quality": 0.8291,
+    "cost": 0.3335,
+    "J": 0.6823,
+    "lambda": 0.44,
+    "within_budget": false,
+    "invalid_rate": 0.0,
+    "mix": {
+     "mid RETRIEVE": 0.598,
+     "frontier VERIFY": 0.327,
+     "frontier RETRIEVE": 0.071,
+     "frontier ESCALATE": 0.003,
+     "mid VERIFY": 0.002,
+     "mid ANSWER": 0.001
+    },
+    "by_proxy": {
+     "easy": {
+      "n": 1199,
+      "quality": 0.8391,
+      "cost": 0.1549,
+      "mix": {
+       "mid RETRIEVE": 0.997,
+       "mid VERIFY": 0.003,
+       "mid ANSWER": 0.001
+      }
+     },
+     "hard": {
+      "n": 801,
+      "quality": 0.814,
+      "cost": 0.6009,
+      "mix": {
+       "frontier VERIFY": 0.815,
+       "frontier RETRIEVE": 0.177,
+       "frontier ESCALATE": 0.007
+      }
+     }
+    },
+    "acts_by_difficulty": true,
+    "support_by_proxy_differs": true
+   },
+   "sampled": {
+    "n": 2000,
+    "quality": 0.8267,
+    "cost": 0.3297,
+    "J": 0.6816,
+    "lambda": 0.44,
+    "within_budget": false,
+    "invalid_rate": 0.0035,
+    "mix": {
+     "mid RETRIEVE": 0.594,
+     "frontier VERIFY": 0.316,
+     "frontier RETRIEVE": 0.073,
+     "mid VERIFY": 0.005,
+     "frontier ESCALATE": 0.004,
+     "INVALID": 0.004,
+     "mid ANSWER": 0.003,
+     "frontier ANSWER": 0.002,
+     "mid ESCALATE": 0.001
+    },
+    "by_proxy": {
+     "easy": {
+      "n": 1199,
+      "quality": 0.8388,
+      "cost": 0.1546,
+      "mix": {
+       "mid RETRIEVE": 0.986,
+       "mid VERIFY": 0.008,
+       "mid ANSWER": 0.004,
+       "mid ESCALATE": 0.001,
+       "INVALID": 0.001
+      }
+     },
+     "hard": {
+      "n": 801,
+      "quality": 0.8085,
+      "cost": 0.5919,
+      "mix": {
+       "frontier VERIFY": 0.788,
+       "frontier RETRIEVE": 0.184,
+       "frontier ESCALATE": 0.009,
+       "INVALID": 0.007,
+       "mid RETRIEVE": 0.006,
+       "frontier ANSWER": 0.004,
+       "mid VERIFY": 0.001,
+       "mid ANSWER": 0.001
+      }
+     }
+    },
+    "acts_by_difficulty": true,
+    "support_by_proxy_differs": true
+   },
+   "lora_tensors": 392,
+   "examples": [
+    "<action>frontier ESCALATE</action>",
+    "<action>frontier RETRIEVE</action>",
+    "<action>frontier VERIFY</action>",
+    "<action>mid ANSWER</action>",
+    "<action>mid RETRIEVE</action>",
+    "<action>mid VERIFY</action>"
+   ]
+  }
+ },
+ "eval_s": 227.2,
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "n": 2000,
+ "seed": 777,
+ "lambda": 0.44
+}

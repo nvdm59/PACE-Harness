@@ -1,0 +1,26 @@
+{
+ "run": "trl_dapo_1b",
+ "steps_planned": 200,
+ "steps_logged": 186,
+ "status": "stopped by the Modal function timeout (2400 s) after step 186",
+ "adapter": "/vol/backends/trl/trl_dapo_1b/adapter_last",
+ "adapter_step": 150,
+ "dynamic": true,
+ "clip": [
+  0.2,
+  0.28
+ ],
+ "num_generations": 16,
+ "batch_completions": 64,
+ "beta": 0.05,
+ "entropy_coef": 0.01,
+ "temperature": 1.0,
+ "lambda": 0.44,
+ "max_gen_batches": 8,
+ "lr": 1e-05,
+ "lr_schedule": "TRL default linear decay over 200 steps",
+ "loss_type": "dapo",
+ "container_s": 2400,
+ "gpu": "A100-40GB",
+ "stack": "torch 2.14.1, transformers 5.19.0, trl 1.15.0, peft 0.21.2 (pace/llm/modal_common.image)"
+}

@@ -1,0 +1,268 @@
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[ssr] policy=tree tiers=['cheap', 'mid'] initial=from-log:['cheap'] n_tasks=50 max_rounds=1 k=2 cap=$14 ledger=$0.0000 -> traces/ssr/ssr_b2b_tree.jsonl
+27
+Using b2b Salesforce credentials
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Wt000003NFKoIAO", "005Wt000003NJ6gIAG"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-903 arm=cheap path=cheap        q 1.00 -> 0.00 conf_min 0.10 $0.0885 (15 calls, 14 worker turns)
+[ssr] b2b-903 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.28 $0.2136 (14 calls, 13 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Wt000003NJ6fIAG"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1259 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.23 $0.0971 (17 calls, 16 worker turns)
+[ssr] b2b-1259 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.23 $0.2204 (15 calls, 14 worker turns)
+[ssr] b2b-703 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.05 $0.0961 (13 calls, 12 worker turns)
+[ssr] b2b-703 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.38 $0.2590 (13 calls, 12 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["CA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1139 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.05 $0.0910 (15 calls, 14 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["CA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1139 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.38 $0.1590 (11 calls, 10 worker turns)
+[ssr] b2b-1558 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.25 $0.0774 (15 calls, 14 worker turns)
+[ssr] b2b-1558 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.53 $0.1791 (13 calls, 12 worker turns)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["01tWt000006hV8LIAU"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1975 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.18 $0.0944 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["01tWt000006hV8LIAU"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1975 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.52 $0.2383 (17 calls, 16 worker turns)
+[ssr] b2b-1393 arm=cheap path=cheap        q 0.00 -> 1.00 conf_min 0.10 $0.0906 (17 calls, 16 worker turns)
+[ssr] b2b-1393 arm=cheap path=mid          q 0.00 -> 1.00 conf_min 0.17 $0.2427 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["a03Wt00000JqxVjIAJ", "01tWt000006hV58IAE"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-373 arm=cheap path=cheap        q 1.00 -> 0.00 conf_min 0.27 $0.0705 (13 calls, 12 worker turns)
+[ssr] b2b-373 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.60 $0.1530 (11 calls, 10 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["March"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-176 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.07 $0.1300 (19 calls, 18 worker turns)
+[ssr] b2b-176 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.07 $0.3306 (19 calls, 18 worker turns)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Wt000003NJ53IAG"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-856 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.08 $0.0859 (15 calls, 14 worker turns)
+[ssr] b2b-856 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.08 $0.2104 (11 calls, 10 worker turns)
+[spend] $3.1657 of cap $14 | 316 calls, 10 tasks, $0.3166/task | in 1,810,998 out 50,340 tok | claude-haiku-4-5 $0.96, claude-sonnet-5-5 $2.21
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Wt000003NJJZIA4", "005Wt000003NETbIAO"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1755 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.20 $0.0971 (15 calls, 14 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Wt000003NETbIAO"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1755 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.50 $0.1795 (13 calls, 12 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Wt000003NJBVIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-2115 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.25 $0.0800 (15 calls, 14 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Wt000003NJBVIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-2115 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.58 $0.2587 (18 calls, 17 worker turns)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Wt000003NFRKIA4"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-995 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.17 $0.0824 (15 calls, 14 worker turns)
+[ssr] b2b-995 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.57 $0.2333 (14 calls, 13 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Negotiation"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1309 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.12 $0.0676 (13 calls, 12 worker turns)
+[ssr] b2b-1309 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.45 $0.1782 (13 calls, 12 worker turns)
+[ssr] b2b-453 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.12 $0.1312 (19 calls, 18 worker turns)
+[ssr] b2b-453 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.45 $0.2716 (19 calls, 18 worker turns)
+[ssr] b2b-1766 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.07 $0.0987 (16 calls, 15 worker turns)
+[ssr] b2b-1766 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.07 $0.2579 (17 calls, 16 worker turns)
+[ssr] b2b-67 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.08 $0.1129 (17 calls, 16 worker turns)
+[ssr] b2b-67 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.08 $0.2677 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-211 arm=cheap path=cheap        q 1.00 -> 0.00 conf_min 0.15 $0.1107 (16 calls, 15 worker turns)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": [
+    "00TWt000002zGmjMAE",
+    "00TWt000002zHAtMAM",
+    "00TWt000002zFVfMAM",
+    "00TWt000002z6Z8MAI",
+    "00TWt000002yzneMAA",
+    "00TWt000002z3wTMAQ"
+  ]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-211 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.17 $0.2630 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Wt000000Ens5IAC"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-651 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.07 $0.1086 (17 calls, 16 worker turns)
+[ssr] b2b-651 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.08 $0.3067 (17 calls, 16 worker turns)
+[ssr] b2b-1656 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.17 $0.0345 (7 calls, 6 worker turns)
+[ssr] b2b-1656 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.50 $0.0886 (7 calls, 6 worker turns)
+[spend] $6.4316 of cap $14 | 639 calls, 20 tasks, $0.3216/task | in 3,680,434 out 99,085 tok | claude-haiku-4-5 $1.92, claude-sonnet-5-5 $4.51
+[ssr] b2b-1928 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.17 $0.0689 (7 calls, 6 worker turns)
+[ssr] b2b-1928 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.50 $0.2148 (7 calls, 6 worker turns)
+[ssr] b2b-560 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.05 $0.1147 (16 calls, 15 worker turns)
+[ssr] b2b-560 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.08 $0.4554 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+
+[ssr] b2b-888 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.05 $0.0964 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-888 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.37 $0.1841 (13 calls, 12 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Wt000003NFKoIAO"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1236 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.22 $0.0815 (15 calls, 14 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Wt000003NFKoIAO"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1236 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.58 $0.2133 (15 calls, 14 worker turns)
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+[ssr] b2b-759 arm=cheap path=cheap        q 0.03 -> 0.03 conf_min 0.08 $0.1162 (15 calls, 14 worker turns)
+[ssr] b2b-759 arm=cheap path=mid          q 0.03 -> 0.03 conf_min 0.08 $0.2520 (13 calls, 12 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["IA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1113 arm=cheap path=cheap        q 1.00 -> 0.00 conf_min 0.12 $0.1511 (19 calls, 18 worker turns)
+[ssr] b2b-1113 arm=cheap path=mid          q 1.00 -> 0.00 conf_min 0.28 $0.2830 (13 calls, 12 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Wt000003NIVZIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1561 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.08 $0.0968 (17 calls, 16 worker turns)
+[ssr] b2b-1561 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.08 $0.2281 (16 calls, 15 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["01tWt000006hV8LIAU"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-2023 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.43 $0.0661 (13 calls, 12 worker turns)
+[ssr] b2b-2023 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.10 $0.1757 (13 calls, 12 worker turns)
+[ssr] b2b-1397 arm=cheap path=cheap        q 0.00 -> 1.00 conf_min 0.03 $0.1163 (19 calls, 18 worker turns)
+[ssr] b2b-1397 arm=cheap path=mid          q 0.00 -> 1.00 conf_min 0.04 $0.2817 (19 calls, 18 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["a03Wt00000JqnHwIAJ"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-332 arm=cheap path=cheap        q 1.00 -> 1.00 conf_min 0.23 $0.0802 (15 calls, 14 worker turns)
+[ssr] b2b-332 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.58 $0.1794 (13 calls, 12 worker turns)
+[spend] $9.9342 of cap $14 | 954 calls, 30 tasks, $0.3311/task | in 5,721,079 out 144,742 tok | claude-haiku-4-5 $2.96, claude-sonnet-5-5 $6.98
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-145 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.14 $0.0885 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-145 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.45 $0.2342 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-842 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.05 $0.0920 (17 calls, 16 worker turns)
+[ssr] b2b-842 arm=cheap path=mid          q 0.00 -> 1.00 conf_min 0.07 $0.2429 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Wt000003NBp4IAG", "005Wt000003NIgrIAG"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1708 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.08 $0.1226 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Wt000003NIgrIAG"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1708 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.07 $0.2227 (16 calls, 15 worker turns)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["None"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-2057 arm=cheap path=cheap        q 0.00 -> 1.00 conf_min 0.10 $0.0836 (15 calls, 14 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Wt000003NCd5IAG"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-2057 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.10 $0.2277 (15 calls, 14 worker turns)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["None"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1041 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.05 $0.1015 (18 calls, 17 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1041 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.05 $0.3223 (18 calls, 17 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Quote"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1368 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.20 $0.0722 (13 calls, 12 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Quote"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1368 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.20 $0.1989 (14 calls, 13 worker turns)
+[ssr] b2b-429 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.18 $0.1199 (19 calls, 18 worker turns)
+[ssr] b2b-429 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.18 $0.3167 (19 calls, 18 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1833 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.07 $0.1190 (18 calls, 17 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Wt000000Ens5IAC"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-1833 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.07 $0.2942 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["Budget", "Timeline"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-80 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.12 $0.0924 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-80 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.12 $0.2599 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["00TWt000002yxFXMAY"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-218 arm=cheap path=cheap        q 1.00 -> 0.00 conf_min 0.20 $0.0852 (15 calls, 14 worker turns)
+[ssr] b2b-218 arm=cheap path=mid          q 1.00 -> 1.00 conf_min 0.20 $0.2241 (15 calls, 14 worker turns)
+[spend] $13.4904 of cap $14 | 1311 calls, 40 tasks, $0.3373/task | in 7,765,521 out 192,728 tok | claude-haiku-4-5 $3.97, claude-sonnet-5-5 $9.52
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Wt000000Eq0MIAS", "ka0Wt000000EoubIAC", "ka0Wt000000EpykIAC", "ka0Wt000000EnvMIAS"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-656 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.07 $0.1339 (17 calls, 16 worker turns)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Wt000000Eq0MIAS"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[ssr] b2b-656 arm=cheap path=mid          q 0.00 -> 0.00 conf_min 0.08 $0.2361 (15 calls, 14 worker turns)
+[ssr] b2b-1616 arm=cheap path=cheap        q 0.00 -> 0.00 conf_min 0.64 $0.0632 (13 calls, 12 worker turns)
+[ssr] STOPPED AT CAP in task b2b-1616 arm cheap: spend cap $14 reached: spent $13.9728, next call (claude-sonnet-5-5, ssr:resolve:mid) could cost up to $0.0382
+[spend] $13.9728 of cap $14 | 1364 calls, 42 tasks, $0.3327/task | in 8,049,524 out 204,585 tok | claude-haiku-4-5 $4.17, claude-sonnet-5-5 $9.80
+[ssr] wrote traces/ssr/STOPPED_AT_CAP; 208 new records this run -> traces/ssr/ssr_b2b_tree.jsonl. Resume with a higher --cap (the ledger is cumulative; logged branches are skipped).

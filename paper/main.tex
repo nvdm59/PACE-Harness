@@ -1328,7 +1328,8 @@ All CPU pipelines are seeded end to end and need only \code{numpy}; the CRMArena
 pip install -r requirements.txt
 bash scripts/run_v0.sh              # sim: collect -> train -> gate -> drift -> retrain -> gate
 bash scripts/run_sim_seeds.sh 0 1 2 3 4   # the same pipeline over five replicate seeds
-python scripts/crmarena_offline.py  # the 50-task analysis on the committed log, no API calls
+head -150 traces/crmarena_b2b_counterfactual.jsonl > /tmp/b2b_50.jsonl   # the first 50 tasks
+python scripts/crmarena_offline.py --log /tmp/b2b_50.jsonl --out results/crmarena   # no API calls
 python scripts/crmarena_offline.py --log traces/crmarena_b2b_counterfactual.jsonl \
     --spend traces/crmarena_b2b_counterfactual.spend.jsonl --out results/crmarena_300
 python scripts/crmarena_offline.py --log traces/crmarena_b2c_counterfactual.jsonl \

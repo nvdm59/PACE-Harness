@@ -1,0 +1,85 @@
+{
+ "results": {
+  "NeMo-RL DAPO (step 120)": {
+   "adapter": "/vol/backends/nemo_rl/nemo_rl_dapo_1b_full/ckpt/step_120/policy/weights/model",
+   "greedy": {
+    "n": 2000,
+    "quality": 0.8291,
+    "cost": 0.3332,
+    "J": 0.6825,
+    "lambda": 0.44,
+    "within_budget": false,
+    "invalid_rate": 0.0,
+    "mix": {
+     "mid RETRIEVE": 0.6,
+     "frontier VERIFY": 0.401
+    },
+    "by_proxy": {
+     "easy": {
+      "n": 1199,
+      "quality": 0.8392,
+      "cost": 0.155,
+      "mix": {
+       "mid RETRIEVE": 1.0
+      }
+     },
+     "hard": {
+      "n": 801,
+      "quality": 0.8141,
+      "cost": 0.6,
+      "mix": {
+       "frontier VERIFY": 1.0
+      }
+     }
+    },
+    "acts_by_difficulty": true,
+    "support_by_proxy_differs": true
+   },
+   "sampled": {
+    "n": 2000,
+    "quality": 0.8291,
+    "cost": 0.3332,
+    "J": 0.6825,
+    "lambda": 0.44,
+    "within_budget": false,
+    "invalid_rate": 0.0,
+    "mix": {
+     "mid RETRIEVE": 0.599,
+     "frontier VERIFY": 0.401,
+     "mid VERIFY": 0.001
+    },
+    "by_proxy": {
+     "easy": {
+      "n": 1199,
+      "quality": 0.8392,
+      "cost": 0.155,
+      "mix": {
+       "mid RETRIEVE": 0.999,
+       "mid VERIFY": 0.001
+      }
+     },
+     "hard": {
+      "n": 801,
+      "quality": 0.8141,
+      "cost": 0.6,
+      "mix": {
+       "frontier VERIFY": 1.0
+      }
+     }
+    },
+    "acts_by_difficulty": true,
+    "support_by_proxy_differs": true
+   },
+   "lora_tensors": 392,
+   "examples": [
+    "<action>frontier VERIFY</action>",
+    "<action>mid RETRIEVE</action>"
+   ]
+  }
+ },
+ "eval_s": 99.4,
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "n": 2000,
+ "seed": 777,
+ "lambda": 0.44
+}

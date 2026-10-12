@@ -1,0 +1,30 @@
+{
+ "status": "ok",
+ "returncode": 0,
+ "container_s": 592.1,
+ "first_step_s": 270.0779526233673,
+ "dataset": {
+  "train": 2000
+ },
+ "cmd": [
+  "/opt/nemo_rl_venv/bin/python",
+  "/root/src/pace/llm/backends/nemo_rl_grpo.py",
+  "--config",
+  "/opt/nemo-rl/examples/configs/pace_grpo_smoke.yaml",
+  "--metrics",
+  "/vol/backends/nemo_rl/nemo_rl_smoke/metrics.jsonl",
+  "grpo.max_num_steps=20",
+  "++env.pace_sim.record_path=/vol/backends/nemo_rl/nemo_rl_smoke/records.jsonl",
+  "logger.log_dir=/vol/backends/nemo_rl/nemo_rl_smoke/logs"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "versions": {
+  "nemo_rl": "0.6.0+19244a094",
+  "vllm": null,
+  "torch": "2.11.0+cu130",
+  "transformers": "5.8.1",
+  "ray": "2.55.1"
+ },
+ "platform": "NeMo-RL",
+ "fixed_lambda": 0.4
+}

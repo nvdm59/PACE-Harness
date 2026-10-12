@@ -1,0 +1,21 @@
+{
+ "run": "trl_fixedprice_1b",
+ "steps": 150,
+ "dynamic": false,
+ "clip": [
+  0.2,
+  0.2
+ ],
+ "num_generations": 16,
+ "batch_completions": 64,
+ "beta": 0.05,
+ "entropy_coef": 0.01,
+ "temperature": 1.0,
+ "lambda": 0.44,
+ "max_gen_batches": 8,
+ "loss_type": "dapo",
+ "train_wall_s": 816.0,
+ "container_s": 844.8,
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "adapter": "/vol/backends/trl/trl_fixedprice_1b/adapter_final"
+}

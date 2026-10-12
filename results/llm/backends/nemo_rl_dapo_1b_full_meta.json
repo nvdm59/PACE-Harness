@@ -1,0 +1,46 @@
+{
+ "status": "killed: container time limit",
+ "returncode": -15,
+ "container_s": 2657.9,
+ "first_step_s": 260.26646900177,
+ "dataset": {
+  "train": 2000
+ },
+ "cmd": [
+  "/opt/nemo_rl_venv/bin/python",
+  "/root/src/pace/llm/backends/nemo_rl_grpo.py",
+  "--config",
+  "/opt/nemo-rl/examples/configs/pace_grpo_smoke.yaml",
+  "--metrics",
+  "/vol/backends/nemo_rl/nemo_rl_dapo_1b_full/metrics.jsonl",
+  "grpo.max_num_steps=120",
+  "++env.pace_sim.record_path=/vol/backends/nemo_rl/nemo_rl_dapo_1b_full/records.jsonl",
+  "logger.log_dir=/vol/backends/nemo_rl/nemo_rl_dapo_1b_full/logs",
+  "grpo.num_prompts_per_step=4",
+  "grpo.num_generations_per_prompt=16",
+  "grpo.use_dynamic_sampling=true",
+  "grpo.dynamic_sampling_max_gen_batches=32",
+  "loss_fn.ratio_clip_min=0.2",
+  "loss_fn.ratio_clip_max=0.28",
+  "loss_fn.reference_policy_kl_penalty=0.05",
+  "checkpointing.enabled=true",
+  "checkpointing.save_period=50",
+  "checkpointing.metric_name=null",
+  "checkpointing.keep_top_k=1",
+  "++env.pace_sim.lam=0.44",
+  "checkpointing.checkpoint_dir=/vol/backends/nemo_rl/nemo_rl_dapo_1b_full/ckpt"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "versions": {
+  "nemo_rl": "0.6.0+19244a094",
+  "vllm": null,
+  "torch": "2.11.0+cu130",
+  "transformers": "5.8.1",
+  "ray": "2.55.1"
+ },
+ "note": "per-step lines rebuilt from the env records: steps from train/dynamic_sampling_num_gen_batches, trained groups matched to train/filtered_reward (nemo_rl_grpo._trained_groups); checkpoint step_120 saved before the time-cap kill",
+ "adapter": "/vol/backends/nemo_rl/nemo_rl_dapo_1b_full/ckpt/step_120/policy/weights/model",
+ "adapter_step": 120,
+ "platform": "NeMo-RL",
+ "fixed_lambda": 0.44
+}

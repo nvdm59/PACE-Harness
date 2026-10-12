@@ -31,3 +31,7 @@ traces/STOPPED_AT_CAP
 !traces/taubench_retail_counterfactual.jsonl
 !traces/taubench_airline_counterfactual.jsonl
 .DS_Store
+paper/main.aux
+paper/main.blg
+paper/main.log
+paper/main.out
