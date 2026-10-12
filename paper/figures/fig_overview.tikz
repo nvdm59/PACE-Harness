@@ -32,17 +32,17 @@
 \node[gate, right=of train, minimum width=31mm, text width=29mm] (gatebox)
   {\textbf{off-policy gate}\\[1pt] IPS / SNIPS / DR with\\ bootstrap intervals;\\ \REVERT{} keeps the incumbent};
 
-\draw[flow] ($(ctrl.south)+(-11mm,0)$) |- node[lab, pos=0.25, left] {$a_t,\ \mu_t,\ c_t$} (log.east);
-\draw[flow] (log.south east) -- ++(0,-3mm) -| (train.south);
+\draw[flow] ($(ctrl.south)+(-13mm,0)$) -- ++(0,-6.5mm) -| node[lab, pos=0.08, left] {$a_t,\ \mu_t,\ c_t$} ($(log.north)+(15mm,0)$);
+\draw[flow] (log.east) -- (train.west);
 \draw[flow] (train) -- node[lab, above] {candidate $\pi'$} (gatebox);
 \draw[flow, draw=pacegreen, line width=0.9pt] (gatebox.north) -- ++(0,4mm) -| node[lab, pos=0.3, above, text=pacegreen] {\PROMOTE: serve $\pi'$} ($(ctrl.south)+(11mm,0)$);
 
 % drift
 \node[frozen, below=5mm of log, minimum width=44mm, text width=42mm, dashed] (drift)
-  {\textbf{drift events} (design time)\\[1pt] reprice $\cdot$ new version $\cdot$ grown $H_{t+1}$};
+  {\textbf{drift events} (design time)\\[1pt] reprice $\cdot$ new version\\ $\cdot$ grown harness $H_{t+1}$};
 \draw[flow, dashed] (drift.east) -| node[lab, pos=0.3, above] {priced BWT / FWT; retrain and re-gate} ($(gatebox.south)+(0,0)$);
 
 % row labels
 \node[font=\footnotesize\itshape, text=pacegrey, above=1mm of task.north west, anchor=south west] {serve};
-\node[font=\footnotesize\itshape, text=pacegrey, anchor=south west] at (task.west |- log.north west) [xshift=0mm, yshift=1mm] {learn};
+\node[font=\footnotesize\itshape, text=pacegrey, anchor=west] at (task.west |- log.west) {learn};
 \end{tikzpicture}
