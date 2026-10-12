@@ -83,7 +83,7 @@ This paper takes the opposite route to the same difficulty. The decisions are pe
 \paragraph{Contributions.}
 \begin{itemize}
 \item \textbf{A priced controller} (Section~\ref{sec:method}): a policy over (op, tier) pairs whose objective is quality minus a learned price of cost, trained offline by constrained group-relative policy optimisation on replay, the Lagrange multiplier found by damped dual ascent against a per-task budget and the served policy an iterate average.
-\item \textbf{An off-policy promotion gate}: per-decision IPS, SNIPS and doubly-robust estimators with cross-fitted direct models and percentile-bootstrap intervals, and a two-bar decision rule on the interval edges. We measure its power against sample size on real agent logs rather than assuming it.
+\item \textbf{An off-policy promotion gate}: per-decision inverse-propensity (IPS), self-normalised (SNIPS) and doubly-robust (DR) estimators with cross-fitted direct models and percentile-bootstrap intervals, and a two-bar decision rule on the interval edges. We measure its power against sample size on real agent logs rather than assuming it.
 \item \textbf{Priced transfer metrics}: backward and forward transfer in the sense of \citet{lopezpaz2017gem}, applied to the controller's priced objective as the harness is repriced, re-versioned or grown.
 \item \textbf{Measurements on four suites} (Section~\ref{sec:results}): 450 CRMArena-Pro tasks on three tiers each, $\tau$-bench retail and airline, three stages of EvoHarnessBench's hosted service, and a 40-day continual-orchestrator study over a frozen, growing harness, together with negative results on decomposition, verification, refinement and LLM controllers, each with its cause stated.
 \end{itemize}
@@ -160,7 +160,7 @@ The last factor is the score correction for the $\epsilon$-mixture: the gradient
 \subsection{The off-policy promotion gate}
 \label{sec:gate}
 
-\paragraph{Estimators.} The gate must value a candidate from episodes that another policy generated, which is the off-policy evaluation problem. For an episode $i$ with per-step rewards $r^i_t$ (the terminal quality, or the per-step cost) and cumulative ratio $\rho^i_{0:t}=\prod_{k\le t}\pi(a^i_k\mid s^i_k)/\mu^i_k$ clipped at $\rho_{\max}=50$,
+\paragraph{Estimators.} The gate must value a candidate from episodes that another policy generated, which is the off-policy evaluation problem. Three estimators are used: inverse propensity scoring (IPS), which reweights each logged outcome by the ratio of the candidate's probability of the logged action to the logging policy's; its self-normalised form (SNIPS), which divides by the realised sum of the weights instead of by $n$, trading a small bias for much lower variance; and the doubly-robust estimator (DR), which starts from a direct model of the outcome fitted on the log and applies the importance weights only to that model's residuals, so that it is correct if either the model or the propensities are. For an episode $i$ with per-step rewards $r^i_t$ (the terminal quality, or the per-step cost) and cumulative ratio $\rho^i_{0:t}=\prod_{k\le t}\pi(a^i_k\mid s^i_k)/\mu^i_k$ clipped at $\rho_{\max}=50$,
 \begin{align}
 \hat V_{\mathrm{IPS}}&=\frac1n\sum_i\sum_t\rho^i_{0:t}\,r^i_t, \qquad
 \hat V_{\mathrm{SNIPS}}=\sum_t\frac{\sum_i\rho^i_{0:t}\,r^i_t}{\sum_i\rho^i_{0:t}},
