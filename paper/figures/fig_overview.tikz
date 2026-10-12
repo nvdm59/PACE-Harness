@@ -8,15 +8,15 @@
   gate/.style={box, fill=paceorange!12, draw=paceorange, line width=0.9pt},
   lab/.style={font=\footnotesize, fill=white, inner sep=1.5pt},
   flow/.style={->, line width=0.7pt},
-  node distance=6mm and 9mm]
+  node distance=6mm and 8mm]
 
 % serving row
 \node[frozen, minimum width=24mm] (task) {task $x$};
-\node[frozen, right=of task, minimum width=46mm, text width=44mm] (harness)
+\node[frozen, right=of task, minimum width=44mm, text width=42mm] (harness)
   {\textbf{frozen harness $H_t$}\\[1pt] state $s_t$, legal set $\mathcal{A}(s_t)$,\\ transition $P_H$; tools, prompts, evaluator};
 \node[learn, right=of harness, minimum width=34mm, text width=32mm] (ctrl)
   {\textbf{controller $\pi_\theta(a\mid s_t)$}\\[1pt] $a=(\text{op},\text{tier})$\\ $\epsilon$-mixed, served};
-\node[frozen, right=of ctrl, minimum width=32mm, text width=30mm] (models)
+\node[frozen, right=of ctrl, minimum width=31mm, text width=29mm] (models)
   {\textbf{frozen model tiers}\\[1pt] cheap, mid, frontier;\\ the episode ends with $q$, $C$};
 
 \draw[flow] (task) -- (harness);
@@ -25,11 +25,11 @@
 \draw[flow] (models.north) -- ++(0,4mm) -| node[lab, pos=0.25, above] {observation $s_{t+1}$ (next step)} ($(harness.north)+(10mm,0)$);
 
 % learning row
-\node[learn, below=16mm of harness, minimum width=46mm, text width=44mm] (log)
+\node[learn, below=16mm of harness, minimum width=44mm, text width=42mm] (log)
   {\textbf{trace log}\\[1pt] per decision: $x_t$, $a_t$, propensity $\mu_t$, $c_t$;\\ per episode: $q$, $C$};
 \node[learn, right=of log, minimum width=34mm, text width=32mm] (train)
   {\textbf{offline trainer}\\[1pt] constrained GRPO on replay\\ (or AWR+IPS); dual ascent\\ on $\lambda$ against budget $B$};
-\node[gate, right=of train, minimum width=32mm, text width=30mm] (gatebox)
+\node[gate, right=of train, minimum width=31mm, text width=29mm] (gatebox)
   {\textbf{off-policy gate}\\[1pt] IPS / SNIPS / DR with\\ bootstrap intervals;\\ \REVERT{} keeps the incumbent};
 
 \draw[flow] ($(ctrl.south)+(-11mm,0)$) |- node[lab, pos=0.25, left] {$a_t,\ \mu_t,\ c_t$} (log.east);
@@ -38,11 +38,11 @@
 \draw[flow, draw=pacegreen, line width=0.9pt] (gatebox.north) -- ++(0,4mm) -| node[lab, pos=0.3, above, text=pacegreen] {\PROMOTE: serve $\pi'$} ($(ctrl.south)+(11mm,0)$);
 
 % drift
-\node[frozen, below=5mm of log, minimum width=46mm, text width=44mm, dashed] (drift)
+\node[frozen, below=5mm of log, minimum width=44mm, text width=42mm, dashed] (drift)
   {\textbf{drift events} (design time)\\[1pt] reprice $\cdot$ new version $\cdot$ grown $H_{t+1}$};
 \draw[flow, dashed] (drift.east) -| node[lab, pos=0.3, above] {priced BWT / FWT; retrain and re-gate} ($(gatebox.south)+(0,0)$);
 
 % row labels
-\node[font=\footnotesize\itshape, text=pacegrey, left=2mm of task] {serve};
-\node[font=\footnotesize\itshape, text=pacegrey] at (task.west |- log.west) [xshift=4mm] {learn};
+\node[font=\footnotesize\itshape, text=pacegrey, above=1mm of task.north west, anchor=south west] {serve};
+\node[font=\footnotesize\itshape, text=pacegrey, anchor=south west] at (task.west |- log.north west) [xshift=0mm, yshift=1mm] {learn};
 \end{tikzpicture}
