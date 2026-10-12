@@ -52,7 +52,7 @@ Quality @ USD per task. Counterfactual logs: every task is run on every tier, so
 pip install -r requirements.txt     # numpy; pytest and pyyaml for the tests
 ```
 
-Python 3.10+. The CPU pipelines need only `numpy`; the test suite also needs `pytest` and `pyyaml` (two backend-config tests import `yaml`). The benchmark collections use a separate Python 3.12 venv created by `scripts/setup_crmarena.sh` (see [Collections](#collections)).
+Python 3.10+. The offline pipelines need only `numpy`; the test suite also needs `pytest` and `pyyaml` (two backend-config tests import `yaml`). The benchmark collections use a separate Python 3.12 venv created by `scripts/setup_crmarena.sh` (see [Collections](#collections)).
 
 ## Quick start
 
@@ -65,7 +65,7 @@ The tests use fake environments and completions and make no network calls.
 
 ## Reproduce
 
-All CPU pipelines are seeded end to end; the CRMArena-Pro offline script is byte-for-byte deterministic on the committed log. Commands are from the paper's Reproduction appendix, run from the repository root.
+All offline pipelines are seeded end to end; the CRMArena-Pro offline script is byte-for-byte deterministic on the committed log. Commands are from the paper's Reproduction appendix, run from the repository root.
 
 | paper section | command | output |
 |---|---|---|

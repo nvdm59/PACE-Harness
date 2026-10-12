@@ -31,7 +31,7 @@ Every per-step number in `results/llm/backends/` is **re-scored from the logged 
 
 ```bash
 modal run pace/llm/backends/verl_grpo.py                     # verl: 20-step smoke, one A100-40GB
-modal run pace/llm/backends/nemo_rl_grpo.py::versions        # NeMo-RL: build the image on CPU only
+modal run pace/llm/backends/nemo_rl_grpo.py::versions        # NeMo-RL: build the image, no GPU needed
 modal run pace/llm/backends/nemo_rl_grpo.py                  # NeMo-RL: 20-step smoke, one A100-40GB
 uv run --no-project --with pytest --with pyyaml --with numpy python -m pytest -q tests/test_backends.py
 # phase-1b reproduction (results/llm/backends/COMPARISON.md)
