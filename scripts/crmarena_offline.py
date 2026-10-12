@@ -125,7 +125,7 @@ def cv_tables(eps, T, folds):
                 for k, v in acc.items()}
         res[f"lam{lam:g}"] = {"rows": rows, "awr_J_in_sample": float(np.mean(ins))}
         lines += [f"#### λ = {lam:g} per dollar (J = quality − {lam:g}·cost)", ""] + fmt_rows(rows, f"λ={lam:g}")
-        lines += ["", f"AWR+IPS in-sample J on the 40 training tasks (mean over folds): {np.mean(ins):.3f} "
+        lines += ["", f"AWR+IPS in-sample J on the ~{int(round(0.8*len(T)))} training tasks of each fold (mean over folds): {np.mean(ins):.3f} "
                       f"(held-out: {rows['AWR+IPS linear (served, stochastic)']['J']:.3f}).", ""]
     # ---------------------------------------------------- constrained: B = $0.10
     acc, lams, ins, fold0 = {}, [], [], None
@@ -155,7 +155,7 @@ def cv_tables(eps, T, folds):
     lines += [f"#### Constrained: budget B = ${BUDGET:.2f} per task, λ learned by dual ascent", "",
               f"J uses each fold's own learned λ̄ (mean over folds {lam_bar:.2f} per dollar; per fold "
               + ", ".join(f"{x:.2f}" for x in lams) + ")."] + [""] + fmt_rows(rows, "fold λ̄")
-    lines += ["", "Constrained policy in-sample on its 40 training tasks (mean over folds): quality "
+    lines += ["", f"Constrained policy in-sample on its ~{int(round(0.8*len(T)))} training tasks of each fold (mean over folds): quality "
               f"{np.mean([x[0] for x in ins]):.3f}, cost ${np.mean([x[1] for x in ins]):.4f}.", ""]
     return res, lines, fold0, lams[0]
 
@@ -174,11 +174,11 @@ def gate_section(eps, T, n_redraws: int, boot: int):
     log1 = fixed_arm_log(eps, seed=0)
     g1 = gate(log1, pol, "behavior", BUDGET, eps_q=EPS_Q, tol=TOL, boot=boot, seed=0)
     out["realized_log"] = g1
-    lines += [f"Candidate: the constrained cgrpo-lookup policy trained on all 50 tasks (λ̄ = {lb:.2f}/USD). "
-              f"Exact value on the 50 tasks (all arms logged): **quality {q_ex:.3f}, cost ${c_ex:.4f}**. "
+    lines += [f"Candidate: the constrained cgrpo-lookup policy trained on all {len(T)} tasks (λ̄ = {lb:.2f}/USD). "
+              f"Exact value on the {len(T)} tasks (all arms logged): **quality {q_ex:.3f}, cost ${c_ex:.4f}**. "
               f"Uniform behavior exact: quality {qb:.3f}, cost ${cb:.4f}. "
               f"Gate: eps_q = {EPS_Q}, budget ${BUDGET:.2f} + tol ${TOL:.3f}.", "",
-              format_table(g1, "(a) Realized behavior log: one uniformly drawn arm per task (50 episodes, seed 0)",
+              format_table(g1, f"(a) Realized behavior log: one uniformly drawn arm per task ({len(T)} episodes, seed 0)",
                            cost_digits=4), "",
               f"Estimator error vs exact on this draw: quality IPS {g1['candidate']['quality']['ips'][0] - q_ex:+.3f}, "
               f"SNIPS {g1['candidate']['quality']['snips'][0] - q_ex:+.3f}, DR {g1['candidate']['quality']['dr'][0] - q_ex:+.3f}; "
@@ -187,10 +187,10 @@ def gate_section(eps, T, n_redraws: int, boot: int):
     # (b) the full counterfactual log: every arm of every task (150 episodes)
     g2 = gate(eps, pol, "behavior", BUDGET, eps_q=EPS_Q, tol=TOL, boot=boot, seed=0)
     out["full_log"] = g2
-    lines += [format_table(g2, "(b) Full counterfactual log: all three arms per task (150 episodes)", cost_digits=4), "",
+    lines += [format_table(g2, f"(b) Full counterfactual log: all three arms per task ({len(eps)} episodes)", cost_digits=4), "",
               "With every arm logged at propensity 1/3, IPS, SNIPS and DR all reduce to the exact value "
               "(the importance weights over a task's three episodes sum to 3·Σπ = 3); the CI is then pure "
-              "task-sampling uncertainty from 50 tasks.", ""]
+              f"task-sampling uncertainty from {len(T)} tasks.", ""]
     # (c) estimator error over redraws of the realized log
     errs = {m: {e: [] for e in ("ips", "snips", "dr")} for m in ("quality", "cost")}
     cover = {m: {e: 0 for e in ("ips", "snips", "dr")} for m in ("quality", "cost")}
@@ -236,13 +236,13 @@ def drift_section(eps, T, folds, frozen, lam_f, gate_out, spend: str, boot: int)
               "unchanged by a repricing. The retrained policy is cgrpo-lookup on the repriced log, warm-started "
               "from the frozen one, same budget. Its gate runs against the frozen incumbent on the repriced realized "
               f"log (seed 0), with the quality bar recorded at the frozen policy's promotion ({q_prev:.3f}).", "",
-              "In-sample (all 50 tasks, exact lookups):", "",
+              f"In-sample (all {len(T)} tasks, exact lookups):", "",
               "| event | (i) frozen, old prices: q / cost / J | (ii) frozen, new prices: q / cost / J | "
               "(iii) retrained, new prices: q / cost / J | priced-BWT J(ii)−J(i) | recovery J(iii)−J(ii) | "
               "gate on retrained (exact q / cost of candidate) |",
               "|---|---|---|---|---|---|---|"]
-    cv_lines = ["Held-out (5-fold CV; frozen and retrained both trained on the 40 training tasks of each fold, "
-                "evaluated on its 10 held-out tasks; J at each fold's frozen λ̄; means over folds):", "",
+    cv_lines = [f"Held-out (5-fold CV; frozen and retrained both trained on the ~{int(round(0.8*len(T)))} training tasks of each fold, "
+                f"evaluated on its ~{int(round(0.2*len(T)))} held-out tasks; J at each fold's frozen λ̄; means over folds):", "",
                 "| event | (i) frozen old: q / cost / J | (ii) frozen new: q / cost / J | (iii) retrained new: q / cost / J "
                 "| priced-BWT | recovery | (iii) within budget |", "|---|---|---|---|---|---|---|"]
     qf, cf = T.value(T.probs(frozen))
@@ -302,9 +302,10 @@ def main(argv=None):
     assert all(not (set(tr) & set(te)) and len(set(tr) | set(te)) == len(T) for tr, te in folds)
     res = {"n_tasks": len(T), "n_episodes": len(eps), "folds": [{"train": tr, "test": te} for tr, te in folds],
            "budget": BUDGET, "tol": TOL, "eps_q": EPS_Q}
-    lines = [f"## Part A: linear controller on the CRMArena-Pro b2b log ({len(T)} tasks × 3 tiers)", "",
+    org = "b2c" if "b2c" in str(a.log) else "b2b"
+    lines = [f"## Part A: linear controller on the CRMArena-Pro {org} log ({len(T)} tasks × 3 tiers)", "",
              "### 1–2. Cross-validated first-step tier policies", "",
-             "5-fold CV over task ids (category-stratified, seed 0): train on 40 tasks, evaluate on the held-out 10. "
+             f"5-fold CV over task ids (category-stratified, seed 0): train on ~{int(round(0.8*len(T)))} tasks, evaluate on the held-out ~{int(round(0.2*len(T)))}. "
              "All three arms are logged for every task, so held-out quality and cost of any policy are exact lookups. "
              "Means over the 5 folds; [fold SD] is the across-fold standard deviation of J.", ""]
     cv, cv_lines, fold0_pol, fold0_lam = cv_tables(eps, T, folds)

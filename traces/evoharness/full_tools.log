@@ -1,0 +1,2 @@
+[evo] axis=tools stages={1: 115, 2: 58, 3: 60, 4: 53, 5: 10, 6: 4} tiers=['cheap', 'mid', 'frontier'] cap=$150 ledger=$11.9442
+[evo] stage 1: 115 of 249 tasks -> traces/evoharness/evoharness_tools_s1.jsonl

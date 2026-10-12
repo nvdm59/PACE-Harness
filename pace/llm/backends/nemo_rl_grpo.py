@@ -132,14 +132,54 @@ def load_config(path: str | Path = CONFIG) -> dict:
     return yaml.safe_load(Path(path).read_text())
 
 
+def _trained_groups(groups: list[list[dict]], k: int, target_mean: float | None, tol: float = 2e-4):
+    """Which k groups NeMo-RL trained on in one dynamic-sampling step.
+
+    NeMo-RL keeps, in generation order, the first k groups whose reward std is non-zero, and it
+    computes that std in fp32 as sqrt(E[x^2] - E[x]^2) on the GPU. For a group whose rewards are
+    exactly equal, the rounding of that difference is often not 0, so such groups can pass the filter
+    (zero true advantage). Non-constant groups always pass. The constant groups that passed cannot be
+    reproduced exactly off-GPU, so they are identified from NeMo's logged `train/filtered_reward` (the
+    mean reward of the trained batch): search the in-order choices of which constant groups passed for
+    one whose first k passed groups have that mean. Returns (indices, n_matches); with no target, or no
+    match, the first k non-constant groups (topped up in order by constant ones)."""
+    const = [max(r["reward"] for r in g) - min(r["reward"] for r in g) <= 1e-9 for g in groups]
+    matches: list[list[int]] = []
+
+    def dfs(i: int, chosen: list[int]):
+        if len(matches) > 50:
+            return
+        if len(chosen) == k:
+            mean = sum(r["reward"] for j in chosen for r in groups[j]) / sum(len(groups[j]) for j in chosen)
+            if target_mean is None or abs(mean - target_mean) < tol:
+                matches.append(list(chosen))
+            return
+        if i == len(groups):
+            return
+        if not const[i]:
+            dfs(i + 1, chosen + [i])
+        else:
+            dfs(i + 1, chosen + [i])      # this constant group passed (fp32 rounding)
+            dfs(i + 1, chosen)            # it was filtered
+
+    if target_mean is not None:
+        dfs(0, [])
+    if matches:
+        return matches[0], len(matches)
+    order = [i for i, c in enumerate(const) if not c] + [i for i, c in enumerate(const) if c]
+    return sorted(order[:k]), 0
+
+
 def records_to_lines(records: list[dict], metrics: dict[int, dict] | None = None, group: int | None = None,
                      prompts_per_step: int | None = None) -> list[dict]:
     """Env records -> one line per GRPO step in the TRL train-log schema.
 
     Without dynamic sampling every env call is one step. With it, NeMo-RL logs
-    `train/dynamic_sampling_num_gen_batches` per step: that many consecutive calls belong to the step;
-    the pre-filter identical-reward rate is taken over all of them, and the step's stats over the groups
-    it trained on (the first `prompts_per_step` groups with non-constant rewards)."""
+    `train/dynamic_sampling_num_gen_batches` per step: that many consecutive calls belong to the step.
+    `identical_reward_group_rate_pre` is over all groups generated in the step; the step's stats and
+    `identical_reward_group_rate_post` are over the groups it trained on (see `_trained_groups`; this
+    post rate is the EXACT-equality rate, while NeMo's own `baseline_reward/pct_mixed` counts the
+    fp32-noise groups as mixed)."""
     from pace.llm.backends.common import step_stats
     by_call: dict[int, list] = {}
     for r in records:
@@ -161,18 +201,21 @@ def records_to_lines(records: list[dict], metrics: dict[int, dict] | None = None
         if not recs:
             continue
         line = {"step": step}
+        m = metrics.get(step) or {}
         if gens and group:
             groups = [recs[i:i + group] for i in range(0, len(recs), group)]
             const = [max(x["reward"] for x in gr) - min(x["reward"] for x in gr) <= 1e-9 for gr in groups]
-            kept = [gr for gr, c in zip(groups, const) if not c][: prompts_per_step or len(groups)]
-            line.update(step_stats(r for gr in kept for r in gr))
+            idx, n_match = _trained_groups(groups, prompts_per_step or len(groups), m.get("train/filtered_reward"))
+            line.update(step_stats(r for j in idx for r in groups[j]))
             line["identical_reward_group_rate_pre"] = round(sum(const) / len(const), 4)
             line["gen_batches"] = len(cs)
+            line["trained_groups_matches"] = n_match
+            if m.get("train/baseline_reward/pct_mixed") is not None:
+                line["nemo_pct_mixed"] = m["train/baseline_reward/pct_mixed"]
         else:
             line.update(step_stats(recs))
             line["identical_reward_group_rate_pre"] = line.get("identical_reward_group_rate")
         line["identical_reward_group_rate_post"] = line.get("identical_reward_group_rate")
-        m = metrics.get(step) or {}
         if m:
             line["step_s"] = m.get("timing/train/total_step_time")
             line["entropy"] = m.get("train/approx_entropy")
@@ -181,68 +224,21 @@ def records_to_lines(records: list[dict], metrics: dict[int, dict] | None = None
     return lines
 
 
-# ------------------------------------------------------------------ in-container driver
-def run_training(config_path: str, metrics_path: str, overrides: list[str] | None = None) -> None:
-    import pprint
+def nemo_rl_adapter_dir(step_dir: str | Path) -> Path:
+    """NeMo-RL checkpoint step dir (`.../ckpt/step_N`) -> the directory PEFT loads directly.
 
-    from nemo_rl.algorithms.grpo import MasterConfig, grpo_train, setup
-    from nemo_rl.algorithms.utils import get_tokenizer, set_seed
-    from nemo_rl.distributed.virtual_cluster import init_ray
-    from nemo_rl.models.generation import configure_generation_config
-    from nemo_rl.utils.config import load_config as nrl_load, parse_hydra_overrides, register_omegaconf_resolvers
-    from omegaconf import OmegaConf
-    from torch.utils.data import Dataset
-
-    from pace.llm.backends.common import task_rows
-
-    register_omegaconf_resolvers()
-    config = nrl_load(config_path)
-    if overrides:
-        config = parse_hydra_overrides(config, overrides)
-    config = OmegaConf.to_container(config, resolve=True)
-    env_cfg = config.pop("env")
-    for k in ("pins", "modal", "recipes"):
-        config.pop(k, None)
-    config["env"] = env_cfg
-    config = MasterConfig(**config)
-    pprint.pprint(config)
-    init_ray()
-    set_seed(config.grpo["seed"])
-    tokenizer = get_tokenizer(config.policy["tokenizer"])
-    config.policy["generation"] = configure_generation_config(config.policy["generation"], tokenizer)
-
-    class ListDataset(Dataset):
-        def __init__(self, items):
-            self.items = items
-
-        def __len__(self):
-            return len(self.items)
-
-        def __getitem__(self, i):
-            return self.items[i]
-
-    lam = float(env_cfg[TASK_NAME].get("lam", 0.4))
-    dataset = ListDataset(build_datums(tokenizer, task_rows(lam=lam)))
-    env = make_env_actor().options(num_gpus=0).remote(cfg=dict(env_cfg[TASK_NAME]))
-    task_to_env = {TASK_NAME: env}
-    (policy, policy_generation, _gym, _cluster, dataloader, val_dataloader, loss_fn, logger, checkpointer,
-     grpo_state, master_config, *_rest) = setup(config, tokenizer, dataset, None)
-
-    orig = logger.log_metrics
-
-    def log_metrics(metrics, step, prefix="", *a, **kw):
-        try:
-            flat = {f"{prefix}/{k}" if prefix else k: v for k, v in metrics.items()
-                    if isinstance(v, (int, float, bool))}
-            with open(metrics_path, "a") as f:
-                f.write(json.dumps({"step": int(step), **flat}) + "\n")
-        except Exception as e:  # noqa: BLE001
-            print(f"[pace] metrics mirror failed: {e!r}", flush=True)
-        return orig(metrics, step, prefix, *a, **kw)
-
-    logger.log_metrics = log_metrics
-    grpo_train(policy, policy_generation, dataloader, val_dataloader, tokenizer, loss_fn, task_to_env,
-               task_to_env, logger, checkpointer, grpo_state, master_config)
+    No conversion is needed for DTensor-v2 LoRA checkpoints (v0.7.0 image): the policy weights are
+    saved under `policy/weights/model/` as a standard PEFT adapter (`adapter_config.json` with r 16,
+    alpha 32 and fully-qualified target modules, `adapter_model.safetensors` with
+    `base_model.model.model.layers.*.lora_{A,B}.weight` keys in fp32), plus NeMo's own
+    `automodel_peft_config.json`. Automodel's LoRA scale is alpha/r, the same as PEFT's, so
+    `PeftModel.from_pretrained(base, nemo_rl_adapter_dir(step_dir))` reproduces the trained policy.
+    A full-weight (non-LoRA) checkpoint would instead be a sharded DCP directory and need
+    NeMo-RL's own `examples/converters/convert_dcp_to_hf.py`."""
+    d = Path(step_dir) / "policy" / "weights" / "model"
+    if not (d / "adapter_config.json").exists():
+        raise FileNotFoundError(f"no PEFT adapter under {d} (full-weight DCP checkpoints need convert_dcp_to_hf.py)")
+    return d
 
 
 def read_metrics(path: str | Path) -> dict[int, dict]:

@@ -1,14 +1,16 @@
 # Priced runtime control over frozen agent harnesses
 
-This repository accompanies the technical report **"Priced Runtime Control over Frozen Agent Harnesses: a Learned Orchestrator, an Off-Policy Promotion Gate, and Drift Metrics"** (draft v0.1, `paper/main.pdf`). It contains all code, logged data and result files behind every number in the report, and nothing else.
+This repository accompanies the technical report **"Priced Runtime Control over Frozen Agent Harnesses: a Learned Orchestrator, an Off-Policy Promotion Gate, and Drift Metrics"** (draft v0.2, `paper/main.pdf`). It contains all code, logged data and result files behind every number in the report, and nothing else.
 
 | what | where |
 |---|---|
 | the report (LaTeX source, figures script, PDF) | `paper/` |
 | platform: harness interface, traces with propensities, fail-closed spend ledger, controller, trainers, gate, drift | `pace/` |
 | the simulator pipeline (one command, ~1 min, no API) | `bash scripts/run_v0.sh` |
-| CRMArena-Pro host harness and the 150-task counterfactual log (every task on every tier) | `pace/harness/crmarena.py`, `traces/crmarena_b2b_counterfactual.jsonl` |
-| offline controller, gate and repricing analysis on that log (no API) | `python scripts/crmarena_offline.py` → `results/crmarena_150/` |
+| CRMArena-Pro host harness and the counterfactual logs: 300 B2B tasks and 150 B2C tasks, every task on every tier | `pace/harness/crmarena.py`, `traces/crmarena_b2b_counterfactual.jsonl`, `traces/crmarena_b2c_counterfactual.jsonl` |
+| offline controller, gate and repricing analysis on those logs (no API) | `python scripts/crmarena_offline.py --log … --spend … --out …` → `results/crmarena_300/`, `results/crmarena_b2c/` (earlier cuts: `results/crmarena/`, `crmarena_127/`, `crmarena_150/`) |
+| τ-bench retail (60 tasks) and airline (49) on the same protocol; first-step policies, oracle, gate | `pace/harness/taubench.py`, `pace/experiments/taubench/`, `traces/taubench_*_counterfactual.jsonl`, `results/taubench/` |
+| EvoHarnessBench hosted service, tools axis, 50 tasks at stages 1, 2 and 4, three tiers, prompt caching | `pace/harness/evoharness.py`, `pace/experiments/evoharness/`, `traces/evoharness/`, `results/evoharness/` |
 | LLM controller (GRPO/LoRA on Modal) | `pace/llm/`, `results/llm/` |
 | process-verified multi-agent orchestration, orchestration reward model | `pace/experiments/mas/`, `results/mas/` |
 | priced Socratic self-refinement | `pace/experiments/ssr/`, `results/ssr/`, `traces/ssr/` |
@@ -131,6 +133,8 @@ scripts/run_v0.sh          end-to-end sim pipeline (about 2 min)
 scripts/crmarena_offline.py  linear controller on the CRMArena log: CV, DR gate, repricing drift (CPU, about 15 s)
 pace/experiments/mas/     process-verified planner / worker / verifier orchestration on CRMArena-Pro, priced per request; orchestration reward model; real-run results in results/mas/ (see its README)
 pace/experiments/mas_continual/  continually trained MAS orchestrator: the decision point learns online across days under scripted harness stages (tools / skills / agents / prices), gated promotion, orchestrator-level BWT / FWT vs frozen and SkillOrchestra-style routers; simulator calibrated to the real MAS log; results in results/mas_continual/ (see its README)
+pace/experiments/evoharness/  EvoHarnessBench hosted service (Salesforce AI Research): per-turn tier x {tool, skill, delegate, answer} harness, capped counterfactual collector, per-stage analysis; tools-axis results in results/evoharness/ (see its README)
+pace/experiments/taubench/  τ-bench retail / airline (Sierra) as a second non-CRM suite: per-step tier x {CONTINUE, ANSWER} harness over τ-bench's own envs, user simulator and reward, capped counterfactual collector, analysis via crmarena_offline.py; results in results/taubench/RESULTS.md (see its README)
 scripts/setup_crmarena.sh  fetch CRMArena into third_party/ (gitignored) + a Python 3.12 venv
 scripts/estimate_cost.py   cost arithmetic from pace/prices.py (assumed, or measured from the ledger)
 tests/                     sim pipeline, estimators and trainers, CRMArena harness (mocked), offline pieces, LLM pieces

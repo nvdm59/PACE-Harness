@@ -26,3 +26,7 @@ third_party/*
 .venv-crmarena/
 # paid-run artifacts (spend.jsonl is covered by traces/*.jsonl, totals by *.json)
 traces/STOPPED_AT_CAP
+# the further real-API collections reported in the paper (b2c, τ-bench, EvoHarnessBench)
+!traces/crmarena_b2c_counterfactual.jsonl
+!traces/taubench_retail_counterfactual.jsonl
+!traces/taubench_airline_counterfactual.jsonl

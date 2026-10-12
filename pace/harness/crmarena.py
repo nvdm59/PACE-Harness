@@ -58,6 +58,7 @@ the call and records real token usage after it.
 """
 from __future__ import annotations
 
+import os
 import random
 import re
 import time
@@ -164,12 +165,18 @@ class PricedLLM:
     """
 
     def __init__(self, ledger: SpendLedger, completion_fn: Callable | None = None, timeout: float = 120.0,
-                 num_retries: int = 2, effort: str | None = "low", provider_prefix: str = "anthropic/"):
+                 num_retries: int = 2, effort: str | None = "low", provider_prefix: str = "anthropic/",
+                 prompt_cache: bool | None = None):
         self.ledger = ledger
         self._completion = completion_fn
         self.timeout, self.num_retries = timeout, num_retries
         self.effort = effort
         self.prefix = provider_prefix
+        # Anthropic prompt caching: opt-in. None -> $PACE_PROMPT_CACHE ("1" on); the CRM collectors
+        # leave it off so their accounting stays comparable with earlier tasks.
+        if prompt_cache is None:
+            prompt_cache = os.environ.get("PACE_PROMPT_CACHE", "0") == "1"
+        self.prompt_cache = bool(prompt_cache)
 
     @property
     def completion(self) -> Callable:
@@ -183,7 +190,8 @@ class PricedLLM:
                  purpose: str) -> LLMResult:
         model = bare_model(model_for(tier_or_model))
         self.ledger.guard(model, estimate_input_tokens(messages), max_tokens, purpose)
-        kwargs: dict[str, Any] = dict(model=self.prefix + model, messages=list(messages), max_tokens=int(max_tokens),
+        sent = with_cache_breakpoints(messages) if self.prompt_cache else list(messages)
+        kwargs: dict[str, Any] = dict(model=self.prefix + model, messages=sent, max_tokens=int(max_tokens),
                                       timeout=self.timeout, num_retries=self.num_retries)
         # effort applies to the thinking models (Sonnet 5.5 / Opus 5.5); Haiku 4.5 rejects it.
         if self.effort and model != MODELS["cheap"]:
@@ -207,13 +215,59 @@ class PricedLLM:
             usd = self.ledger.record(model, 0, 0, task_id, purpose, usd=wc, extra={"charged": "worst_case:no_usage"})
             in_tok = out_tok = 0
         else:
-            usd = self.ledger.record(model, int(in_tok), int(out_tok), task_id, purpose)
+            cw, cr = cache_tokens(usage)
+            if cw or cr:
+                # litellm (1.67, Anthropic) reports prompt_tokens = input_tokens + cache_read; Anthropic's
+                # input_tokens already excludes both cache classes, which call_cost prices separately.
+                in_tok = max(int(in_tok) - cr, 0)
+                usd = self.ledger.record(model, in_tok, int(out_tok), task_id, purpose,
+                                         cache_write_tokens=cw, cache_read_tokens=cr)
+            else:
+                usd = self.ledger.record(model, int(in_tok), int(out_tok), task_id, purpose)
         choices = _get(res, "choices") or []
         msg = _get(choices[0], "message") if choices else None
         text = _get(msg, "content") or ""
         if isinstance(text, list):
             text = "".join(_get(b, "text", "") or "" for b in text)
         return LLMResult(str(text), usd, lat, int(in_tok), int(out_tok), model)
+
+
+EPHEMERAL = {"type": "ephemeral"}
+
+
+def _as_blocks(content: Any) -> list[dict]:
+    if isinstance(content, list):
+        return [dict(b) if isinstance(b, dict) else {"type": "text", "text": str(b)} for b in content]
+    return [{"type": "text", "text": str(content or "")}]
+
+
+def with_cache_breakpoints(messages: list[dict]) -> list[dict]:
+    """Copy of `messages` with Anthropic `cache_control` breakpoints (litellm content-block syntax)
+    on the system prompt (the fixed prefix: policy, protocol, tool schemas) and on the last
+    message, so each turn reads the previous turns' prefix from the cache. Empty texts are
+    left unmarked (Anthropic rejects cache_control on empty blocks)."""
+    out = [dict(m) for m in messages]
+    idx = [i for i, m in enumerate(out) if m.get("role") == "system"][:1]
+    if out and out[-1].get("role") != "system":
+        idx.append(len(out) - 1)
+    for i in idx:
+        blocks = _as_blocks(out[i].get("content"))
+        if blocks and blocks[-1].get("text"):
+            blocks[-1] = dict(blocks[-1], cache_control=dict(EPHEMERAL))
+            out[i]["content"] = blocks
+    return out
+
+
+def cache_tokens(usage: Any) -> tuple[int, int]:
+    """(cache_write, cache_read) input tokens from a litellm usage object (0 when absent)."""
+    cw = _get(usage, "cache_creation_input_tokens") or 0
+    cr = _get(usage, "cache_read_input_tokens")
+    if cr is None:
+        cr = _get(_get(usage, "prompt_tokens_details"), "cached_tokens") or 0
+    try:
+        return int(cw), int(cr)
+    except (TypeError, ValueError):
+        return 0, 0
 
 
 class _ExtractorLiteLLM:

@@ -153,6 +153,17 @@ def test_dynamic_sampling_helpers_and_recipes():
     assert "loss_fn.ratio_clip_max=0.28" in rc["overrides"]
 
 
+def test_nemo_trained_group_matching():
+    n = _import_blocked("pace.llm.backends.nemo_rl_grpo")
+    mk = lambda rs: [{"reward": r} for r in rs]
+    groups = [mk([0.5] * 4), mk([0.1, 0.3, 0.1, 0.3]), mk([0.9] * 4), mk([0.0, 1.0, 0.0, 1.0])]
+    # NeMo-RL trained on [group 0 (constant, leaked through the fp32 std test), 1, 3]
+    target = (0.5 * 4 + 0.8 + 2.0) / 12
+    idx, n_match = n._trained_groups(groups, 3, target)
+    assert idx == [0, 1, 3] and n_match == 1
+    assert n._trained_groups(groups, 2, None)[0] == [1, 3]
+
+
 class _FakeTok:
     def apply_chat_template(self, msgs, tokenize=False, add_generation_prompt=True, enable_thinking=True):
         assert not enable_thinking

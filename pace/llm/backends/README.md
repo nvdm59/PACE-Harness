@@ -134,6 +134,18 @@ What it took to get the runs going (the first attempts failed in ways the config
   v0.7.0.
 - **GPU type.** Modal served one of the A100-40GB requests on an 80 GB card.
 
+**Evaluating a NeMo-RL checkpoint.** A DTensor-v2 LoRA checkpoint needs no conversion.
+`ckpt/step_N/policy/weights/model/` is a standard PEFT adapter: `adapter_config.json` (r 16, α 32) and
+`adapter_model.safetensors` with `base_model.model.…lora_{A,B}.weight` keys. NeMo's
+`automodel_peft_config.json` sits beside them. `nemo_rl_grpo.nemo_rl_adapter_dir(step_dir)` returns
+that path, and the shared evaluator loads it with `PeftModel.from_pretrained`. A full-weight run would
+save a sharded DCP checkpoint instead, which needs NeMo-RL's `examples/converters/convert_dcp_to_hf.py`.
+
+**NeMo-RL dynamic sampling leaks constant groups.** Its filter keeps a group when the reward std is
+`!= 0`, with the std computed in fp32 as sqrt(E[x²] − E[x]²). Groups of exactly equal rewards often
+pass on rounding noise. In the 120-step run, 58–62% of the trained groups had zero true advantage
+(see COMPARISON.md).
+
 ### Phase-1b reproduction
 
 See `results/llm/backends/COMPARISON.md`: TRL as logged, TRL + dynamic sampling, verl's DAPO recipe,

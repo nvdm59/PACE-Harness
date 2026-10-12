@@ -325,11 +325,11 @@ def rewrite(harness, task: CRMTask, answer: str, claims: list[Claim], tier: str)
     return (refined or "None"), r.usd
 
 
-def score_answer(harness, task: CRMTask, answer: str, episode: list[str]) -> tuple[float, float, dict]:
+def score_answer(harness, task: CRMTask, answer: str, trajectory: list[str]) -> tuple[float, float, dict]:
     """CRMArena's Evaluator on an arbitrary answer, via a terminal state. Returns (quality, eval usd, eval)."""
     s = harness.reset(task)
     s.extra["answer"] = answer
-    s.extra["actions"] = list(episode) + [answer]
+    s.extra["actions"] = list(trajectory) + [answer]
     s.done = True
     ev = harness.evaluate(s)
     return float(ev["quality"]), float(ev.get("eval_cost_usd", 0.0)), ev

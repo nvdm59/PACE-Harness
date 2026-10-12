@@ -17,7 +17,7 @@ per_decision   each logged decision point is one contextual-bandit sample (conte
                the decision, and Qhat(bucket, a) the mean of r over logged decisions in the
                same (pace.features.bucket_key, action) cell, falling back to the bucket mean
                and the global mean. This is the value of changing ONE decision while the rest
-               of the episode stays as logged (a one-step policy-improvement quantity), not
+               of the trajectory stays as logged (a one-step policy-improvement quantity), not
                the value of the full policy: it is biased by the downstream decisions the
                candidate would also change, in exchange for ratios bounded by |legal| / eps.
 episode_level  self-normalised IPS with the per-step ratio clipped at `clip` (default 5) before

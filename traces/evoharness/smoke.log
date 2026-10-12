@@ -1,0 +1,39 @@
+[evo] axis=tools stages={1: 10} tiers=['cheap', 'mid', 'frontier'] cap=$50 ledger=$0.0543
+[evo] stage 1: 10 of 249 tasks -> traces/evoharness/evoharness_tools_s1.jsonl
+[evo] itsm/v1/test/task_20251212_172511_458_e6427839_47076c15 arm=mid      score=0.875 pass=False cost=$0.2620 turns=6 types=['tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] itsm/v1/test/task_20251212_172511_458_e6427839_47076c15 arm=frontier score=0.875 pass=False cost=$0.5140 turns=6 types=['tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] calendar/v1/test/task_20251203_142634_160_bca89e7d_193f597f arm=cheap    score=0.000 pass=False cost=$0.0148 turns=1 types=['answer']
+[evo] calendar/v1/test/task_20251203_142634_160_bca89e7d_193f597f arm=mid      score=1.000 pass=True cost=$0.3426 turns=9 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] calendar/v1/test/task_20251203_142634_160_bca89e7d_193f597f arm=frontier score=1.000 pass=True cost=$0.6667 turns=9 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'invalid', 'answer']
+[evo] drive/v1/test/task_20260108_101953_397_be6c9105_0ebb2503 arm=cheap    score=0.800 pass=False cost=$0.2211 turns=18 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] drive/v1/test/task_20260108_101953_397_be6c9105_0ebb2503 arm=mid      score=0.800 pass=False cost=$0.2447 turns=10 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'invalid', 'answer']
+[evo] drive/v1/test/task_20260108_101953_397_be6c9105_0ebb2503 arm=frontier score=0.800 pass=False cost=$0.4758 turns=10 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] STOP: $0.9139/task (all tiers) x 60 tasks = $54.83 > cap $50
+exit 5
+[evo] axis=tools stages={1: 10} tiers=['cheap', 'mid', 'frontier'] cap=$50 ledger=$2.7960
+[evo] stage 1: 10 of 249 tasks -> traces/evoharness/evoharness_tools_s1.jsonl
+[evo] hybrid/v1/test/task_20251221_222713_409_64a4ebb9_9915366d arm=cheap    score=0.600 pass=False cost=$0.1032 turns=8 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] hybrid/v1/test/task_20251221_222713_409_64a4ebb9_9915366d arm=mid      score=0.600 pass=False cost=$0.2448 turns=8 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] hybrid/v1/test/task_20251221_222713_409_64a4ebb9_9915366d arm=frontier score=1.000 pass=True cost=$0.5084 turns=8 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'invalid', 'answer']
+[evo] itsm/v1/train/task_20260113_153008_006_46ca2862_c5083638 arm=cheap    score=0.250 pass=False cost=$0.1731 turns=9 types=['invalid', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] itsm/v1/train/task_20260113_153008_006_46ca2862_c5083638 arm=mid      score=0.500 pass=False cost=$0.3694 turns=8 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] itsm/v1/train/task_20260113_153008_006_46ca2862_c5083638 arm=frontier score=1.000 pass=True cost=$1.2657 turns=14 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] teams/v1/test/task_20251203_115913_239_b5bd4eb9_2e02dcf0 arm=cheap    score=0.857 pass=False cost=$0.2176 turns=11 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'invalid', 'answer']
+[evo] teams/v1/test/task_20251203_115913_239_b5bd4eb9_2e02dcf0 arm=mid      score=1.000 pass=True cost=$0.5966 turns=11 types=['tool', 'tool', 'tool', 'invalid', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] teams/v1/test/task_20251203_115913_239_b5bd4eb9_2e02dcf0 arm=frontier score=1.000 pass=True cost=$1.2080 turns=11 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] csm/v1/test/task_20251205_194841_224_391f1eff_136bedae arm=cheap    score=0.000 pass=False cost=$0.0159 turns=2 types=['invalid', 'answer']
+[evo] csm/v1/test/task_20251205_194841_224_391f1eff_136bedae arm=mid      score=0.000 pass=False cost=$0.0401 turns=2 types=['tool', 'answer']
+[evo] csm/v1/test/task_20251205_194841_224_391f1eff_136bedae arm=frontier score=0.000 pass=False cost=$0.0882 turns=2 types=['invalid', 'answer']
+[evo] itsm/v1/test/task_20260113_031046_703_99ba2325_54f35603 arm=cheap    score=1.000 pass=True cost=$0.2118 turns=11 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'invalid', 'answer']
+[evo] itsm/v1/test/task_20260113_031046_703_99ba2325_54f35603 arm=mid      score=1.000 pass=True cost=$0.4868 turns=9 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] itsm/v1/test/task_20260113_031046_703_99ba2325_54f35603 arm=frontier score=1.000 pass=True cost=$1.2914 turns=11 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] drive/v1/train/task_20260107_135115_794_be6c9105_f0911f6a arm=cheap    score=1.000 pass=True cost=$0.2714 turns=20 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] drive/v1/train/task_20260107_135115_794_be6c9105_f0911f6a arm=mid      score=1.000 pass=True cost=$0.2007 turns=8 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] drive/v1/train/task_20260107_135115_794_be6c9105_f0911f6a arm=frontier score=1.000 pass=True cost=$0.3979 turns=8 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] calendar/v1/train/task_20260107_104648_226_df2c536d_860ba76c arm=cheap    score=1.000 pass=True cost=$0.1175 turns=9 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'invalid', 'answer']
+[evo] calendar/v1/train/task_20260107_104648_226_df2c536d_860ba76c arm=mid      score=1.000 pass=True cost=$0.1873 turns=6 types=['tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] calendar/v1/train/task_20260107_104648_226_df2c536d_860ba76c arm=frontier score=1.000 pass=True cost=$0.3776 turns=6 types=['tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] done: 21 new episodes -> traces/evoharness/evoharness_tools_s1.jsonl; $1.1962/task (all tiers) -> $0.00 projected for 0 tasks
+[spend] $11.1693 of cap $50 | 254 calls, 10 tasks, $1.1169/task | in 4,342,360 out 48,836 tok | claude-haiku-4-5 $1.40, claude-opus-5-5 $6.79, claude-sonnet-5-5 $2.97
+[spend] $11.1693 of cap $50 | 254 calls, 10 tasks, $1.1169/task | in 4,342,360 out 48,836 tok | claude-haiku-4-5 $1.40, claude-opus-5-5 $6.79, claude-sonnet-5-5 $2.97
+exit2 0

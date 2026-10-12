@@ -1,0 +1,10 @@
+{
+ "stopped_at": "2026-10-11T17:46:55-0700",
+ "total_usd": 44.977728,
+ "cap_usd": 45.0,
+ "n_calls": 3080,
+ "n_tasks": 50,
+ "next_call_worst_case_usd": 0.03032,
+ "next_call_model": "claude-sonnet-5-5",
+ "next_call_purpose": "agent:mid"
+}

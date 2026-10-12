@@ -8,9 +8,8 @@ Inputs (all committed):
   results/llm/train_log_phase1{,b,c}.jsonl   GRPO training logs (lambda, batch cost, degeneracy)
   results/ssr/frontier.csv                   SSR policy frontier
   results/mas_continual/{days,gates,meta}.jsonl  and mild/   the continual-orchestrator run
-  README.md                                  the simulator gate tables (sim JSON outputs are
-                                             gitignored; the values below are copied from the
-                                             README's "Results (sim)" section)
+  results/sim_seeds/seed*/                   the simulator pipeline over 5 seeds
+                                             (scripts/run_sim_seeds.sh)
 """
 from __future__ import annotations
 
@@ -424,45 +423,60 @@ def fig_continual_mild():
 
 
 # --------------------------------------------------------------------------------------
-# 9. Simulator gate: estimator forest plot (values from README.md, "Results (sim)")
+# 9. Simulator gate over seeds: estimator forest plot from results/sim_seeds/seed*/
 # --------------------------------------------------------------------------------------
-SIM_GATE = {
-    # README.md > The simulator > Results (sim, from scripts/run_v0.sh). (pt, lo, hi)
-    "v1": {
-        "behavior (log mean)": ((0.754, 0.743, 0.765), (0.293, 0.286, 0.301)),
-        "candidate IPS": ((0.742, 0.638, 0.866), (0.267, 0.228, 0.309)),
-        "candidate SNIPS": ((0.761, 0.682, 0.832), (0.272, 0.246, 0.297)),
-        "candidate DR": ((0.851, 0.815, 0.887), (0.306, 0.302, 0.309)),
-        "ground truth (20k tasks)": ((0.880, None, None), (0.303, None, None)),
-    },
-    "v2": {
-        "incumbent frozen (DR)": ((0.860, 0.852, 0.868), (0.408, 0.404, 0.411)),
-        "candidate IPS": ((0.869, 0.826, 0.908), (0.312, 0.303, 0.322)),
-        "candidate SNIPS": ((0.872, 0.851, 0.891), (0.313, 0.309, 0.317)),
-        "candidate DR": ((0.873, 0.854, 0.889), (0.310, 0.309, 0.311)),
-        "ground truth (20k tasks)": ((0.871, None, None), (0.312, None, None)),
-    },
-}
+SIM_SEEDS = os.path.join(ROOT, "results", "sim_seeds")
+
+
+def _sim_seed_rows():
+    """Per gate, per row: (mean point, SE of point, mean CI lo, mean CI hi) for quality and cost."""
+    seeds = sorted(d for d in os.listdir(SIM_SEEDS) if d.startswith("seed"))
+    acc = {"v1": defaultdict(lambda: ([], [])), "v2": defaultdict(lambda: ([], []))}
+    for d in seeds:
+        L = lambda f: json.load(open(os.path.join(SIM_SEEDS, d, f)))
+        g1, g2, ug = L("gate_v1.json"), L("gate_v2.json"), L("drift_ungated.json")
+        for ver, g, inc, truth in (("v1", g1, "behavior (log mean)", ug["rows"]["(i) frozen on v1"]),
+                                   ("v2", g2, "incumbent frozen (DR)", ug["rows"]["(iii) adapted on v2"])):
+            acc[ver][inc][0].append(g["incumbent"]["quality"])
+            acc[ver][inc][1].append(g["incumbent"]["cost"])
+            for est in ("ips", "snips", "dr"):
+                nm = f"candidate {est.upper() if est != 'snips' else 'SNIPS'}"
+                acc[ver][nm][0].append(g["candidate"]["quality"][est])
+                acc[ver][nm][1].append(g["candidate"]["cost"][est])
+            acc[ver]["ground truth (20k tasks)"][0].append([truth["quality"]] * 3)
+            acc[ver]["ground truth (20k tasks)"][1].append([truth["cost"]] * 3)
+    out = {}
+    for ver, rows in acc.items():
+        out[ver] = {}
+        for nm, (q, c) in rows.items():
+            q, c = np.array(q), np.array(c)
+            se = lambda a: a[:, 0].std(ddof=1) / np.sqrt(len(a)) if len(a) > 1 else 0.0
+            out[ver][nm] = ((q[:, 0].mean(), se(q), q[:, 1].mean(), q[:, 2].mean(), "truth" in nm),
+                            (c[:, 0].mean(), se(c)))
+    return out, len(seeds)
 
 
 def fig_sim_gate():
-    fig, axes = plt.subplots(1, 2, figsize=(7.4, 2.6))
-    for ax, (ver, rows) in zip(axes, SIM_GATE.items()):
-        names = list(rows)
+    rows_by_ver, n = _sim_seed_rows()
+    fig, axes = plt.subplots(1, 2, figsize=(7.4, 2.9))
+    fig.subplots_adjust(wspace=0.9)
+    for ax, ver in zip(axes, ("v1", "v2")):
+        rows = rows_by_ver[ver]
+        names = [k for k in rows if "truth" not in k] + ["ground truth (20k tasks)"]
         for i, nm in enumerate(names):
-            (q, ql, qh), (c, cl, ch) = rows[nm]
-            col = C[7] if "truth" in nm else (C[0] if "DR" in nm else C[6])
-            if ql is not None:
-                ax.plot([ql, qh], [i, i], color=col, lw=1.4)
-            ax.plot(q, i, "o" if ql is not None else "*", color=col, ms=5 if ql is not None else 8)
-            ax.text(0.585, i + 0.26, f"cost {c:.3f}" + (f" [{cl:.3f}, {ch:.3f}]" if cl is not None else ""),
-                    fontsize=6.5, color="0.3")
+            (q, qse, ql, qh, is_truth), (c, cse) = rows[nm]
+            col = C[7] if is_truth else (C[0] if "DR" in nm else C[6])
+            if not is_truth:
+                ax.plot([ql, qh], [i, i], color=col, lw=1.0, alpha=0.6)
+            ax.errorbar(q, i, xerr=qse, fmt="*" if is_truth else "o", color=col, ms=8 if is_truth else 5,
+                        capsize=2.5, elinewidth=1.6)
+            ax.text(0.585, i - 0.22, f"cost {c:.3f} ± {cse:.3f}", fontsize=6.5, color="0.3")
         ax.set_yticks(range(len(names)))
         ax.set_yticklabels(names)
-        ax.invert_yaxis()
+        ax.set_ylim(len(names) - 0.5, -0.7)
         ax.set_xlim(0.58, 0.95)
-        ax.set_xlabel("quality [90% CI]")
-        ax.set_title(f"gate {ver}: " + ("candidate vs uniform behavior (3,000 eps.)" if ver == "v1" else "adapted vs frozen (6,000 eps., drift)"))
+        ax.set_xlabel(f"quality (mean ± SE, {n} seeds)")
+        ax.set_title(f"gate {ver}: " + ("candidate vs uniform\nbehavior (3,000 eps.)" if ver == "v1" else "adapted vs frozen\n(6,000 eps., drift)"))
     save(fig, "fig_sim_gate")
 
 

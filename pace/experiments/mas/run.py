@@ -284,7 +284,7 @@ def controller_hook(by_mode: dict[str, list[Episode]], qm: QualityModel | None, 
              "",
              "Per-decision estimates treat each logged decision point as a contextual-bandit sample with its own "
              "single-step importance ratio (max {:.1f} here): the value of changing one decision while the rest of the "
-             "episode stays as logged, scored on quality_hat, on the outcome, and on the cost-to-go from the decision "
+             "trajectory stays as logged, scored on quality_hat, on the outcome, and on the cost-to-go from the decision "
              "(the policy-independent prefix, planner + first worker, is ${:.4f}/task on top). The episode-level row is "
              "self-normalised IPS of the full policy with each per-step ratio clipped at {:g}. ESS = (Σw)²/Σw²; an "
              "estimate with ESS below 10% of n is flagged.".format(pd_out["max_ratio"], prefix, STEP_CLIP), "",

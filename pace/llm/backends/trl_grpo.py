@@ -265,10 +265,10 @@ if modal is not None:
         print(json.dumps(res["meta"], indent=1))
 
     @app.local_entrypoint()
-    def eval_main(adapters: str, out_name: str = "eval_phase1b_repro"):
+    def eval_main(adapters: str, out_name: str = "eval_phase1b_repro", include_base: bool = True):
         out = Path(__file__).resolve().parents[3] / "results" / "llm" / "backends"
         ad = dict(kv.split("=", 1) for kv in adapters.split(",") if kv)
-        res = evaluate.remote(ad)
+        res = evaluate.remote(ad, include_base=include_base)
         (out / f"{out_name}.json").write_text(json.dumps(res, indent=1) + "\n")
         print(json.dumps({k: {m: (v[m]["quality"], v[m]["cost"], v[m]["invalid_rate"]) for m in ("greedy", "sampled")}
                           for k, v in res["results"].items()}, indent=1))

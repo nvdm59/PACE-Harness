@@ -43,7 +43,8 @@ def main() -> str:
     arms["(1) TRL phase 1b, as logged"] = first_k(trl1b, pre_key="degenerate_group_rate",
                                                    post_key="degenerate_group_rate")
     for name, fn in [("(2) TRL + dynamic sampling + clip 0.2/0.28", "trl_dapo_1b"),
-                     ("(3) verl, DAPO recipe", "verl_dapo_1b"), ("(4) NeMo-RL, DAPO recipe", "nemo_rl_dapo_1b")]:
+                     ("(3) verl, DAPO recipe", "verl_dapo_1b"), ("(4) NeMo-RL, DAPO recipe (120-step run)", "nemo_rl_dapo_1b_full"),
+                     ("control: TRL, fixed price, no dynamic sampling", "trl_fixedprice_1b")]:
         p = B / f"{fn}.jsonl"
         if p.exists():
             arms[name] = first_k(load_jsonl(p))
@@ -53,9 +54,13 @@ def main() -> str:
         out.append(f"| {name} | {a['steps']} | {f(a['reward'])} | {f(a['quality'])} | {f(a['cost'])} | "
                    f"{f(a['pre'], '.0%')} → {f(a['post'], '.0%')} | {f(a['entropy'])} | {f(a['step_s'], '.1f')} | "
                    f"{', '.join(map(str, a['curve']))} |")
-    ev = B / "eval_phase1b_repro.json"
-    if ev.exists():
-        e = json.loads(ev.read_text())
+    results: dict = {}
+    for fn in ("eval_phase1b_repro.json", "eval_nemo_rl_full.json", "eval_fixedprice_control.json"):
+        if (B / fn).exists():
+            for k, v in json.loads((B / fn).read_text())["results"].items():
+                results.setdefault(k, v)          # the base model is evaluated in two files; keep one
+    if results:
+        e = {"results": results}
         out += ["", "| policy (2,000 tasks, seed 777, λ = 0.44 in the prompt) | mode | quality | cost | J | within B | "
                 "invalid | easy: top actions | hard: top actions | acts by difficulty |", "|---|---|---|---|---|---|---|---|---|---|"]
         for name, r in e["results"].items():

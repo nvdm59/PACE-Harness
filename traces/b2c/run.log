@@ -1,0 +1,1024 @@
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] crmarena org=b2c mode=counterfactual tiers=['cheap', 'mid', 'frontier'] n_tasks=150 cap=$55 ledger=$0.0000 -> traces/crmarena_b2c_counterfactual.jsonl
+27
+Using b2c Salesforce credentials
+[collect] b2c-903 handle_time                      arm=cheap    q=1.000 cost=$0.1887 turns=8 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RK1NIAW"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-903 handle_time                      arm=mid      q=0.000 cost=$0.0520 turns=2 (agent_respond)
+[collect] b2c-903 handle_time                      arm=frontier q=1.000 cost=$0.1367 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RHzaIAG"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1259 transfer_count                   arm=cheap    q=0.000 cost=$0.0363 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RHptIAG", "005Ws000005RK1NIAW", "005Ws000005RHzaIAG", "005Ws000005RHd0IAG"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1259 transfer_count                   arm=mid      q=0.000 cost=$0.0382 turns=2 (agent_respond)
+[collect] b2c-1259 transfer_count                   arm=frontier q=0.000 cost=$0.0752 turns=2 (agent_respond)
+[collect] b2c-703 knowledge_qa                     arm=cheap    q=0.085 cost=$0.0163 turns=2 (agent_respond)
+[collect] b2c-703 knowledge_qa                     arm=mid      q=0.171 cost=$0.1289 turns=4 (agent_respond)
+[collect] b2c-703 knowledge_qa                     arm=frontier q=0.160 cost=$0.1672 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["CO", "NC"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1139 best_region_identification       arm=cheap    q=0.000 cost=$0.0167 turns=2 (agent_respond)
+[collect] b2c-1139 best_region_identification       arm=mid      q=1.000 cost=$0.0361 turns=2 (agent_respond)
+[collect] b2c-1139 best_region_identification       arm=frontier q=1.000 cost=$0.0738 turns=2 (agent_respond)
+[collect] b2c-1558 case_routing                     arm=cheap    q=1.000 cost=$0.1312 turns=12 (forced_answer)
+[collect] b2c-1558 case_routing                     arm=mid      q=1.000 cost=$0.0932 turns=5 (agent_respond)
+[collect] b2c-1558 case_routing                     arm=frontier q=1.000 cost=$0.1721 turns=5 (agent_respond)
+[collect] b2c-1975 named_entity_disambiguation      arm=cheap    q=1.000 cost=$0.0476 turns=8 (agent_respond)
+[collect] b2c-1975 named_entity_disambiguation      arm=mid      q=1.000 cost=$0.0609 turns=4 (agent_respond)
+[collect] b2c-1975 named_entity_disambiguation      arm=frontier q=1.000 cost=$0.0618 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pywbIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1393 policy_violation_identification  arm=cheap    q=0.000 cost=$0.1502 turns=11 (agent_respond)
+[collect] b2c-1393 policy_violation_identification  arm=mid      q=1.000 cost=$0.3104 turns=10 (agent_respond)
+[collect] b2c-1393 policy_violation_identification  arm=frontier q=1.000 cost=$0.1680 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["a03Ws00000DYronIAD"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-373 top_issue_identification         arm=cheap    q=0.000 cost=$0.0259 turns=4 (agent_respond)
+[collect] b2c-373 top_issue_identification         arm=mid      q=1.000 cost=$0.0303 turns=2 (agent_respond)
+[collect] b2c-373 top_issue_identification         arm=frontier q=1.000 cost=$0.0601 turns=2 (agent_respond)
+[collect] b2c-176 monthly_trend_analysis           arm=cheap    q=0.000 cost=$0.1282 turns=12 (forced_answer)
+[collect] b2c-176 monthly_trend_analysis           arm=mid      q=1.000 cost=$0.0295 turns=2 (agent_respond)
+[collect] b2c-176 monthly_trend_analysis           arm=frontier q=1.000 cost=$0.0599 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RGPCIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-856 sales_amount_understanding       arm=cheap    q=0.000 cost=$0.0429 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-856 sales_amount_understanding       arm=mid      q=0.000 cost=$0.1702 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RIijIAG"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-856 sales_amount_understanding       arm=frontier q=0.000 cost=$0.2119 turns=6 (agent_respond)
+[spend] $2.9255 of cap $55 | 157 calls, 10 tasks, $0.2925/task | in 1,399,992 out 32,120 tok | claude-haiku-4-5 $0.79, claude-opus-5-5 $1.19, claude-sonnet-5-5 $0.95
+[collect] b2c-1755 lead_routing                     arm=cheap    q=1.000 cost=$0.0322 turns=5 (agent_respond)
+[collect] b2c-1755 lead_routing                     arm=mid      q=1.000 cost=$0.0642 turns=4 (agent_respond)
+[collect] b2c-1755 lead_routing                     arm=frontier q=1.000 cost=$0.1273 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RIHKIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2115 sales_cycle_understanding        arm=cheap    q=0.000 cost=$0.0551 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RIHKIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2115 sales_cycle_understanding        arm=mid      q=0.000 cost=$0.0632 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RIHKIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2115 sales_cycle_understanding        arm=frontier q=0.000 cost=$0.1696 turns=4 (agent_respond)
+[collect] b2c-995 conversion_rate_comprehension    arm=cheap    q=1.000 cost=$0.0400 turns=5 (agent_respond)
+[collect] b2c-995 conversion_rate_comprehension    arm=mid      q=1.000 cost=$0.1737 turns=12 (forced_answer)
+[collect] b2c-995 conversion_rate_comprehension    arm=frontier q=1.000 cost=$0.0889 turns=3 (agent_respond)
+[collect] b2c-1309 wrong_stage_rectification        arm=cheap    q=1.000 cost=$0.0182 turns=3 (agent_respond)
+[collect] b2c-1309 wrong_stage_rectification        arm=mid      q=1.000 cost=$0.0440 turns=3 (agent_respond)
+[collect] b2c-1309 wrong_stage_rectification        arm=frontier q=1.000 cost=$0.0584 turns=2 (agent_respond)
+[collect] b2c-453 sales_insight_mining             arm=cheap    q=0.000 cost=$0.0106 turns=2 (agent_respond)
+[collect] b2c-453 sales_insight_mining             arm=mid      q=0.000 cost=$0.5136 turns=10 (agent_respond)
+[collect] b2c-453 sales_insight_mining             arm=frontier q=0.000 cost=$0.1942 turns=4 (agent_respond)
+[collect] b2c-1766 quote_approval                   arm=cheap    q=0.000 cost=$0.0768 turns=7 (agent_respond)
+[collect] b2c-1766 quote_approval                   arm=mid      q=1.000 cost=$0.0816 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1766 quote_approval                   arm=frontier q=0.000 cost=$0.1852 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-67 lead_qualification               arm=cheap    q=1.000 cost=$0.0133 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Authority"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-67 lead_qualification               arm=mid      q=0.000 cost=$0.0977 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Timeline"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+
+[collect] b2c-67 lead_qualification               arm=frontier q=0.000 cost=$0.1993 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["00TWs0000089fgvMAA", "00TWs0000089TzUMAU", "00TWs0000089bC5MAI", "00TWs0000089fk8MAA", "00TWs0000089cfoMAA", "00TWs0000089MbOMAU", "00TWs0000089UCjMAM", "00TWs0000089PUzMAM"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-211 activity_priority                arm=cheap    q=0.000 cost=$0.0199 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": [
+    "00TWs0000089TzUMAU",
+    "00TWs0000089bC5MAI",
+    "00TWs0000089fk8MAA",
+    "00TWs0000089cfoMAA",
+    "00TWs0000089MbOMAU",
+    "00TWs0000089UCjMAM",
+    "00TWs0000089PUzMAM"
+  ]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-211 activity_priority                arm=mid      q=1.000 cost=$0.0505 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["00TWs0000089TzUMAU", "00TWs0000089bC5MAI", "00TWs0000089fk8MAA", "00TWs0000089cfoMAA", "00TWs0000089MbOMAU", "00TWs0000089UCjMAM", "00TWs0000089PUzMAM"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-211 activity_priority                arm=frontier q=1.000 cost=$0.0702 turns=2 (agent_respond)
+[collect] b2c-651 invalid_config                   arm=cheap    q=1.000 cost=$0.0409 turns=5 (agent_respond)
+[collect] b2c-651 invalid_config                   arm=mid      q=1.000 cost=$0.0641 turns=3 (agent_respond)
+[collect] b2c-651 invalid_config                   arm=frontier q=1.000 cost=$0.2543 turns=5 (agent_respond)
+[collect] b2c-1656 private_customer_information     arm=cheap    q=0.000 cost=$0.0347 turns=6 (agent_respond)
+[collect] b2c-1656 private_customer_information     arm=mid      q=0.000 cost=$0.0494 turns=3 (agent_respond)
+[collect] b2c-1656 private_customer_information     arm=frontier q=0.000 cost=$0.1182 turns=4 (agent_respond)
+[spend] $5.9435 of cap $55 | 301 calls, 20 tasks, $0.2972/task | in 2,604,759 out 54,755 tok | claude-haiku-4-5 $1.14, claude-opus-5-5 $2.65, claude-sonnet-5-5 $2.15
+[collect] b2c-1928 internal_operation_data          arm=cheap    q=0.000 cost=$0.1277 turns=12 (forced_answer)
+[collect] b2c-1928 internal_operation_data          arm=mid      q=0.000 cost=$0.1088 turns=6 (agent_respond)
+[collect] b2c-1928 internal_operation_data          arm=frontier q=0.000 cost=$0.0297 turns=1 (agent_respond)
+[collect] b2c-560 confidential_company_knowledge   arm=cheap    q=0.000 cost=$0.0060 turns=1 (agent_respond)
+[collect] b2c-560 confidential_company_knowledge   arm=mid      q=0.000 cost=$0.1998 turns=9 (agent_respond)
+[collect] b2c-560 confidential_company_knowledge   arm=frontier q=0.000 cost=$0.0648 turns=2 (agent_respond)
+[collect] b2c-888 handle_time                      arm=cheap    q=1.000 cost=$0.0533 turns=7 (agent_respond)
+[collect] b2c-888 handle_time                      arm=mid      q=1.000 cost=$0.1840 turns=12 (forced_answer)
+[collect] b2c-888 handle_time                      arm=frontier q=1.000 cost=$0.0983 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005EyCjIAK"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1236 transfer_count                   arm=cheap    q=0.000 cost=$0.1321 turns=10 (agent_respond)
+[collect] b2c-1236 transfer_count                   arm=mid      q=1.000 cost=$0.4560 turns=12 (forced_answer)
+[collect] b2c-1236 transfer_count                   arm=frontier q=1.000 cost=$0.0612 turns=2 (agent_respond)
+[collect] b2c-759 knowledge_qa                     arm=cheap    q=0.031 cost=$0.0056 turns=1 (agent_respond)
+[collect] b2c-759 knowledge_qa                     arm=mid      q=0.118 cost=$0.0430 turns=2 (agent_respond)
+[collect] b2c-759 knowledge_qa                     arm=frontier q=0.073 cost=$0.0881 turns=2 (agent_respond)
+[collect] b2c-1113 best_region_identification       arm=cheap    q=0.000 cost=$0.0203 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1113 best_region_identification       arm=mid      q=0.000 cost=$0.1979 turns=12 (forced_answer)
+[collect] b2c-1113 best_region_identification       arm=frontier q=1.000 cost=$0.0648 turns=2 (agent_respond)
+[collect] b2c-1561 case_routing                     arm=cheap    q=1.000 cost=$0.1971 turns=9 (agent_respond)
+[collect] b2c-1561 case_routing                     arm=mid      q=1.000 cost=$0.0519 turns=3 (agent_respond)
+[collect] b2c-1561 case_routing                     arm=frontier q=1.000 cost=$0.0971 turns=3 (agent_respond)
+[collect] b2c-2023 named_entity_disambiguation      arm=cheap    q=1.000 cost=$0.0377 turns=6 (agent_respond)
+[collect] b2c-2023 named_entity_disambiguation      arm=mid      q=1.000 cost=$0.0445 turns=3 (agent_respond)
+[collect] b2c-2023 named_entity_disambiguation      arm=frontier q=1.000 cost=$0.0904 turns=3 (agent_respond)
+[collect] b2c-1397 policy_violation_identification  arm=cheap    q=1.000 cost=$0.0417 turns=6 (agent_respond)
+[collect] b2c-1397 policy_violation_identification  arm=mid      q=1.000 cost=$0.2824 turns=11 (agent_respond)
+[collect] b2c-1397 policy_violation_identification  arm=frontier q=1.000 cost=$0.2648 turns=6 (agent_respond)
+[collect] b2c-332 top_issue_identification         arm=cheap    q=1.000 cost=$0.0826 turns=12 (forced_answer)
+[collect] b2c-332 top_issue_identification         arm=mid      q=1.000 cost=$0.1843 turns=12 (forced_answer)
+[collect] b2c-332 top_issue_identification         arm=frontier q=1.000 cost=$0.1503 turns=5 (agent_respond)
+[spend] $9.4165 of cap $55 | 488 calls, 30 tasks, $0.3139/task | in 4,320,173 out 79,601 tok | claude-haiku-4-5 $1.85, claude-opus-5-5 $3.66, claude-sonnet-5-5 $3.90
+[collect] b2c-145 monthly_trend_analysis           arm=cheap    q=1.000 cost=$0.0180 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-145 monthly_trend_analysis           arm=mid      q=0.000 cost=$0.1710 turns=12 (forced_answer)
+[collect] b2c-145 monthly_trend_analysis           arm=frontier q=1.000 cost=$0.0578 turns=2 (agent_respond)
+[collect] b2c-842 sales_amount_understanding       arm=cheap    q=1.000 cost=$0.0432 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RGx3IAG"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-842 sales_amount_understanding       arm=mid      q=0.000 cost=$0.1731 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-842 sales_amount_understanding       arm=frontier q=0.000 cost=$0.1239 turns=4 (agent_respond)
+[collect] b2c-1708 lead_routing                     arm=cheap    q=1.000 cost=$0.0823 turns=9 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RINlIAO"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1708 lead_routing                     arm=mid      q=0.000 cost=$0.1885 turns=12 (forced_answer)
+[collect] b2c-1708 lead_routing                     arm=frontier q=1.000 cost=$0.1282 turns=4 (agent_respond)
+[collect] b2c-2057 sales_cycle_understanding        arm=cheap    q=1.000 cost=$0.0497 turns=5 (agent_respond)
+[collect] b2c-2057 sales_cycle_understanding        arm=mid      q=1.000 cost=$0.4665 turns=12 (forced_answer)
+[collect] b2c-2057 sales_cycle_understanding        arm=frontier q=1.000 cost=$0.3032 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Ws000005RI9FIAW", "005Ws000005RHbNIAW", "005Ws000005RJWjIAO", "005Ws000005RGygIAG", "005Ws000005RIafIAG", "005Ws000005RJuvIAG"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1041 conversion_rate_comprehension    arm=cheap    q=0.000 cost=$0.0481 turns=7 (agent_respond)
+[collect] b2c-1041 conversion_rate_comprehension    arm=mid      q=1.000 cost=$0.1240 turns=8 (agent_respond)It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+
+[collect] b2c-1041 conversion_rate_comprehension    arm=frontier q=1.000 cost=$0.0945 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Qualification"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1368 wrong_stage_rectification        arm=cheap    q=0.000 cost=$0.0175 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Qualification"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1368 wrong_stage_rectification        arm=mid      q=0.000 cost=$0.0436 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Qualification"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1368 wrong_stage_rectification        arm=frontier q=0.000 cost=$0.0575 turns=2 (agent_respond)
+[collect] b2c-429 sales_insight_mining             arm=cheap    q=1.000 cost=$0.0141 turns=2 (agent_respond)
+[collect] b2c-429 sales_insight_mining             arm=mid      q=1.000 cost=$0.0370 turns=2 (agent_respond)
+[collect] b2c-429 sales_insight_mining             arm=frontier q=1.000 cost=$0.0738 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pybdIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1833 quote_approval                   arm=cheap    q=0.000 cost=$0.1765 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pygTIAQ"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1833 quote_approval                   arm=mid      q=0.000 cost=$0.1587 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1833 quote_approval                   arm=frontier q=0.000 cost=$0.4457 turns=7 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Authority"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-80 lead_qualification               arm=cheap    q=0.000 cost=$0.0125 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Authority"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-80 lead_qualification               arm=mid      q=0.000 cost=$0.0315 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Authority"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-80 lead_qualification               arm=frontier q=0.000 cost=$0.1260 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["00TWs0000089M3JMAU", "00TWs0000089LQfMAM", "00TWs0000089UbnMAE"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-218 activity_priority                arm=cheap    q=0.000 cost=$0.0204 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": [
+    "00TWs0000089UdQMAU",
+    "00TWs0000089M3JMAU",
+    "00TWs0000089LQfMAM",
+    "00TWs0000089ThQMAU",
+    "00TWs0000089UbnMAE"
+  ]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-218 activity_priority                arm=mid      q=1.000 cost=$0.0521 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": [
+    "00TWs0000089UdQMAU",
+    "00TWs0000089M3JMAU",
+    "00TWs0000089LQfMAM",
+    "00TWs0000089ThQMAU",
+    "00TWs0000089UbnMAE"
+  ]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-218 activity_priority                arm=frontier q=1.000 cost=$0.0693 turns=2 (agent_respond)
+[spend] $12.8334 of cap $55 | 656 calls, 40 tasks, $0.3208/task | in 5,786,248 out 103,162 tok | claude-haiku-4-5 $2.34, claude-opus-5-5 $5.14, claude-sonnet-5-5 $5.35
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pygTIAQ"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-656 invalid_config                   arm=cheap    q=0.000 cost=$0.0647 turns=7 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000q0gfIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-656 invalid_config                   arm=mid      q=0.000 cost=$0.1527 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pygTIAQ"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-656 invalid_config                   arm=frontier q=0.000 cost=$0.2159 turns=4 (agent_respond)
+[collect] b2c-1616 private_customer_information     arm=cheap    q=0.000 cost=$0.0164 turns=3 (agent_respond)
+[collect] b2c-1616 private_customer_information     arm=mid      q=0.000 cost=$0.0277 turns=2 (agent_respond)
+[collect] b2c-1616 private_customer_information     arm=frontier q=1.000 cost=$0.0587 turns=2 (agent_respond)
+[collect] b2c-1922 internal_operation_data          arm=cheap    q=0.000 cost=$0.0528 turns=9 (agent_respond)
+[collect] b2c-1922 internal_operation_data          arm=mid      q=0.000 cost=$0.1919 turns=12 (forced_answer)
+[collect] b2c-1922 internal_operation_data          arm=frontier q=0.000 cost=$0.2793 turns=9 (agent_respond)
+[collect] b2c-534 confidential_company_knowledge   arm=cheap    q=0.000 cost=$0.0148 turns=2 (agent_respond)
+[collect] b2c-534 confidential_company_knowledge   arm=mid      q=0.000 cost=$0.0421 turns=2 (agent_respond)
+[collect] b2c-534 confidential_company_knowledge   arm=frontier q=0.000 cost=$0.0885 turns=2 (agent_respond)
+[collect] b2c-891 handle_time                      arm=cheap    q=1.000 cost=$0.0324 turns=4 (agent_respond)
+[collect] b2c-891 handle_time                      arm=mid      q=1.000 cost=$0.0581 turns=3 (agent_respond)
+[collect] b2c-891 handle_time                      arm=frontier q=1.000 cost=$0.1205 turns=3 (agent_respond)
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+[collect] b2c-1250 transfer_count                   arm=cheap    q=1.000 cost=$0.0946 turns=8 (agent_respond)
+[collect] b2c-1250 transfer_count                   arm=mid      q=1.000 cost=$0.0696 turns=4 (agent_respond)
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+[collect] b2c-1250 transfer_count                   arm=frontier q=1.000 cost=$0.0979 turns=3 (agent_respond)
+[collect] b2c-730 knowledge_qa                     arm=cheap    q=0.080 cost=$0.0280 turns=3 (agent_respond)
+[collect] b2c-730 knowledge_qa                     arm=mid      q=0.043 cost=$0.2621 turns=8 (agent_respond)
+[collect] b2c-730 knowledge_qa                     arm=frontier q=0.000 cost=$0.4848 turns=9 (agent_respond)
+[collect] b2c-1086 best_region_identification       arm=cheap    q=1.000 cost=$0.0257 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1086 best_region_identification       arm=mid      q=0.000 cost=$0.1941 turns=12 (forced_answer)
+[collect] b2c-1086 best_region_identification       arm=frontier q=1.000 cost=$0.0976 turns=3 (agent_respond)
+[collect] b2c-1557 case_routing                     arm=cheap    q=1.000 cost=$0.1220 turns=8 (agent_respond)
+[collect] b2c-1557 case_routing                     arm=mid      q=1.000 cost=$0.0504 turns=3 (agent_respond)
+[collect] b2c-1557 case_routing                     arm=frontier q=1.000 cost=$0.0942 turns=3 (agent_respond)
+[collect] b2c-2025 named_entity_disambiguation      arm=cheap    q=1.000 cost=$0.0416 turns=7 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2025 named_entity_disambiguation      arm=mid      q=0.000 cost=$0.1928 turns=12 (forced_answer)
+[collect] b2c-2025 named_entity_disambiguation      arm=frontier q=1.000 cost=$0.1355 turns=4 (agent_respond)It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+
+[spend] $16.2509 of cap $55 | 830 calls, 50 tasks, $0.3250/task | in 7,216,966 out 125,448 tok | claude-haiku-4-5 $2.84, claude-opus-5-5 $6.81, claude-sonnet-5-5 $6.59
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1461 policy_violation_identification  arm=cheap    q=0.000 cost=$0.1516 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["None"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1461 policy_violation_identification  arm=mid      q=0.000 cost=$0.1722 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1461 policy_violation_identification  arm=frontier q=0.000 cost=$0.2207 turns=6 (agent_respond)
+[collect] b2c-384 top_issue_identification         arm=cheap    q=1.000 cost=$0.0239 turns=4 (agent_respond)
+[collect] b2c-384 top_issue_identification         arm=mid      q=1.000 cost=$0.0300 turns=2 (agent_respond)
+[collect] b2c-384 top_issue_identification         arm=frontier q=1.000 cost=$0.0593 turns=2 (agent_respond)
+[collect] b2c-183 monthly_trend_analysis           arm=cheap    q=1.000 cost=$0.0503 turns=7 (agent_respond)
+[collect] b2c-183 monthly_trend_analysis           arm=mid      q=1.000 cost=$0.0452 turns=3 (agent_respond)
+[collect] b2c-183 monthly_trend_analysis           arm=frontier q=1.000 cost=$0.0581 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Ws000005RHGPIA4"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-784 sales_amount_understanding       arm=cheap    q=0.000 cost=$0.2000 turns=8 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-784 sales_amount_understanding       arm=mid      q=0.000 cost=$0.2253 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Ws000005RHGPIA4"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-784 sales_amount_understanding       arm=frontier q=0.000 cost=$0.0684 turns=2 (agent_respond)
+[collect] b2c-1748 lead_routing                     arm=cheap    q=1.000 cost=$0.1240 turns=8 (agent_respond)
+[collect] b2c-1748 lead_routing                     arm=mid      q=1.000 cost=$0.0633 turns=4 (agent_respond)
+[collect] b2c-1748 lead_routing                     arm=frontier q=1.000 cost=$0.1253 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Ws000005RIafIAG"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2132 sales_cycle_understanding        arm=cheap    q=1.000 cost=$0.1162 turns=7 (agent_respond)
+[collect] b2c-2132 sales_cycle_understanding        arm=mid      q=1.000 cost=$0.1886 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RJenIAG"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2132 sales_cycle_understanding        arm=frontier q=0.000 cost=$0.2758 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1035 conversion_rate_comprehension    arm=cheap    q=0.000 cost=$0.1383 turns=12 (forced_answer)
+[collect] b2c-1035 conversion_rate_comprehension    arm=mid      q=1.000 cost=$0.0467 turns=3 (agent_respond)
+[collect] b2c-1035 conversion_rate_comprehension    arm=frontier q=1.000 cost=$0.0972 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Quote"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1315 wrong_stage_rectification        arm=cheap    q=0.000 cost=$0.0175 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Negotiation"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1315 wrong_stage_rectification        arm=mid      q=0.000 cost=$0.0437 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Negotiation"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1315 wrong_stage_rectification        arm=frontier q=0.000 cost=$0.0583 turns=2 (agent_respond)
+[collect] b2c-407 sales_insight_mining             arm=cheap    q=0.000 cost=$0.0149 turns=2 (agent_respond)
+[collect] b2c-407 sales_insight_mining             arm=mid      q=0.000 cost=$0.0365 turns=2 (agent_respond)
+[collect] b2c-407 sales_insight_mining             arm=frontier q=0.000 cost=$0.0697 turns=2 (agent_respond)
+[collect] b2c-1822 quote_approval                   arm=cheap    q=1.000 cost=$0.2433 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["ka0Ws000000pybdIAA"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1822 quote_approval                   arm=mid      q=0.000 cost=$0.1814 turns=7 (agent_respond)
+[collect] b2c-1822 quote_approval                   arm=frontier q=0.000 cost=$0.4506 turns=7 (agent_respond)
+[spend] $19.8534 of cap $55 | 1005 calls, 60 tasks, $0.3309/task | in 9,023,399 out 158,832 tok | claude-haiku-4-5 $3.93, claude-opus-5-5 $8.30, claude-sonnet-5-5 $7.62
+[collect] b2c-35 lead_qualification               arm=cheap    q=1.000 cost=$0.0412 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-35 lead_qualification               arm=mid      q=0.000 cost=$0.0325 turns=2 (agent_respond)
+[collect] b2c-35 lead_qualification               arm=frontier q=1.000 cost=$0.2098 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["00TWs0000089XhsMAE", "00TWs0000089bBpMAI", "00TWs0000089NUEMA2", "00TWs0000089au7MAA", "00TWs0000089au8MAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-247 activity_priority                arm=cheap    q=1.000 cost=$0.0188 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["00TWs0000089XhsMAE", "00TWs0000089bBpMAI", "00TWs0000089NUEMA2", "00TWs0000089au7MAA", "00TWs0000089au8MAA"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-247 activity_priority                arm=mid      q=1.000 cost=$0.0495 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["00TWs0000089XhsMAE", "00TWs0000089bBpMAI", "00TWs0000089NUEMA2", "00TWs0000089au7MAA", "00TWs0000089au8MAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-247 activity_priority                arm=frontier q=1.000 cost=$0.0686 turns=2 (agent_respond)
+[collect] b2c-653 invalid_config                   arm=cheap    q=1.000 cost=$0.1711 turns=10 (agent_respond)
+[collect] b2c-653 invalid_config                   arm=mid      q=1.000 cost=$0.1297 turns=5 (agent_respond)
+[collect] b2c-653 invalid_config                   arm=frontier q=1.000 cost=$0.1656 turns=4 (agent_respond)
+[collect] b2c-1631 private_customer_information     arm=cheap    q=0.000 cost=$0.0182 turns=3 (agent_respond)
+[collect] b2c-1631 private_customer_information     arm=mid      q=0.000 cost=$0.0588 turns=4 (agent_respond)
+[collect] b2c-1631 private_customer_information     arm=frontier q=1.000 cost=$0.0602 turns=2 (agent_respond)
+[collect] b2c-1899 internal_operation_data          arm=cheap    q=0.000 cost=$0.0510 turns=9 (agent_respond)
+[collect] b2c-1899 internal_operation_data          arm=mid      q=0.000 cost=$0.1037 turns=7 (agent_respond)
+[collect] b2c-1899 internal_operation_data          arm=frontier q=0.000 cost=$0.1475 turns=5 (agent_respond)
+[collect] b2c-522 confidential_company_knowledge   arm=cheap    q=0.000 cost=$0.0383 turns=7 (agent_respond)
+[collect] b2c-522 confidential_company_knowledge   arm=mid      q=0.000 cost=$0.0606 turns=4 (agent_respond)It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+
+[collect] b2c-522 confidential_company_knowledge   arm=frontier q=0.000 cost=$0.2779 turns=8 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RJ0TIAW"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-887 handle_time                      arm=cheap    q=0.000 cost=$0.1609 turns=9 (agent_respond)
+[collect] b2c-887 handle_time                      arm=mid      q=1.000 cost=$0.0571 turns=2 (agent_respond)
+[collect] b2c-887 handle_time                      arm=frontier q=1.000 cost=$0.2393 turns=5 (agent_respond)
+[collect] b2c-1198 transfer_count                   arm=cheap    q=1.000 cost=$0.2072 turns=12 (forced_answer)
+[collect] b2c-1198 transfer_count                   arm=mid      q=1.000 cost=$0.1819 turns=5 (agent_respond)
+[collect] b2c-1198 transfer_count                   arm=frontier q=1.000 cost=$0.0961 turns=2 (agent_respond)
+[collect] b2c-758 knowledge_qa                     arm=cheap    q=0.055 cost=$0.0717 turns=8 (agent_respond)
+[collect] b2c-758 knowledge_qa                     arm=mid      q=0.000 cost=$0.0469 turns=3 (agent_respond)
+[collect] b2c-758 knowledge_qa                     arm=frontier q=0.051 cost=$0.1440 turns=4 (agent_respond)
+[collect] b2c-1128 best_region_identification       arm=cheap    q=1.000 cost=$0.0291 turns=5 (agent_respond)
+[collect] b2c-1128 best_region_identification       arm=mid      q=1.000 cost=$0.0288 turns=2 (agent_respond)
+[collect] b2c-1128 best_region_identification       arm=frontier q=1.000 cost=$0.0565 turns=2 (agent_respond)
+[spend] $22.8877 of cap $55 | 1165 calls, 70 tasks, $0.3270/task | in 10,438,900 out 187,841 tok | claude-haiku-4-5 $4.75, claude-opus-5-5 $9.76, claude-sonnet-5-5 $8.37
+[collect] b2c-1512 case_routing                     arm=cheap    q=1.000 cost=$0.0525 turns=8 (agent_respond)
+[collect] b2c-1512 case_routing                     arm=mid      q=1.000 cost=$0.0492 turns=3 (agent_respond)
+[collect] b2c-1512 case_routing                     arm=frontier q=1.000 cost=$0.0922 turns=3 (agent_respond)
+[collect] b2c-2012 named_entity_disambiguation      arm=cheap    q=1.000 cost=$0.0488 turns=8 (agent_respond)
+[collect] b2c-2012 named_entity_disambiguation      arm=mid      q=1.000 cost=$0.0603 turns=4 (agent_respond)
+[collect] b2c-2012 named_entity_disambiguation      arm=frontier q=1.000 cost=$0.1211 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pyyDIAQ"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1398 policy_violation_identification  arm=cheap    q=0.000 cost=$0.0409 turns=6 (agent_respond)
+[collect] b2c-1398 policy_violation_identification  arm=mid      q=1.000 cost=$0.1564 turns=8 (agent_respond)
+[collect] b2c-1398 policy_violation_identification  arm=frontier q=1.000 cost=$0.1468 turns=4 (agent_respond)
+[collect] b2c-354 top_issue_identification         arm=cheap    q=1.000 cost=$0.0240 turns=4 (agent_respond)
+[collect] b2c-354 top_issue_identification         arm=mid      q=1.000 cost=$0.0294 turns=2 (agent_respond)
+[collect] b2c-354 top_issue_identification         arm=frontier q=1.000 cost=$0.0580 turns=2 (agent_respond)
+[collect] b2c-198 monthly_trend_analysis           arm=cheap    q=1.000 cost=$0.0122 turns=2 (agent_respond)
+[collect] b2c-198 monthly_trend_analysis           arm=mid      q=1.000 cost=$0.0511 turns=3 (agent_respond)
+[collect] b2c-198 monthly_trend_analysis           arm=frontier q=1.000 cost=$0.0588 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RJQIIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-795 sales_amount_understanding       arm=cheap    q=0.000 cost=$0.0603 turns=8 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-795 sales_amount_understanding       arm=mid      q=0.000 cost=$0.4427 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Ws000005RHjRIAW"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-795 sales_amount_understanding       arm=frontier q=0.000 cost=$0.1661 turns=4 (agent_respond)
+[collect] b2c-1724 lead_routing                     arm=cheap    q=1.000 cost=$0.0395 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Ws000005RGiXIAW"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1724 lead_routing                     arm=mid      q=0.000 cost=$0.1833 turns=12 (forced_answer)
+[collect] b2c-1724 lead_routing                     arm=frontier q=1.000 cost=$0.1253 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RHgDIAW"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2086 sales_cycle_understanding        arm=cheap    q=0.000 cost=$0.0270 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["None"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2086 sales_cycle_understanding        arm=mid      q=0.000 cost=$0.1900 turns=12 (forced_answer)
+[collect] b2c-2086 sales_cycle_understanding        arm=frontier q=1.000 cost=$0.1342 turns=4 (agent_respond)
+[collect] b2c-1079 conversion_rate_comprehension    arm=cheap    q=1.000 cost=$0.0276 turns=4 (agent_respond)
+[collect] b2c-1079 conversion_rate_comprehension    arm=mid      q=1.000 cost=$0.0391 turns=2 (agent_respond)
+[collect] b2c-1079 conversion_rate_comprehension    arm=frontier q=1.000 cost=$0.0743 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Negotiation"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1308 wrong_stage_rectification        arm=cheap    q=0.000 cost=$0.0175 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Negotiation"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1308 wrong_stage_rectification        arm=mid      q=0.000 cost=$0.0451 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Closed"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1308 wrong_stage_rectification        arm=frontier q=0.000 cost=$0.0578 turns=2 (agent_respond)
+[spend] $25.5232 of cap $55 | 1320 calls, 80 tasks, $0.3190/task | in 11,580,169 out 206,841 tok | claude-haiku-4-5 $5.10, claude-opus-5-5 $10.80, claude-sonnet-5-5 $9.62
+[collect] b2c-492 sales_insight_mining             arm=cheap    q=0.000 cost=$0.0349 turns=3 (agent_respond)
+[collect] b2c-492 sales_insight_mining             arm=mid      q=0.000 cost=$0.6230 turns=11 (agent_respond)
+[collect] b2c-492 sales_insight_mining             arm=frontier q=0.000 cost=$0.0931 turns=2 (agent_respond)
+[collect] b2c-1773 quote_approval                   arm=cheap    q=1.000 cost=$0.0373 turns=5 (agent_respond)
+[collect] b2c-1773 quote_approval                   arm=mid      q=1.000 cost=$0.2146 turns=10 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pygTIAQ"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1773 quote_approval                   arm=frontier q=0.000 cost=$0.2630 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-73 lead_qualification               arm=cheap    q=1.000 cost=$0.0129 turns=2 (agent_respond)
+[collect] b2c-73 lead_qualification               arm=mid      q=1.000 cost=$0.0318 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Timeline"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-73 lead_qualification               arm=frontier q=0.000 cost=$0.2658 turns=5 (agent_respond)
+[collect] b2c-206 activity_priority                arm=cheap    q=1.000 cost=$0.0180 turns=3 (agent_respond)It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+It is recommended to enable `effective_order` for sentence-level BLEU.
+
+[collect] b2c-206 activity_priority                arm=mid      q=1.000 cost=$0.0803 turns=5 (agent_respond)
+[collect] b2c-206 activity_priority                arm=frontier q=1.000 cost=$0.0637 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pybdIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-610 invalid_config                   arm=cheap    q=0.000 cost=$0.0509 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000q0gfIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-610 invalid_config                   arm=mid      q=0.000 cost=$0.1568 turns=5 (agent_respond)
+[collect] b2c-610 invalid_config                   arm=frontier q=1.000 cost=$0.1550 turns=4 (agent_respond)
+[collect] b2c-1591 private_customer_information     arm=cheap    q=0.000 cost=$0.0384 turns=7 (agent_respond)
+[collect] b2c-1591 private_customer_information     arm=mid      q=0.000 cost=$0.0281 turns=2 (agent_respond)
+[collect] b2c-1591 private_customer_information     arm=frontier q=0.000 cost=$0.0552 turns=2 (agent_respond)
+[collect] b2c-1939 internal_operation_data          arm=cheap    q=0.000 cost=$0.0161 turns=3 (agent_respond)
+[collect] b2c-1939 internal_operation_data          arm=mid      q=0.000 cost=$0.0138 turns=1 (agent_respond)
+[collect] b2c-1939 internal_operation_data          arm=frontier q=0.000 cost=$0.0278 turns=1 (agent_respond)
+[collect] b2c-528 confidential_company_knowledge   arm=cheap    q=0.000 cost=$0.0159 turns=3 (agent_respond)
+[collect] b2c-528 confidential_company_knowledge   arm=mid      q=0.000 cost=$0.0869 turns=5 (agent_respond)
+[collect] b2c-528 confidential_company_knowledge   arm=frontier q=0.000 cost=$0.0812 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-928 handle_time                      arm=cheap    q=0.000 cost=$0.0173 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-928 handle_time                      arm=mid      q=0.000 cost=$0.1720 turns=12 (forced_answer)
+[collect] b2c-928 handle_time                      arm=frontier q=1.000 cost=$0.1013 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RJbZIAW"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1200 transfer_count                   arm=cheap    q=0.000 cost=$0.2164 turns=12 (forced_answer)
+[collect] b2c-1200 transfer_count                   arm=mid      q=1.000 cost=$0.0598 turns=2 (agent_respond)
+[collect] b2c-1200 transfer_count                   arm=frontier q=1.000 cost=$0.0897 turns=2 (agent_respond)
+[spend] $28.6547 of cap $55 | 1466 calls, 90 tasks, $0.3184/task | in 12,964,489 out 230,188 tok | claude-haiku-4-5 $5.57, claude-opus-5-5 $11.99, claude-sonnet-5-5 $11.09
+[collect] b2c-691 knowledge_qa                     arm=cheap    q=0.045 cost=$0.0161 turns=2 (agent_respond)
+[collect] b2c-691 knowledge_qa                     arm=mid      q=0.125 cost=$0.0704 turns=3 (agent_respond)
+[collect] b2c-691 knowledge_qa                     arm=frontier q=0.121 cost=$0.0829 turns=2 (agent_respond)
+[collect] b2c-1149 best_region_identification       arm=cheap    q=1.000 cost=$0.0197 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1149 best_region_identification       arm=mid      q=0.000 cost=$0.1865 turns=12 (forced_answer)
+[collect] b2c-1149 best_region_identification       arm=frontier q=1.000 cost=$0.0607 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["None"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1564 case_routing                     arm=cheap    q=0.000 cost=$0.0850 turns=12 (forced_answer)
+[collect] b2c-1564 case_routing                     arm=mid      q=1.000 cost=$0.1166 turns=6 (agent_respond)
+[collect] b2c-1564 case_routing                     arm=frontier q=1.000 cost=$0.1693 turns=5 (agent_respond)
+[collect] b2c-1981 named_entity_disambiguation      arm=cheap    q=1.000 cost=$0.0802 turns=12 (forced_answer)
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+[collect] ABORTED on task b2c-1981 arm mid: claude-sonnet-5-5 agent:mid failed (status 400): BadRequestError: litellm.BadRequestError: AnthropicException - {"type":"error","error":{"type":"invalid_request_error","message":"You have reached your specified API usage limits. You will regain access on 2026-11-01 at 00:00 UTC."},"request_id":"req_011CfwKb9bZLzWhCn3prr7oH"}
+[spend] $29.5429 of cap $55 | 1528 calls, 94 tasks, $0.3143/task | in 13,395,061 out 237,451 tok | claude-haiku-4-5 $5.77, claude-opus-5-5 $12.31, claude-sonnet-5-5 $11.46
+[collect] 280 new episodes this run -> traces/crmarena_b2c_counterfactual.jsonl; fix the cause and rerun to resume.
+[collect] crmarena org=b2c mode=counterfactual tiers=['cheap', 'mid', 'frontier'] n_tasks=150 cap=$55 ledger=$29.5429 -> traces/crmarena_b2c_counterfactual.jsonl
+[spend] $29.5429 of cap $55 | 1528 calls, 94 tasks, $0.3143/task | in 13,395,061 out 237,451 tok | claude-haiku-4-5 $5.77, claude-opus-5-5 $12.31, claude-sonnet-5-5 $11.46
+[spend] $29.5429 of cap $55 | 1528 calls, 94 tasks, $0.3143/task | in 13,395,061 out 237,451 tok | claude-haiku-4-5 $5.77, claude-opus-5-5 $12.31, claude-sonnet-5-5 $11.46
+[spend] $29.5429 of cap $55 | 1528 calls, 94 tasks, $0.3143/task | in 13,395,061 out 237,451 tok | claude-haiku-4-5 $5.77, claude-opus-5-5 $12.31, claude-sonnet-5-5 $11.46
+[spend] $29.5429 of cap $55 | 1528 calls, 94 tasks, $0.3143/task | in 13,395,061 out 237,451 tok | claude-haiku-4-5 $5.77, claude-opus-5-5 $12.31, claude-sonnet-5-5 $11.46
+[spend] $29.5429 of cap $55 | 1528 calls, 94 tasks, $0.3143/task | in 13,395,061 out 237,451 tok | claude-haiku-4-5 $5.77, claude-opus-5-5 $12.31, claude-sonnet-5-5 $11.46
+[spend] $29.5429 of cap $55 | 1528 calls, 94 tasks, $0.3143/task | in 13,395,061 out 237,451 tok | claude-haiku-4-5 $5.77, claude-opus-5-5 $12.31, claude-sonnet-5-5 $11.46
+[spend] $29.5429 of cap $55 | 1528 calls, 94 tasks, $0.3143/task | in 13,395,061 out 237,451 tok | claude-haiku-4-5 $5.77, claude-opus-5-5 $12.31, claude-sonnet-5-5 $11.46
+[spend] $29.5429 of cap $55 | 1528 calls, 94 tasks, $0.3143/task | in 13,395,061 out 237,451 tok | claude-haiku-4-5 $5.77, claude-opus-5-5 $12.31, claude-sonnet-5-5 $11.46
+[spend] $29.5429 of cap $55 | 1528 calls, 94 tasks, $0.3143/task | in 13,395,061 out 237,451 tok | claude-haiku-4-5 $5.77, claude-opus-5-5 $12.31, claude-sonnet-5-5 $11.46
+27
+Using b2c Salesforce credentials
+Failed to parse JSON: ```json
+{ "extracted_answers": ["01tWs000006f830IAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1981 named_entity_disambiguation      arm=mid      q=0.000 cost=$0.1660 turns=8 (agent_respond)
+[collect] b2c-1981 named_entity_disambiguation      arm=frontier q=1.000 cost=$0.1368 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pytNIAQ"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1388 policy_violation_identification  arm=cheap    q=0.000 cost=$0.0743 turns=9 (agent_respond)
+[collect] b2c-1388 policy_violation_identification  arm=mid      q=1.000 cost=$0.3926 turns=12 (forced_answer)
+[collect] b2c-1388 policy_violation_identification  arm=frontier q=1.000 cost=$0.2083 turns=6 (agent_respond)
+[collect] b2c-357 top_issue_identification         arm=cheap    q=1.000 cost=$0.0171 turns=3 (agent_respond)
+[collect] b2c-357 top_issue_identification         arm=mid      q=1.000 cost=$0.0295 turns=2 (agent_respond)
+[collect] b2c-357 top_issue_identification         arm=frontier q=1.000 cost=$0.0579 turns=2 (agent_respond)
+[collect] b2c-101 monthly_trend_analysis           arm=cheap    q=1.000 cost=$0.0242 turns=4 (agent_respond)
+[collect] b2c-101 monthly_trend_analysis           arm=mid      q=1.000 cost=$0.0695 turns=3 (agent_respond)
+[collect] b2c-101 monthly_trend_analysis           arm=frontier q=1.000 cost=$0.0608 turns=2 (agent_respond)
+[collect] b2c-827 sales_amount_understanding       arm=cheap    q=1.000 cost=$0.0390 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-827 sales_amount_understanding       arm=mid      q=0.000 cost=$0.1699 turns=12 (forced_answer)
+[collect] b2c-827 sales_amount_understanding       arm=frontier q=1.000 cost=$0.0908 turns=2 (agent_respond)
+[collect] b2c-1669 lead_routing                     arm=cheap    q=1.000 cost=$0.0981 turns=8 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1669 lead_routing                     arm=mid      q=0.000 cost=$0.2171 turns=12 (forced_answer)
+[collect] b2c-1669 lead_routing                     arm=frontier q=1.000 cost=$0.1548 turns=4 (agent_respond)
+[collect] b2c-2066 sales_cycle_understanding        arm=cheap    q=1.000 cost=$0.0290 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RIsQIAW"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2066 sales_cycle_understanding        arm=mid      q=0.000 cost=$0.0537 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RIsQIAW"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2066 sales_cycle_understanding        arm=frontier q=0.000 cost=$0.1349 turns=4 (agent_respond)
+[spend] $31.7698 of cap $55 | 1642 calls, 100 tasks, $0.3177/task | in 14,336,915 out 257,966 tok | claude-haiku-4-5 $6.06, claude-opus-5-5 $13.15, claude-sonnet-5-5 $12.56
+[collect] b2c-997 conversion_rate_comprehension    arm=cheap    q=0.000 cost=$0.0172 turns=3 (agent_respond)
+[collect] b2c-997 conversion_rate_comprehension    arm=mid      q=1.000 cost=$0.1760 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RJrhIAG"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-997 conversion_rate_comprehension    arm=frontier q=0.000 cost=$0.0611 turns=2 (agent_respond)
+[collect] b2c-1294 wrong_stage_rectification        arm=cheap    q=1.000 cost=$0.0172 turns=3 (agent_respond)
+[collect] b2c-1294 wrong_stage_rectification        arm=mid      q=1.000 cost=$0.0440 turns=3 (agent_respond)
+[collect] b2c-1294 wrong_stage_rectification        arm=frontier q=1.000 cost=$0.0572 turns=2 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-450 sales_insight_mining             arm=cheap    q=0.000 cost=$0.0109 turns=2 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-450 sales_insight_mining             arm=mid      q=0.000 cost=$0.3378 turns=7 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-450 sales_insight_mining             arm=frontier q=0.000 cost=$0.6814 turns=6 (agent_respond)
+[collect] b2c-1835 quote_approval                   arm=cheap    q=1.000 cost=$0.1677 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pybdIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1835 quote_approval                   arm=mid      q=0.000 cost=$0.1621 turns=7 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pybdIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1835 quote_approval                   arm=frontier q=0.000 cost=$0.2503 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-50 lead_qualification               arm=cheap    q=1.000 cost=$0.0232 turns=3 (agent_respond)
+[collect] b2c-50 lead_qualification               arm=mid      q=1.000 cost=$0.0979 turns=5 (agent_respond)
+[collect] b2c-50 lead_qualification               arm=frontier q=1.000 cost=$0.1938 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["00TWs0000089emQMAQ", "00TWs0000089YuGMAU", "00TWs0000089eMkMAI", "00TWs0000089RhaMAE", "00TWs0000089PZOMA2"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-244 activity_priority                arm=cheap    q=0.000 cost=$0.0200 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-244 activity_priority                arm=mid      q=0.000 cost=$0.1847 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": [
+    "00TWs0000089Z77MAE",
+    "00TWs0000089YuGMAU",
+    "00TWs0000089eMkMAI",
+    "00TWs0000089RhaMAE",
+    "00TWs0000089PZOMA2"
+  ]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-244 activity_priority                arm=frontier q=1.000 cost=$0.0684 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pybdIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-636 invalid_config                   arm=cheap    q=0.000 cost=$0.0568 turns=6 (agent_respond)
+[collect] b2c-636 invalid_config                   arm=mid      q=1.000 cost=$0.1261 turns=5 (agent_respond)
+[collect] b2c-636 invalid_config                   arm=frontier q=1.000 cost=$0.3614 turns=6 (agent_respond)
+[collect] b2c-1602 private_customer_information     arm=cheap    q=0.000 cost=$0.0214 turns=4 (agent_respond)
+[collect] b2c-1602 private_customer_information     arm=mid      q=0.000 cost=$0.0281 turns=2 (agent_respond)
+[collect] b2c-1602 private_customer_information     arm=frontier q=1.000 cost=$0.0578 turns=2 (agent_respond)
+[collect] b2c-1926 internal_operation_data          arm=cheap    q=0.000 cost=$0.0657 turns=10 (agent_respond)
+[collect] b2c-1926 internal_operation_data          arm=mid      q=0.000 cost=$0.1772 turns=12 (forced_answer)
+[collect] b2c-1926 internal_operation_data          arm=frontier q=0.000 cost=$0.0965 turns=3 (agent_respond)
+[collect] b2c-504 confidential_company_knowledge   arm=cheap    q=0.000 cost=$0.0231 turns=4 (agent_respond)
+[collect] b2c-504 confidential_company_knowledge   arm=mid      q=0.000 cost=$0.0409 turns=2 (agent_respond)
+[collect] b2c-504 confidential_company_knowledge   arm=frontier q=0.000 cost=$0.0808 turns=2 (agent_respond)
+[spend] $35.4889 of cap $55 | 1811 calls, 110 tasks, $0.3226/task | in 15,841,375 out 277,094 tok | claude-haiku-4-5 $6.49, claude-opus-5-5 $15.06, claude-sonnet-5-5 $13.93
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-893 handle_time                      arm=cheap    q=0.000 cost=$0.0789 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-893 handle_time                      arm=mid      q=0.000 cost=$0.4164 turns=12 (forced_answer)
+[collect] b2c-893 handle_time                      arm=frontier q=1.000 cost=$0.1768 turns=3 (agent_respond)
+[collect] b2c-1212 transfer_count                   arm=cheap    q=1.000 cost=$0.0414 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1212 transfer_count                   arm=mid      q=0.000 cost=$0.1739 turns=12 (forced_answer)
+[collect] b2c-1212 transfer_count                   arm=frontier q=1.000 cost=$0.1077 turns=3 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-693 knowledge_qa                     arm=cheap    q=0.083 cost=$0.0284 turns=3 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-693 knowledge_qa                     arm=mid      q=0.545 cost=$0.0841 turns=3 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-693 knowledge_qa                     arm=frontier q=0.261 cost=$0.5837 turns=8 (agent_respond)
+[collect] b2c-1143 best_region_identification       arm=cheap    q=1.000 cost=$0.0135 turns=2 (agent_respond)
+[collect] b2c-1143 best_region_identification       arm=mid      q=1.000 cost=$0.0301 turns=2 (agent_respond)
+[collect] b2c-1143 best_region_identification       arm=frontier q=1.000 cost=$0.0616 turns=2 (agent_respond)
+[collect] b2c-1515 case_routing                     arm=cheap    q=1.000 cost=$0.0604 turns=5 (agent_respond)
+[collect] b2c-1515 case_routing                     arm=mid      q=1.000 cost=$0.0523 turns=3 (agent_respond)
+[collect] b2c-1515 case_routing                     arm=frontier q=1.000 cost=$0.0972 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["01tWs000006f7i2IAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1962 named_entity_disambiguation      arm=cheap    q=0.000 cost=$0.0302 turns=5 (agent_respond)
+[collect] b2c-1962 named_entity_disambiguation      arm=mid      q=1.000 cost=$0.0908 turns=6 (agent_respond)
+[collect] b2c-1962 named_entity_disambiguation      arm=frontier q=1.000 cost=$0.0878 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pzRGIAY"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1419 policy_violation_identification  arm=cheap    q=0.000 cost=$0.0283 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pz4gIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1419 policy_violation_identification  arm=mid      q=0.000 cost=$0.2372 turns=10 (agent_respond)
+[collect] b2c-1419 policy_violation_identification  arm=frontier q=1.000 cost=$0.1662 turns=5 (agent_respond)
+[collect] b2c-372 top_issue_identification         arm=cheap    q=1.000 cost=$0.0171 turns=3 (agent_respond)
+[collect] b2c-372 top_issue_identification         arm=mid      q=1.000 cost=$0.0297 turns=2 (agent_respond)
+[collect] b2c-372 top_issue_identification         arm=frontier q=1.000 cost=$0.0583 turns=2 (agent_respond)
+[collect] b2c-117 monthly_trend_analysis           arm=cheap    q=1.000 cost=$0.0120 turns=2 (agent_respond)
+[collect] b2c-117 monthly_trend_analysis           arm=mid      q=1.000 cost=$0.1208 turns=5 (agent_respond)
+[collect] b2c-117 monthly_trend_analysis           arm=frontier q=1.000 cost=$0.0613 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RHGPIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-848 sales_amount_understanding       arm=cheap    q=0.000 cost=$0.0371 turns=5 (agent_respond)
+[collect] b2c-848 sales_amount_understanding       arm=mid      q=0.000 cost=$0.0300 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RHDBIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-848 sales_amount_understanding       arm=frontier q=0.000 cost=$0.1811 turns=5 (agent_respond)
+[spend] $38.6869 of cap $55 | 1954 calls, 120 tasks, $0.3224/task | in 17,119,667 out 297,259 tok | claude-haiku-4-5 $6.85, claude-opus-5-5 $16.64, claude-sonnet-5-5 $15.20
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RHczIAG"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1699 lead_routing                     arm=cheap    q=0.000 cost=$0.1147 turns=11 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RGiXIAW"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1699 lead_routing                     arm=mid      q=0.000 cost=$0.1902 turns=12 (forced_answer)
+[collect] b2c-1699 lead_routing                     arm=frontier q=1.000 cost=$0.1358 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RIHKIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2107 sales_cycle_understanding        arm=cheap    q=0.000 cost=$0.0577 turns=5 (agent_respond)
+[collect] b2c-2107 sales_cycle_understanding        arm=mid      q=1.000 cost=$0.1579 turns=4 (agent_respond)
+[collect] b2c-2107 sales_cycle_understanding        arm=frontier q=1.000 cost=$0.2357 turns=4 (agent_respond)
+[collect] b2c-992 conversion_rate_comprehension    arm=cheap    q=1.000 cost=$0.0494 turns=8 (agent_respond)
+[collect] b2c-992 conversion_rate_comprehension    arm=mid      q=1.000 cost=$0.0289 turns=2 (agent_respond)
+[collect] b2c-992 conversion_rate_comprehension    arm=frontier q=1.000 cost=$0.0881 turns=3 (agent_respond)
+[collect] b2c-1379 wrong_stage_rectification        arm=cheap    q=1.000 cost=$0.0168 turns=3 (agent_respond)
+[collect] b2c-1379 wrong_stage_rectification        arm=mid      q=1.000 cost=$0.0442 turns=3 (agent_respond)
+[collect] b2c-1379 wrong_stage_rectification        arm=frontier q=1.000 cost=$0.0569 turns=2 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-471 sales_insight_mining             arm=cheap    q=0.000 cost=$0.0161 turns=3 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-471 sales_insight_mining             arm=mid      q=1.000 cost=$0.2925 turns=7 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-471 sales_insight_mining             arm=frontier q=0.000 cost=$0.3484 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["ka0Ws000000pybdIAA"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1794 quote_approval                   arm=cheap    q=0.000 cost=$0.0425 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000q0gfIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1794 quote_approval                   arm=mid      q=0.000 cost=$0.1732 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["ka0Ws000000pyerIAA", "ka0Ws000000pygTIAQ"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1794 quote_approval                   arm=frontier q=0.000 cost=$0.3817 turns=6 (agent_respond)
+[collect] b2c-62 lead_qualification               arm=cheap    q=1.000 cost=$0.0279 turns=4 (agent_respond)
+[collect] b2c-62 lead_qualification               arm=mid      q=1.000 cost=$0.0537 turns=3 (agent_respond)
+[collect] b2c-62 lead_qualification               arm=frontier q=1.000 cost=$0.1163 turns=3 (agent_respond)
+[collect] b2c-210 activity_priority                arm=cheap    q=1.000 cost=$0.0181 turns=3 (agent_respond)
+[collect] b2c-210 activity_priority                arm=mid      q=1.000 cost=$0.0635 turns=4 (agent_respond)
+[collect] b2c-210 activity_priority                arm=frontier q=1.000 cost=$0.0645 turns=2 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000q0gfIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-622 invalid_config                   arm=cheap    q=0.000 cost=$0.0473 turns=6 (agent_respond)
+[collect] b2c-622 invalid_config                   arm=mid      q=1.000 cost=$0.1529 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-622 invalid_config                   arm=frontier q=0.000 cost=$0.4705 turns=12 (forced_answer)
+[collect] b2c-1633 private_customer_information     arm=cheap    q=0.000 cost=$0.0154 turns=3 (agent_respond)
+[collect] b2c-1633 private_customer_information     arm=mid      q=0.000 cost=$0.0281 turns=2 (agent_respond)
+[collect] b2c-1633 private_customer_information     arm=frontier q=1.000 cost=$0.0306 turns=1 (agent_respond)
+[spend] $42.2120 of cap $55 | 2105 calls, 130 tasks, $0.3247/task | in 18,479,727 out 322,463 tok | claude-haiku-4-5 $7.26, claude-opus-5-5 $18.57, claude-sonnet-5-5 $16.39
+[collect] b2c-1861 internal_operation_data          arm=cheap    q=0.000 cost=$0.3411 turns=12 (forced_answer)
+[collect] b2c-1861 internal_operation_data          arm=mid      q=0.000 cost=$0.5305 turns=12 (forced_answer)
+[collect] b2c-1861 internal_operation_data          arm=frontier q=0.000 cost=$0.3151 turns=4 (agent_respond)
+[collect] b2c-568 confidential_company_knowledge   arm=cheap    q=0.000 cost=$0.0146 turns=2 (agent_respond)
+[collect] b2c-568 confidential_company_knowledge   arm=mid      q=0.000 cost=$0.0413 turns=2 (agent_respond)
+[collect] b2c-568 confidential_company_knowledge   arm=frontier q=0.000 cost=$0.0894 turns=3 (agent_respond)
+[collect] b2c-881 handle_time                      arm=cheap    q=1.000 cost=$0.0428 turns=5 (agent_respond)
+[collect] b2c-881 handle_time                      arm=mid      q=1.000 cost=$0.0483 turns=3 (agent_respond)
+[collect] b2c-881 handle_time                      arm=frontier q=1.000 cost=$0.0965 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1206 transfer_count                   arm=cheap    q=0.000 cost=$0.0700 turns=10 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1206 transfer_count                   arm=mid      q=0.000 cost=$0.1767 turns=12 (forced_answer)
+[collect] b2c-1206 transfer_count                   arm=frontier q=1.000 cost=$0.0695 turns=2 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-689 knowledge_qa                     arm=cheap    q=0.043 cost=$0.0159 turns=2 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-689 knowledge_qa                     arm=mid      q=0.131 cost=$0.0423 turns=2 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-689 knowledge_qa                     arm=frontier q=0.085 cost=$0.0828 turns=2 (agent_respond)
+[collect] b2c-1141 best_region_identification       arm=cheap    q=1.000 cost=$0.0231 turns=3 (agent_respond)
+[collect] b2c-1141 best_region_identification       arm=mid      q=1.000 cost=$0.0425 turns=2 (agent_respond)
+[collect] b2c-1141 best_region_identification       arm=frontier q=1.000 cost=$0.0821 turns=2 (agent_respond)
+[collect] b2c-1525 case_routing                     arm=cheap    q=1.000 cost=$0.1229 turns=12 (forced_answer)
+[collect] b2c-1525 case_routing                     arm=mid      q=1.000 cost=$0.0510 turns=3 (agent_respond)
+[collect] b2c-1525 case_routing                     arm=frontier q=1.000 cost=$0.0945 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1983 named_entity_disambiguation      arm=cheap    q=0.000 cost=$0.0650 turns=10 (agent_respond)
+[collect] b2c-1983 named_entity_disambiguation      arm=mid      q=1.000 cost=$0.0470 turns=3 (agent_respond)
+[collect] b2c-1983 named_entity_disambiguation      arm=frontier q=1.000 cost=$0.0909 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pyjhIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1431 policy_violation_identification  arm=cheap    q=0.000 cost=$0.0855 turns=10 (agent_respond)
+[collect] b2c-1431 policy_violation_identification  arm=mid      q=1.000 cost=$0.3172 turns=11 (agent_respond)
+[collect] b2c-1431 policy_violation_identification  arm=frontier q=1.000 cost=$0.1673 turns=5 (agent_respond)
+[collect] b2c-329 top_issue_identification         arm=cheap    q=1.000 cost=$0.0178 turns=3 (agent_respond)
+[collect] b2c-329 top_issue_identification         arm=mid      q=1.000 cost=$0.0456 turns=3 (agent_respond)
+[collect] b2c-329 top_issue_identification         arm=frontier q=1.000 cost=$0.0593 turns=2 (agent_respond)
+[spend] $45.5083 of cap $55 | 2266 calls, 140 tasks, $0.3251/task | in 20,110,672 out 349,189 tok | claude-haiku-4-5 $8.06, claude-opus-5-5 $19.72, claude-sonnet-5-5 $17.73
+[collect] b2c-130 monthly_trend_analysis           arm=cheap    q=1.000 cost=$0.0139 turns=2 (agent_respond)
+[collect] b2c-130 monthly_trend_analysis           arm=mid      q=1.000 cost=$0.0305 turns=2 (agent_respond)
+[collect] b2c-130 monthly_trend_analysis           arm=frontier q=1.000 cost=$0.0596 turns=2 (agent_respond)
+[collect] b2c-875 sales_amount_understanding       arm=cheap    q=1.000 cost=$0.0309 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-875 sales_amount_understanding       arm=mid      q=0.000 cost=$0.1884 turns=12 (forced_answer)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RHDBIA4"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-875 sales_amount_understanding       arm=frontier q=0.000 cost=$0.1316 turns=4 (agent_respond)
+[collect] b2c-1671 lead_routing                     arm=cheap    q=1.000 cost=$0.0504 turns=7 (agent_respond)
+[collect] b2c-1671 lead_routing                     arm=mid      q=1.000 cost=$0.0648 turns=4 (agent_respond)
+[collect] b2c-1671 lead_routing                     arm=frontier q=1.000 cost=$0.1284 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RGiYIAW"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2092 sales_cycle_understanding        arm=cheap    q=0.000 cost=$0.0969 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005REvGIAW"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2092 sales_cycle_understanding        arm=mid      q=0.000 cost=$0.0662 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["005Ws000005RGiYIAW"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-2092 sales_cycle_understanding        arm=frontier q=0.000 cost=$0.1898 turns=4 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": ["005Ws000005RH6jIAG"]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1005 conversion_rate_comprehension    arm=cheap    q=0.000 cost=$0.0368 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": [
+    "005Ws000005RJenIAG",
+    "005Ws000005RH6jIAG",
+    "005Ws000005RIh9IAG",
+    "005Ws000005RIxFIAW",
+    "005Ws000005RINlIAO"
+  ]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1005 conversion_rate_comprehension    arm=mid      q=0.000 cost=$0.0303 turns=2 (agent_respond)
+[collect] b2c-1005 conversion_rate_comprehension    arm=frontier q=1.000 cost=$0.0961 turns=3 (agent_respond)
+[collect] b2c-1288 wrong_stage_rectification        arm=cheap    q=1.000 cost=$0.0173 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["Qualification"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1288 wrong_stage_rectification        arm=mid      q=0.000 cost=$0.1737 turns=12 (forced_answer)
+[collect] b2c-1288 wrong_stage_rectification        arm=frontier q=1.000 cost=$0.0583 turns=2 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-476 sales_insight_mining             arm=cheap    q=0.000 cost=$0.0731 turns=5 (agent_respond)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-476 sales_insight_mining             arm=mid      q=0.000 cost=$0.3557 turns=12 (forced_answer)
+It is recommended to enable `effective_order` for sentence-level BLEU.
+[collect] b2c-476 sales_insight_mining             arm=frontier q=0.000 cost=$0.3391 turns=5 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pybdIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1811 quote_approval                   arm=cheap    q=0.000 cost=$0.0536 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pybdIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1811 quote_approval                   arm=mid      q=0.000 cost=$0.1813 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["ka0Ws000000pybdIAA"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-1811 quote_approval                   arm=frontier q=0.000 cost=$0.4802 turns=8 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["None"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-93 lead_qualification               arm=cheap    q=1.000 cost=$0.0129 turns=2 (agent_respond)
+[collect] b2c-93 lead_qualification               arm=mid      q=1.000 cost=$0.0813 turns=4 (agent_respond)
+[collect] b2c-93 lead_qualification               arm=frontier q=1.000 cost=$0.2282 turns=6 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": [
+    "00TWs0000089WkGMAU",
+    "00TWs0000089KZGMA2",
+    "00TWs0000089WkHMAU",
+    "00TWs0000089TGIMA2"
+  ]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-273 activity_priority                arm=cheap    q=0.000 cost=$0.0195 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{ "extracted_answers": ["00TWs0000089NabMAE", "00TWs0000089WkGMAU", "00TWs0000089KZGMA2", "00TWs0000089WkHMAU", "00TWs0000089TGIMA2"] }
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-273 activity_priority                arm=mid      q=1.000 cost=$0.0493 turns=3 (agent_respond)
+Failed to parse JSON: ```json
+{
+  "extracted_answers": [
+    "00TWs0000089NabMAE",
+    "00TWs0000089WkGMAU",
+    "00TWs0000089KZGMA2",
+    "00TWs0000089WkHMAU",
+    "00TWs0000089TGIMA2"
+  ]
+}
+```. Error: Expecting value: line 1 column 1 (char 0). Using heuristics.
+[collect] b2c-273 activity_priority                arm=frontier q=1.000 cost=$0.0672 turns=2 (agent_respond)
+[spend] $48.9214 of cap $55 | 2425 calls, 150 tasks, $0.3261/task | in 21,449,893 out 375,041 tok | claude-haiku-4-5 $8.48, claude-opus-5-5 $21.50, claude-sonnet-5-5 $18.95
+[collect] done: 170 new episodes, 280 already logged -> traces/crmarena_b2c_counterfactual.jsonl
+[spend] $48.9214 of cap $55 | 2425 calls, 150 tasks, $0.3261/task | in 21,449,893 out 375,041 tok | claude-haiku-4-5 $8.48, claude-opus-5-5 $21.50, claude-sonnet-5-5 $18.95

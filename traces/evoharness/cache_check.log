@@ -1,0 +1,15 @@
+[evo] axis=tools stages={1: 13} tiers=['cheap', 'mid', 'frontier'] cap=$150 ledger=$11.1693
+[evo] stage 1: 13 of 249 tasks -> traces/evoharness/evoharness_tools_s1.jsonl
+[evo] hr/v1/test/task_20251224_094258_495_c4ad7a70_42fbe372 arm=cheap    score=0.000 pass=False cost=$0.0162 turns=2 types=['tool', 'answer']
+[evo] hr/v1/test/task_20251224_094258_495_c4ad7a70_42fbe372 arm=mid      score=0.750 pass=False cost=$0.0742 turns=11 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] hr/v1/test/task_20251224_094258_495_c4ad7a70_42fbe372 arm=frontier score=1.000 pass=True cost=$0.1676 turns=12 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] hybrid/v1/train/task_20260114_124106_138_1628b966_ddc2587a arm=cheap    score=0.000 pass=False cost=$0.0363 turns=10 types=['invalid', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] hybrid/v1/train/task_20260114_124106_138_1628b966_ddc2587a arm=mid      score=0.000 pass=False cost=$0.0706 turns=7 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] hybrid/v1/train/task_20260114_124106_138_1628b966_ddc2587a arm=frontier score=0.000 pass=False cost=$0.1572 turns=8 types=['tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] calendar/v1/test/task_20260105_140440_086_e0ac0c6d_27ecac16 arm=cheap    score=1.000 pass=True cost=$0.0314 turns=6 types=['tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] calendar/v1/test/task_20260105_140440_086_e0ac0c6d_27ecac16 arm=mid      score=1.000 pass=True cost=$0.0732 turns=6 types=['tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] calendar/v1/test/task_20260105_140440_086_e0ac0c6d_27ecac16 arm=frontier score=1.000 pass=True cost=$0.1483 turns=6 types=['tool', 'tool', 'tool', 'tool', 'tool', 'answer']
+[evo] done: 9 new episodes -> traces/evoharness/evoharness_tools_s1.jsonl; $0.2583/task (all tiers) -> $0.00 projected for 0 tasks
+[spend] $11.9442 of cap $150 | 322 calls, 13 tasks, $0.9188/task | in 4,342,614 out 62,462 tok | claude-haiku-4-5 $1.48, claude-opus-5-5 $7.27, claude-sonnet-5-5 $3.19
+[spend] $11.9442 of cap $150 | 322 calls, 13 tasks, $0.9188/task | in 4,342,614 out 62,462 tok | claude-haiku-4-5 $1.48, claude-opus-5-5 $7.27, claude-sonnet-5-5 $3.19
+exit 0

@@ -397,7 +397,12 @@ def calibrate(mas_log: str | Path = MAS_LOG, single_log: str | Path = SINGLE_AGE
     out.mas_cat_counts = {c: tuple(v) for c, v in sorted(cat.items())}
     st = defaultdict(lambda: [0, 0])
     sc = defaultdict(lambda: defaultdict(lambda: [0, 0]))
+    # the single-agent constants are measured on the same tasks the MAS run used (the first 50 of the
+    # seeded sample); the counterfactual log has since been extended on that sample, so restrict to them
+    mas_tasks = {e.task_id for e in mas}
     for e in cf:
+        if e.task_id not in mas_tasks:
+            continue
         t = e.steps[0].action_name.split("@")[1]
         st[t][0] += int(e.quality >= 0.5); st[t][1] += 1
         sc[e.meta["category"]][t][0] += int(e.quality >= 0.5); sc[e.meta["category"]][t][1] += 1
