@@ -1,10 +1,12 @@
 # PACE: Priced Adaptive Control for Evolving Harnesses
 
+**Paper:** [full PDF](https://github.com/nvdm59/PACE-Harness/raw/main/paper/main.pdf) (GitHub's in-browser preview of `paper/main.pdf` shows only the first pages).
+
 A learned, cost-priced controller at the decision points of a frozen agent harness, an off-policy promotion gate, and priced transfer metrics under harness drift.
 
 ## Overview
 
-Agent harnesses expose a small number of runtime decisions: which model tier to call, whether to retrieve, verify, delegate or answer. PACE treats these decision points as a constrained control problem and learns a policy over them without modifying the harness itself. The controller is trained offline from logged traces that record behaviour propensities, under a per-task cost budget whose price λ is learned by dual ascent, and every model call passes through a fail-closed spend ledger. A candidate policy is put into service only through an off-policy promotion gate (IPS, SNIPS and doubly-robust estimates with bootstrap intervals). When the harness changes (new tools, new versions, repricing), priced forward- and backward-transfer metrics measure what the controller keeps and what it must relearn. We evaluate on a calibrated simulator, CRMArena-Pro, τ-bench and the hosted EvoHarnessBench service, and the repository contains the code, logs and result files behind every number in the report (`paper/`).
+Agent harnesses expose a small number of runtime decisions: which model tier to call, whether to retrieve, verify, delegate or answer. PACE treats these decision points as a constrained control problem and learns a policy over them without modifying the harness itself. The controller is trained offline from logged traces that record behaviour propensities, under a per-task cost budget whose price λ is learned by dual ascent, and every model call passes through a fail-closed spend ledger. A candidate policy is put into service only through an off-policy promotion gate (IPS, SNIPS and doubly-robust estimates with bootstrap intervals). When the harness changes (new tools, new versions, repricing), priced forward- and backward-transfer metrics measure what the controller keeps and what it must relearn. We evaluate on a calibrated simulator, CRMArena-Pro, τ-bench and the hosted EvoHarnessBench service, and the repository contains the code, logs and result files behind every number in the paper (`paper/`).
 
 ![PACE overview](docs/fig_overview.png)
 
@@ -18,9 +20,9 @@ Agent harnesses expose a small number of runtime decisions: which model tier to 
 | `pace/llm/` | LLM controller (Qwen3-1.7B + LoRA, SFT and GRPO on Modal) |
 | `pace/llm/backends/` | the same GRPO task on TRL, verl on Ray and NeMo-RL, plus `compare.py` and `summarize.py` |
 | `scripts/` | simulator pipeline, offline CRMArena-Pro analysis, setup scripts for the benchmarks, cost estimates |
-| `results/` | every result file cited in the report |
+| `results/` | every result file cited in the paper |
 | `traces/` | the committed counterfactual logs and spend ledgers |
-| `paper/` | report source, figure script and PDF |
+| `paper/` | paper source, figure script and PDF |
 | `docs/` | figures for this README |
 | `tests/` | unit and offline integration tests |
 
@@ -40,17 +42,17 @@ Quality @ USD per task. Counterfactual logs: every task is run on every tier, so
 
 ![Suites](docs/fig_suites.png)
 
-**Gate.** On the realised one-arm CRMArena-Pro log the doubly-robust gate promotes the learned policy in 30% of redraws at 300 tasks (10% at 150, 8% on B2C). Certifying a $0.005 budget margin is a matter of roughly 1,000 tasks.
+**Gate.** On the realised one-arm CRMArena-Pro log the doubly-robust gate promotes the learned policy in 30% of redraws at 300 tasks (10% at 150, 8% on B2C). Certifying a $0.005 budget margin needs an interval near $0.01, about 1,700 tasks at the measured 300-task width.
 
 **Continual orchestrator.** In a simulator calibrated to the real logs (40 days, 4 pre-registered harness stages), the online learner has the lowest regret of every learned arm (1.26, against 2.60 for the frozen policy and 3.03–3.46 for static routers) and recovers after every stage. A fixed never-verify mode has lower whole-stream regret because of a 12-day cold start. Verification helps only when the verifier is informative and retries are not cap-bound (+0.03 accuracy for +18% cost).
 
 ## Install
 
 ```bash
-pip install -r requirements.txt     # numpy; pytest optional
+pip install -r requirements.txt     # numpy; pytest and pyyaml for the tests
 ```
 
-Python 3.10+. The CPU pipelines need only `numpy`. The benchmark collections use a separate Python 3.12 venv created by `scripts/setup_crmarena.sh` (see [Collections](#collections)).
+Python 3.10+. The CPU pipelines need only `numpy`; the test suite also needs `pytest` and `pyyaml` (two backend-config tests import `yaml`). The benchmark collections use a separate Python 3.12 venv created by `scripts/setup_crmarena.sh` (see [Collections](#collections)).
 
 ## Quick start
 
@@ -63,13 +65,13 @@ The tests use fake environments and completions and make no network calls.
 
 ## Reproduce
 
-All CPU pipelines are seeded end to end; the CRMArena-Pro offline script is byte-for-byte deterministic on the committed log. Commands are from the report's Reproduction appendix, run from the repository root.
+All CPU pipelines are seeded end to end; the CRMArena-Pro offline script is byte-for-byte deterministic on the committed log. Commands are from the paper's Reproduction appendix, run from the repository root.
 
-| report section | command | output |
+| paper section | command | output |
 |---|---|---|
 | Simulator pipeline | `bash scripts/run_v0.sh` | `results/` |
 | Simulator, five seeds | `bash scripts/run_sim_seeds.sh 0 1 2 3 4` | `results/sim_seeds/` |
-| CRMArena-Pro (50 tasks) | `python scripts/crmarena_offline.py` | `results/crmarena/` |
+| CRMArena-Pro (first 50 tasks) | `head -150 traces/crmarena_b2b_counterfactual.jsonl > /tmp/b2b_50.jsonl && python scripts/crmarena_offline.py --log /tmp/b2b_50.jsonl --out results/crmarena` | `results/crmarena/` |
 | CRMArena-Pro B2B, 300 tasks | `python scripts/crmarena_offline.py --log traces/crmarena_b2b_counterfactual.jsonl --spend traces/crmarena_b2b_counterfactual.spend.jsonl --out results/crmarena_300` | `results/crmarena_300/` |
 | CRMArena-Pro B2C, 150 tasks | `python scripts/crmarena_offline.py --log traces/crmarena_b2c_counterfactual.jsonl --spend traces/b2c/spend.jsonl --out results/crmarena_b2c` | `results/crmarena_b2c/` |
 | τ-bench retail | `python -m pace.experiments.taubench.run analyze --log traces/taubench_retail_counterfactual.jsonl --out results/taubench/retail_RESULTS.md` | `results/taubench/` |
@@ -83,7 +85,7 @@ All CPU pipelines are seeded end to end; the CRMArena-Pro offline script is byte
 | LLM controller (GPU) | run once each on one A100-40GB; logs and evaluation tables committed | `results/llm/` |
 | Figures | `python paper/make_figures.py` | `paper/figures/` |
 
-The report itself is built with `make` in `paper/`.
+The 50-task analysis runs on the first 50 tasks (150 lines) of the committed B2B log; run without `--log`, `scripts/crmarena_offline.py` analyses the full 300-task log and overwrites `results/crmarena/`. The paper itself is built with `make` in `paper/`.
 
 ## Training backends
 
@@ -136,11 +138,12 @@ EvoHarnessBench (Salesforce AI Research) is a hosted service that holds the gyms
 ## Citation
 
 ```bibtex
-@techreport{mehrdad2026pace,
+@misc{mehrdad2026pace,
   title  = {PACE: Priced Adaptive Control for Evolving Harnesses},
   author = {Mehrdad, Navid},
   year   = {2026},
-  note   = {Technical report}
+  note   = {Manuscript},
+  url    = {https://github.com/nvdm59/PACE-Harness}
 }
 ```
 

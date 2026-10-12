@@ -5,3 +5,5 @@ numpy>=1.24
 # .venv-crmarena by scripts/setup_crmarena.sh, not from this file.
 # optional, for running the tests under pytest (they also run as plain python):
 # pytest
+# needed by two config tests in tests/test_backends.py:
+# pyyaml
