@@ -1,6 +1,6 @@
 # PACE: Priced Adaptive Control for Evolving Harnesses
 
-**Paper:** [full PDF](https://github.com/nvdm59/PACE-Harness/raw/main/paper/main.pdf) (GitHub's in-browser preview of `paper/main.pdf` shows only the first pages).
+**Paper:** [full PDF](https://github.com/nvdm59/PACE-Harness/raw/main/paper/main.pdf).
 
 A learned, cost-priced controller at the decision points of a frozen agent harness, an off-policy promotion gate, and priced transfer metrics under harness drift.
 
