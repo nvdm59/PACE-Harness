@@ -724,7 +724,7 @@ The same loop on the real orchestrator: days of 20 b2b tasks, the learner traine
 \section{Limitations and threats to validity}
 
 \begin{itemize}
-\item \textbf{Fifty tasks.} The real-harness evidence is one b2b collection of 50 tasks (2--3 per category); every held-out number is a mean over 10 tasks per fold, one task is $0.1$ of quality, and the across-fold SDs are as large as the differences between policies. The MAS run has 130 episodes on the same 50 tasks; the SSR run 41 tasks. The negative results for the linear controller, the ORM and the refinement gate are statements about this sample size and these observables, not about the approaches.
+\item \textbf{Sample sizes.} The real-harness evidence is 300 B2B and 150 B2C tasks on CRMArena-Pro, 60 and 49 tasks on the two $\tau$-bench domains, and 50 tasks at each of three EvoHarnessBench stages, every task on every tier. The held-out numbers of Section~\ref{sec:crm} are means over 10 tasks per fold, where one task is $0.1$ of quality and the across-fold SDs are as large as the differences between policies; the 300-task section is where the orderings become stable, and the gate's intervals are still five times the budget margin there. The MAS run has 130 episodes on the first 50 tasks; the SSR run 41 tasks. The negative results for the ORM, the refinement gate, and the first-step policies on $\tau$-bench are statements about these sample sizes and observables, not about the approaches.
 \item \textbf{Seeds.} The simulator pipeline reports 5 seeds; the CRMArena folds one split, and each GPU run ran once; the continual study's all-arms run is one seed per schedule, and only the verifier ablation (continual, the two fixed modes and the oracle; Section~\ref{sec:ablation}) reports 5-seed error bars. The router and AWR arms carry no seed variance.
 \item \textbf{Simulators calibrated to the project's own logs.} The sim of Section~\ref{sec:sim} is hand-written. The continual simulator's process statistics are measured on 130 episodes, but the link from a step's latent quality to the answer and every capability that arrives after stage 0 are assumed (Appendix~\ref{app:sim}); the transfer effect sizes are the simulator's, not CRMArena's. The calibration check reproduces the fixed modes' cost and call counts but lands accuracy at $0.446/0.459$ against $0.480/0.460$, because the simulated verifier is uninformative, as the measured one is.
 \item \textbf{Assumed stage parameters.} $P(\text{good}\mid\text{rows})=0.60/0.75/0.85$ by tier; coverage-to-answer logit slope 1.5; task-level logit noise sd 0.4; \code{verify-2} at $P(\text{flag}\mid\text{correct})=0.30$ with the same recall; \code{data-4} at rows 0.85 / good 0.80; \code{answer-4} mid-grade on 8 categories; \code{schema\_lookup} removes error mass from the next step; \code{aggregate\_calc} adds $+0.34$ coverage on aggregation categories; the three skills add $+0.15$ $P(\text{good}\mid\text{rows})$ on their categories or re-plan into 3--4 sub-queries; planner v2 plan length $(0.0,0.1,0.4,0.5)$. Tools and skills are priced as a verifier-sized cheap call (711/62 tokens).
@@ -926,6 +926,39 @@ seed & $\bar\lambda$ & gate $v_1$ DR quality & cost hi & decision & truth $v_1$ 
 \end{tabular}}
 \end{table}
 
+
+\section{A logged episode, step by step}
+\label{app:episode}
+
+One task from the B2B counterfactual log, \code{b2b-1755} (category \code{lead\_routing}: which sales user a lead in a given state should be routed to), as the platform recorded it. Every step carries the action as an (op, tier) pair, the propensity the behaviour policy assigned to it, the realised cost and latency, the 43-dimensional feature vector and the legal action set. The mid-tier arm:
+
+{\small\begin{verbatim}
+t=0  CONTINUE@mid   propensity 0.333   $0.0141   1.4 s
+t=1  CONTINUE@mid   propensity 1.0     $0.0146   1.6 s
+t=2  CONTINUE@mid   propensity 1.0     $0.0186   2.9 s
+t=3  CONTINUE@mid   propensity 1.0     $0.0172   1.2 s
+quality 1.0   total cost $0.0645   latency 7.1 s   end: agent_respond
+\end{verbatim}}
+
+\noindent The agent's logged tool calls at those steps: a query for the territory whose description matches the state; a query for the users assigned to that territory; a count of accepted quotes per owner among those users; the answer, one user id, which matched the reference exactly. The propensity is $1/3$ at $t=0$ because the collection's behaviour policy drew the tier uniformly, and $1$ afterwards because the continuation is fixed on the chosen tier (Section~\ref{sec:crm}); the controller's decision is the first step only, so later steps carry no weight in any estimator.
+
+\begin{table}[H]\centering\small
+\begin{tabular}{lrlrr}\toprule
+arm & steps & answer & quality & cost \\\midrule
+cheap & 7 & a different user id & 0.0 & \$0.049 \\
+mid & 4 & correct & 1.0 & \$0.065 \\
+frontier & 4 & correct & 1.0 & \$0.128 \\\bottomrule
+\end{tabular}
+\caption{The same task on the three arms. The per-task oracle is the mid tier: best quality, cheapest among the correct arms.}
+\end{table}
+
+\paragraph{What the controller does with it.} At $t=0$ the feature vector has two non-zero entries, the task category and the harness version. The constrained policy of Section~\ref{sec:crm127} (trained on all 300 tasks, $\bar\lambda=1.09$ per dollar) maps it through a $3\times43$ weight matrix with logit clip $3$ to
+\[
+\pi(\text{cheap}\mid x)=0.054,\qquad \pi(\text{mid}\mid x)=0.009,\qquad \pi(\text{frontier}\mid x)=0.937 .
+\]
+It has learned that \code{lead\_routing} tasks, on average over the log, are worth the frontier tier under its budget; on this task that spends twice what the mid tier needed. The gap between the learned policy and the per-task oracle in Table~\ref{tab:crm150} is this gap: the policy conditions on the category, the oracle on the outcome.
+
+\paragraph{What the gate does with it.} On a realised one-arm log that drew the mid tier for this task, the candidate's importance weight is $\pi(\text{mid}\mid x)/(1/3)\approx0.03$, so the episode barely enters the IPS term; a task whose log drew the frontier tier carries weight $2.8$. The doubly-robust estimator (Appendix~\ref{app:estimators}) first predicts the task's quality and cost from its category with a direct model fitted on the other tasks, then adds the weighted residual. Over the 300 tasks this gives quality $0.607$ $[0.525, 0.668]$ and cost $\$0.095$ $[0.087, 0.113]$; the quality lower bound clears $q_{\text{prev}}-\epsilon=0.484$, the cost upper bound does not clear $B+\mathrm{tol}=\$0.105$, and the gate \REVERT{}s. The policy's exact cost on the full log is $\$0.098$, inside the budget by less than the tolerance, which is the case the interval cannot certify at this sample size (Section~\ref{sec:gatepower}).
 
 \section{Prompts}
 \label{app:prompts}
