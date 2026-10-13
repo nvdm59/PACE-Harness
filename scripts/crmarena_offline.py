@@ -284,6 +284,116 @@ def drift_section(eps, T, folds, frozen, lam_f, gate_out, spend: str, boot: int)
     return out, lines
 
 
+def cv_gate_section(eps, T, folds, n_redraws: int = 200, boot: int = 200, seed0: int = 100_000):
+    """CROSS-FITTED gate protocol (not part of main()'s outputs; see scripts/crmarena_cv_gate.py).
+
+    gate_section trains its candidate on ALL tasks' full outcome table and then gates it on a
+    one-arm-per-task mask of the same tasks, so the candidate has seen every outcome it is scored
+    on. Here, for each CV fold: the candidate is the constrained cgrpo-lookup policy trained on the
+    training folds only (exactly the CV policy of cv_tables: cgrpo_policy(T.subset(train), seed=fold));
+    it is gated on the HELD-OUT fold's realised one-arm log (one uniformly drawn arm per held-out
+    task, fixed_arm_log seed = seed0 * (fold + 1) + redraw), n_redraws times, each with `boot`
+    bootstrap resamples (bootstrap seed = redraw index), against the uniform behaviour (bar = the
+    redraw's on-policy log mean), with the leave-one-task-out (cross-fitted) direct model of
+    pace.gate.estimate_bandit fitted within that held-out log only.
+
+    Truth: the candidate's EXACT held-out quality / cost from the full table. The correct decision
+    is PROMOTE iff exact cost <= B + tol and exact quality >= (exact uniform quality on the fold) -
+    eps_q; 'decision accuracy (realised bar)' instead uses each redraw's own on-policy bar.
+    Returns (results dict, markdown lines)."""
+    ests = ("ips", "snips", "dr")
+    per_fold, pooled = [], {"promote": [], "correct": [], "correct_realised_bar": [],
+                            "err": {m: {e: [] for e in ests} for m in ("quality", "cost")},
+                            "cover": {m: {e: [] for e in ests} for m in ("quality", "cost")},
+                            "width": {m: {e: [] for e in ests} for m in ("quality", "cost")}}
+    for fi, (tr, te) in enumerate(folds):
+        Ttr, Tte = T.subset(tr), T.subset(te)
+        pol, lb = cgrpo_policy(Ttr, seed=fi)
+        q_ex, c_ex = Tte.value(Tte.probs(pol))
+        qb, cb = Tte.value(uniform(len(Tte)))
+        exact = {"quality": q_ex, "cost": c_ex}
+        should = bool(c_ex <= BUDGET + TOL + 1e-12 and q_ex >= qb - EPS_Q)
+        te_set = set(te)
+        eps_te = [e for e in eps if e.task_id in te_set]
+        err = {m: {e: [] for e in ests} for m in ("quality", "cost")}
+        cover = {m: {e: [] for e in ests} for m in ("quality", "cost")}
+        width = {m: {e: [] for e in ests} for m in ("quality", "cost")}
+        prom, corr, corr_r, bars = [], [], [], []
+        for k in range(n_redraws):
+            lg = fixed_arm_log(eps_te, seed=seed0 * (fi + 1) + k)
+            g = gate(lg, pol, "behavior", BUDGET, eps_q=EPS_Q, tol=TOL, boot=boot, seed=k)
+            for m in ("quality", "cost"):
+                for e in ests:
+                    pt, lo, hi = g["candidate"][m][e]
+                    err[m][e].append(pt - exact[m])
+                    cover[m][e].append(int(lo <= exact[m] <= hi))
+                    width[m][e].append(hi - lo)
+            p = g["decision"] == "PROMOTE"
+            should_r = bool(c_ex <= BUDGET + TOL + 1e-12 and q_ex >= g["q_prev"] - EPS_Q)
+            prom.append(int(p)); corr.append(int(p == should)); corr_r.append(int(p == should_r))
+            bars.append(g["q_prev"])
+        stats = {}
+        for m in ("quality", "cost"):
+            for e in ests:
+                a = np.array(err[m][e])
+                stats[f"{m}/{e}"] = {"bias": float(a.mean()), "rmse": float(np.sqrt((a ** 2).mean())),
+                                     "ci_width": float(np.mean(width[m][e])),
+                                     "coverage": float(np.mean(cover[m][e]))}
+                pooled["err"][m][e] += err[m][e]; pooled["cover"][m][e] += cover[m][e]
+                pooled["width"][m][e] += width[m][e]
+        pooled["promote"] += prom; pooled["correct"] += corr; pooled["correct_realised_bar"] += corr_r
+        per_fold.append({"fold": fi, "n_test_tasks": len(te), "lambda_bar": float(lb),
+                         "exact": exact, "behavior_exact": {"quality": qb, "cost": cb},
+                         "correct_decision": "PROMOTE" if should else "REVERT",
+                         "promote_rate": float(np.mean(prom)), "decision_accuracy": float(np.mean(corr)),
+                         "decision_accuracy_realised_bar": float(np.mean(corr_r)),
+                         "mean_realised_bar": float(np.mean(bars)), "stats": stats})
+    pst = {}
+    for m in ("quality", "cost"):
+        for e in ests:
+            a = np.array(pooled["err"][m][e])
+            pst[f"{m}/{e}"] = {"bias": float(a.mean()), "rmse": float(np.sqrt((a ** 2).mean())),
+                               "ci_width": float(np.mean(pooled["width"][m][e])),
+                               "coverage": float(np.mean(pooled["cover"][m][e]))}
+    out = {"n_redraws": n_redraws, "boot": boot, "eps_q": EPS_Q, "tol": TOL, "budget": BUDGET, "seed0": seed0,
+           "folds": per_fold,
+           "pooled": {"n_gates": len(pooled["promote"]), "promote_rate": float(np.mean(pooled["promote"])),
+                      "decision_accuracy": float(np.mean(pooled["correct"])),
+                      "decision_accuracy_realised_bar": float(np.mean(pooled["correct_realised_bar"])),
+                      "stats": pst}}
+    f6 = lambda x: f"{x:.6f}"
+    lines = [f"Cross-fitted gate: per fold, candidate = constrained cgrpo-lookup trained on the training folds; gated on "
+             f"the held-out fold's realised one-arm log ({n_redraws} redraws, bootstrap {boot}, eps_q = {EPS_Q}, "
+             f"budget ${BUDGET:.2f} + tol ${TOL:.3f}, cross-fitted DR direct model within the held-out log). "
+             "Correct decision: PROMOTE iff exact held-out cost ≤ B + tol and exact quality ≥ exact uniform "
+             "quality − eps_q.", "",
+             "| fold | n test | cand. exact q | cand. exact cost | uniform exact q | correct | promote rate | "
+             "decision acc. | acc. (realised bar) | DR q bias | DR q RMSE | DR q CI width | DR q cover | "
+             "DR c bias | DR c RMSE | DR c CI width | DR c cover |", "|" + "---|" * 17]
+    for r in per_fold:
+        sq, sc = r["stats"]["quality/dr"], r["stats"]["cost/dr"]
+        lines.append(f"| {r['fold']} | {r['n_test_tasks']} | {f6(r['exact']['quality'])} | {f6(r['exact']['cost'])} | "
+                     f"{f6(r['behavior_exact']['quality'])} | {r['correct_decision']} | {r['promote_rate']:.3f} | "
+                     f"{r['decision_accuracy']:.3f} | {r['decision_accuracy_realised_bar']:.3f} | {sq['bias']:+.6f} | "
+                     f"{f6(sq['rmse'])} | {f6(sq['ci_width'])} | {sq['coverage']:.3f} | {sc['bias']:+.6f} | "
+                     f"{f6(sc['rmse'])} | {f6(sc['ci_width'])} | {sc['coverage']:.3f} |")
+    P = out["pooled"]
+    sq, sc = P["stats"]["quality/dr"], P["stats"]["cost/dr"]
+    lines.append(f"| pooled | {len(T)} | – | – | – | – | {P['promote_rate']:.3f} | {P['decision_accuracy']:.3f} | "
+                 f"{P['decision_accuracy_realised_bar']:.3f} | {sq['bias']:+.6f} | {f6(sq['rmse'])} | "
+                 f"{f6(sq['ci_width'])} | {sq['coverage']:.3f} | {sc['bias']:+.6f} | {f6(sc['rmse'])} | "
+                 f"{f6(sc['ci_width'])} | {sc['coverage']:.3f} |")
+    lines += ["", f"Pooled over the {P['n_gates']} gates (5 folds × {n_redraws} redraws), all estimators "
+              "(error vs the fold's exact held-out value):", "",
+              "| metric | estimator | bias | RMSE | mean 90% CI width | CI covers exact |", "|---|---|---|---|---|---|"]
+    for m in ("quality", "cost"):
+        for e in ests:
+            s_ = P["stats"][f"{m}/{e}"]
+            lines.append(f"| {m} | {e.upper()} | {s_['bias']:+.6f} | {f6(s_['rmse'])} | {f6(s_['ci_width'])} | "
+                         f"{s_['coverage']:.3f} |")
+    return out, lines
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--log", default=str(ROOT / "traces" / "crmarena_b2b_counterfactual.jsonl"),

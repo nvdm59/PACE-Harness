@@ -1,0 +1,19 @@
+## Exact vs sampled constrained training: CRMArena-Pro B2C, 150 tasks, 5-fold CV (seed 0)
+
+Held-out means over the 5 test folds (exact lookups). J at a common λ (2 and 5 per dollar). Budget B = $0.10, tol $0.005; flags on the mean held-out cost; 'folds ok' = folds with held-out cost ≤ B + tol. 'table reads' = (task, tier) cells read by the trainer: sampled = iters·batch·group = 300·32·8 sampled transitions; exact = iters·tasks·3; LP = one pass over the training cells. Multiplier: learned λ̄ (trainers) or the LP's dual price μ of the budget constraint. Wall-clock is training time per fold on this machine (CPU).
+
+| policy | quality | cost (USD) | J(λ=2) [SD] | J(λ=5) [SD] | cost ≤ B | cost ≤ B+tol | folds ok | multiplier (mean) | wall s / fold | table reads / fold |
+|---|---|---|---|---|---|---|---|---|---|---|
+| sampled cgrpo-lookup (served: iterate mix) | 0.617428 | 0.103341 | 0.410746 [0.096789] | 0.100725 [0.148954] | NO | yes | 4/5 | 1.212746 | 0.055 | 76800 |
+| sampled cgrpo-lookup (greedy of the mix) | 0.676803 | 0.105198 | 0.466407 [0.122821] | 0.150814 [0.202866] | NO | NO | 4/5 | 1.212746 | 0.055 | 76800 |
+| exact-gradient, full batch (served: iterate mix) | 0.628190 | 0.103613 | 0.420963 [0.097385] | 0.110123 [0.148770] | NO | yes | 4/5 | 0.948345 | 0.064 | 108000 |
+| exact-gradient, full batch (greedy of the mix) | 0.676803 | 0.102820 | 0.471163 [0.113469] | 0.162703 [0.179303] | NO | yes | 4/5 | 0.948345 | 0.064 | 108000 |
+| exact-gradient, minibatch 32 (served: iterate mix) | 0.621481 | 0.103495 | 0.414491 [0.098028] | 0.104004 [0.148228] | NO | yes | 4/5 | 1.069184 | 0.050 | 28800 |
+| exact-gradient, minibatch 32 (greedy of the mix) | 0.676803 | 0.103319 | 0.470165 [0.112710] | 0.160209 [0.177542] | NO | yes | 4/5 | 1.069184 | 0.050 | 28800 |
+| category LP, train-fold means (served, stochastic) | 0.634223 | 0.094289 | 0.445645 [0.102334] | 0.162779 [0.168831] | yes | yes | 4/5 | 0.000000 | 0.001 | 360 |
+| category LP, train-fold means (greedy: argmax tier per category) | 0.634223 | 0.094289 | 0.445645 [0.102334] | 0.162779 [0.168831] | yes | yes | 4/5 | 0.000000 | 0.001 | 360 |
+| best fixed-arm mixture at cost <= B (train-fold LP, context-free) | 0.554163 | 0.100481 | 0.353202 [0.089093] | 0.051760 [0.126894] | NO | yes | 4/5 | – | 0.000 | 360 |
+
+Category LP per fold (training-fold objective): fold 0: q 0.6830, c 0.0986, randomized categories 0, unseen test categories 0; fold 1: q 0.7011, c 0.0945, randomized categories 0, unseen test categories 0; fold 2: q 0.7001, c 0.0810, randomized categories 0, unseen test categories 0; fold 3: q 0.7295, c 0.0900, randomized categories 0, unseen test categories 0; fold 4: q 0.6824, c 0.0993, randomized categories 0, unseen test categories 0.
+
+The budget constraint is slack in every fold's LP (μ = 0, no randomized category): on training-fold category means, the highest-quality tier of every category already costs ≤ B on average, so the LP optimum is the per-category max-quality tier (cheaper on quality ties), and its stochastic and greedy rows coincide.

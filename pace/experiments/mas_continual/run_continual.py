@@ -40,6 +40,17 @@ schedule (`--schedule default`) and a milder sensitivity schedule (`--schedule m
 Two options of the cgrpo continual arm (RESULTS_rao_metainit.md): `--delegation-credit rao --lambda-d 0.5`
 trains with RAO-style per-decision delegation credit (rao_reward.py); `--init meta` starts the arm
 from a meta-learned controller instead of the uniform policy (meta_init.py).
+
+Gate review options (results/mas_continual/gate_v2/RESULTS.md; defaults reproduce the committed run):
+  --gate v2             pace.gate.gate_v2: joint-bootstrap quality difference, total episode cost
+                        (prefix included) against the FULL budget, overlap guard -> UNEVALUABLE
+  --gate-holdout 0.3    each day's served episodes are split 70/30 by task id (seeded hash); the
+                        trainers use only the 70% slice, the gate only the 30% slice (same window rule:
+                        since the last harness event, at most `gate_window` days)
+  --gate-shadow 1       also compute the v2 record when deciding with v1 (logged, never acted on)
+  --log-new-action-mass 1   log the served policy's probability on the actions introduced by the
+                        current stage, on every day of that stage (against the ε exploration floor)
+  --arms gate           continual, continual_awr, always_verify, never_verify (+ the oracle)
 """
 from __future__ import annotations
 
@@ -47,13 +58,14 @@ import argparse
 import json
 import random
 import time
+import zlib
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import numpy as np
 
 from ...controller import Controller
-from ...gate import gate
+from ...gate import gate, gate_v2
 from ...trace import Episode
 from ..mas.offpolicy import per_decision
 from . import drift, simenv
@@ -102,10 +114,57 @@ class Config:
     init: str = "zero"                # "zero" (uniform policy) | "meta" (meta_init.meta_learn on stages g0..g3)
     meta_outer: int = 3
     meta_inner_days: int = 2
+    # gate review options (gate_v2/RESULTS.md); the defaults are the committed behaviour
+    gate: str = "v1"                  # "v1" | "v2" (pace.gate.gate_v2)
+    gate_holdout: float = 0.0         # fraction of each day's served episodes (by task id) reserved for the gate
+    ess_floor: float = 0.2            # v2 overlap guard
+    clip_frac_max: float = 0.1        # v2 overlap guard
+    gate_shadow: int = 0              # 1: with --gate v1, also log the v2 record (not acted on)
+    log_new_action_mass: int = 0      # 1: log served mass on newly introduced actions
 
 
 CONTINUAL = ("continual", "continual_awr")
 ARMS = ("continual", "continual_awr", "frozen", "so_static", "so_relearn", "always_verify", "never_verify")
+
+
+def _holdout_split(eps_: list[Episode], frac: float, seed: int, day: int) -> tuple[list[Episode], list[Episode]]:
+    """(trainer slice, gate slice) of one day's served episodes, split by task id with a seeded hash
+    (the same task id goes to the same side for every arm). frac = 0: both slices are the full day."""
+    if frac <= 0:
+        return eps_, eps_
+    side = lambda e: (zlib.crc32(f"{seed}:{day}:{e.task_id}".encode()) % 100000) < frac * 100000
+    return [e for e in eps_ if not side(e)], [e for e in eps_ if side(e)]
+
+
+def _new_action_mass(eps_: list[Episode], pol: Controller, new_actions: set[str], eps: float) -> dict:
+    """Served probability on actions introduced by the current stage, over the logged decisions at which
+    at least one of them was legal; the floor is what ε-exploration alone gives them (ε·|new ∩ legal|/|legal|)."""
+    pol = pol.copy()
+    pol.ensure_actions(ACTIONS)
+    mass, base, floor, per_max, per_floor = [], [], [], [], []
+    by_action: dict[str, list[float]] = {}
+    n_dec = 0
+    for e in eps_:
+        for s in e.steps:
+            n_dec += 1
+            legal = s.legal or []
+            new = [a for a in legal if a in new_actions]
+            if not new:
+                continue
+            p = pol.probs(s.features, legal, eps=eps)
+            pb = pol.probs(s.features, legal, eps=0.0)
+            ix = [pol.index(a) for a in new]
+            mass.append(float(p[ix].sum())); base.append(float(pb[ix].sum()))
+            floor.append(eps * len(new) / len(legal))
+            per_max.append(float(p[ix].max())); per_floor.append(eps / len(legal))
+            for a, i in zip(new, ix):
+                by_action.setdefault(a, []).append(float(p[i]))
+    if not mass:
+        return {"n_states": 0, "n_decisions": n_dec}
+    return {"n_states": len(mass), "n_decisions": n_dec, "mass": float(np.mean(mass)), "mass_no_eps": float(np.mean(base)),
+            "floor": float(np.mean(floor)), "per_action_max": float(np.mean(per_max)), "per_action_floor": float(np.mean(per_floor)),
+            "by_action": {a: float(np.mean(v)) for a, v in sorted(by_action.items())},
+            "chosen_share": sum(1 for e in eps_ for s in e.steps if s.action_name in new_actions) / max(n_dec, 1)}
 
 
 def _snapshots(logs: list[list[Episode]]) -> list[dict]:
@@ -157,7 +216,7 @@ def run(cfg: Config, out: Path, log=print) -> dict:
     drift.apply_bonus_scale(cfg.schedule)
     gens = drift.schedule(cfg.schedule, verifier2_from_day1=cfg.verifier == "verify-2", max_calls=cfg.max_calls,
                           verifier_exempt_from_cap=cfg.verifier_exempt)
-    arms_cont = CONTINUAL if cfg.arms == "all" else ("continual",)
+    arms_cont = CONTINUAL if cfg.arms in ("all", "gate") else ("continual",)
     design_time = cfg.arms == "all"
     rng = random.Random(cfg.seed)
     harness: dict[int, MASSimHarness] = {}
@@ -188,6 +247,8 @@ def run(cfg: Config, out: Path, log=print) -> dict:
     relearn_window: list[list[Episode]] | None = None
     relearn_start_day: int | None = None
     logs: dict[str, list[list[Episode]]] = {a: [] for a in CONTINUAL + ("so_relearn",)}
+    logs_train: dict[str, list[list[Episode]]] = {a: [] for a in CONTINUAL}   # = logs when gate_holdout == 0
+    logs_gate: dict[str, list[list[Episode]]] = {a: [] for a in CONTINUAL}
     fixed = {"always_verify": FixedPolicy(True, verifier=cfg.verifier), "never_verify": FixedPolicy(False)}
     last_event_day = 1
     days_f = (out / "days.jsonl").open("w")
@@ -239,6 +300,8 @@ def run(cfg: Config, out: Path, log=print) -> dict:
             serving[arm] = incumbent[arm]
             served[arm] = serve(h, tasks, incumbent[arm], seed=cfg.seed + day * 10 + 1, eps=cfg.eps, mode=arm)
             logs[arm].append(served[arm])
+            tr, gt = _holdout_split(served[arm], cfg.gate_holdout, cfg.seed, day)
+            logs_train[arm].append(tr); logs_gate[arm].append(gt)
         if frozen is not None:
             serving["frozen"] = frozen
             served["frozen"] = serve(h, tasks, frozen, seed=cfg.seed + day * 10 + 2, eps=0.0, mode="frozen",
@@ -270,9 +333,11 @@ def run(cfg: Config, out: Path, log=print) -> dict:
         # ---------------------------------------------------------- train + gate
         gate_rows: dict[str, dict] = {}
         for arm in arms_cont:
-            window = logs[arm][max(0, last_event_day - 1):][-cfg.gate_window:]
+            window = logs_gate[arm][max(0, last_event_day - 1):][-cfg.gate_window:]
             gate_log = [e for d in window for e in d]
-            replay = _snapshots(logs[arm][-cfg.replay_window:])
+            train_window = logs_train[arm][max(0, last_event_day - 1):][-cfg.gate_window:]
+            awr_log = [e for d in train_window for e in d]          # = gate_log when gate_holdout == 0
+            replay = _snapshots(logs_train[arm][-cfg.replay_window:])
             inc, prev = incumbent[arm], learner[arm]
             t0 = time.time()
             if arm == "continual" and cfg.delegation_credit != "none":
@@ -285,14 +350,31 @@ def run(cfg: Config, out: Path, log=print) -> dict:
                                                    group=cfg.cgrpo_group, init=prev, serve_eps=cfg.eps,
                                                    lam0=float(prev.meta.get("lambda", 0.0)), seed=cfg.seed + day)
             else:
-                cand = train_awr_day(gate_log, cfg.awr_lam, prev, serve_eps=cfg.eps, epochs=cfg.awr_epochs)
+                cand = train_awr_day(awr_log, cfg.awr_lam, prev, serve_eps=cfg.eps, epochs=cfg.awr_epochs)
                 lam_bar = cfg.awr_lam
             cand.meta["name"] = f"{arm}-day{day}"
             learner[arm] = cand
             train_s = time.time() - t0
             t0 = time.time()
             prefix = sum(e.total_cost - sum(s.cost for s in e.steps) for e in gate_log) / len(gate_log)
-            g = gate(gate_log, cand, inc, cfg.budget - prefix, cfg.eps_q, cfg.tol, boot=cfg.boot, seed=cfg.seed + day)
+            v2rec = None
+            if cfg.gate == "v2":
+                v2rec = gate_v2(gate_log, cand, inc, cfg.budget, cfg.eps_q, cfg.tol, boot=cfg.boot, seed=cfg.seed + day,
+                                ess_floor=cfg.ess_floor, clip_frac_max=cfg.clip_frac_max)
+                ev2 = v2rec["estimates"]
+                g = {"decision": v2rec["decision"], "quality_ok": v2rec["quality_ok"], "cost_ok": v2rec["cost_ok"],
+                     "q_prev": ev2["inc_quality"][0],
+                     "candidate": {"quality": {"dr": ev2["cand_quality"], "snips": (float("nan"),) * 3, "ips": (float("nan"),) * 3},
+                                   "cost": {"dr": ev2["cand_decision_cost"]}, "n": v2rec["n"],
+                                   "max_rho": v2rec["diagnostics"]["max_rho"]},
+                     "incumbent": {"quality": ev2["inc_quality"], "cost": ev2["inc_total_cost"]}}
+            elif cfg.gate == "v1":
+                g = gate(gate_log, cand, inc, cfg.budget - prefix, cfg.eps_q, cfg.tol, boot=cfg.boot, seed=cfg.seed + day)
+                if cfg.gate_shadow:
+                    v2rec = gate_v2(gate_log, cand, inc, cfg.budget, cfg.eps_q, cfg.tol, boot=cfg.boot, seed=cfg.seed + day,
+                                    ess_floor=cfg.ess_floor, clip_frac_max=cfg.clip_frac_max)
+            else:
+                raise ValueError(cfg.gate)
             pd = per_decision(gate_log, cand, reward="quality", boot=50, seed=cfg.seed + day)
             gate_s = time.time() - t0
             ct = true_eval(h, cand, heldout_tasks[gen.index], seed=cfg.seed + 7, lam_j=lam_j)
@@ -311,6 +393,14 @@ def run(cfg: Config, out: Path, log=print) -> dict:
                              "regressed": bool(ct["quality"] < it["quality"] - cfg.eps_q)},
                    "gate_correct": bool((g["decision"] == "PROMOTE") == acceptable),
                    "train_s": round(train_s, 2), "gate_s": round(gate_s, 2)}
+            if cfg.gate != "v1" or cfg.gate_holdout > 0 or cfg.gate_shadow:
+                row["gate_version"] = cfg.gate
+                row["gate_budget"] = cfg.budget if cfg.gate == "v2" else cfg.budget - prefix
+                row["gate_holdout"] = cfg.gate_holdout
+                row["n_train_episodes"] = len(awr_log)
+                row["truth"]["diff_quality"] = ct["quality"] - it["quality"]
+            if v2rec is not None:
+                row["gate_v2" if cfg.gate == "v2" else "gate_v2_shadow"] = v2rec
             gates_f.write(json.dumps(row) + "\n")
             gate_rows[arm] = row
             if g["decision"] == "PROMOTE":
@@ -354,6 +444,12 @@ def run(cfg: Config, out: Path, log=print) -> dict:
                    "lambda": float(serving[arm].meta.get("lambda", serving[arm].meta.get("lambda_c", float("nan")))),
                    "heldout": {str(k): v for k, v in heldout[arm].items()},
                    "oracle_J": oracle[gen.index]["J"], "lambda_stage": lam_j}
+            if cfg.log_new_action_mass and arm in CONTINUAL and gen.index > 0:
+                prev_gen = gens[[x.index for x in gens].index(gen.index) - 1]
+                new_acts = _legal_universe(gen.params) - _legal_universe(prev_gen.params)
+                if new_acts:
+                    row["new_action_mass"] = {"stage_day": day - gen.day + 1, "new_actions": sorted(new_acts),
+                                              **_new_action_mass(served[arm], serving[arm], new_acts, cfg.eps)}
             if arm in gate_rows:
                 gr = gate_rows[arm]
                 row["gate"] = {k: gr[k] for k in ("decision", "quality_ok", "cost_ok", "dr_quality", "dr_cost", "per_decision_ess",

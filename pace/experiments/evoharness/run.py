@@ -258,7 +258,6 @@ def main(argv: list[str] | None = None) -> None:
         rep = analyze(paths, tiers)
         _print_report(rep, tiers)
         out = Path(a.out or Path(a.traces_dir) / "analysis.json")
-        out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(rep, indent=1) + "\n")
         print(f"[evo] report -> {out}")
         return

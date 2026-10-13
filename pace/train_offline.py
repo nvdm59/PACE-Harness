@@ -183,12 +183,24 @@ def train_cgrpo(episodes: list[Episode], harness: Harness, budget: float, iters:
                 group: int = 8, lr: float = 1.5, lr_lam: float = 0.10, kp: float = 2.0, lam0: float = 0.0,
                 ema: float = 0.9, snap_every: int = 5, init: Controller | None = None,
                 serve_eps: float = 0.05, reward: str = "realized", seed: int = 0,
-                log: list | None = None) -> tuple[Controller, float]:
+                log: list | None = None, restart_mix: float = 0.5,
+                max_transitions: int | None = None) -> tuple[Controller, float]:
     """Constrained GRPO on replay from logged state snapshots (sim harness only).
-    Each iteration re-rolls `group` continuations from `batch` logged states (half of them
-    episode starts, whose full cost feeds the dual variable). `reward` = "realized" uses the
-    0/1 outcome, "expected" the harness's success probability (lower variance; sim only).
+    Each iteration re-rolls `group` continuations from `batch` logged states: floor((1 -
+    restart_mix) * batch) episode starts (step 0; their full-episode cost feeds the dual variable)
+    and the rest drawn from ALL logged states (interior restarts, which may also land on step 0).
+    restart_mix = 0.5 is the historical default; 0.0 trains on episode starts only, i.e. on the
+    episode-start objective E_{s0}[V(s0)] rather than a restart-distribution objective (see
+    results/sim_seeds/restart_ablation.md). `reward` = "realized" uses the 0/1 outcome,
+    "expected" the harness's success probability (lower variance; sim only).
+
+    Every simulator step consumed is counted (meta "transitions"). With `max_transitions`, training
+    stops once that many transitions are consumed (`iters` is then only an upper bound) and the
+    iterate average covers the iterations after half the transition budget was spent, so two runs
+    can be compared at a matched simulator budget.
     Returns (policy, lam_bar) with lam_bar the mean lam over the averaged half."""
+    if not 0.0 <= restart_mix <= 1.0:
+        raise ValueError(f"restart_mix must be in [0, 1], got {restart_mix}")
     rng = random.Random(seed)
     pol = _new_policy(harness.all_actions, init, serve_eps)
     starts = [s.state for ep in episodes for s in ep.steps if s.state is not None]
@@ -199,8 +211,12 @@ def train_cgrpo(episodes: list[Episode], harness: Harness, budget: float, iters:
     lam_sum, n_avg = 0.0, 0
     pol.mix = None
     snaps: list[np.ndarray] = []
+    n_start = int(np.floor((1.0 - restart_mix) * batch))            # restart_mix=0.5 -> batch // 2, as before
+    transitions, it_done, avg_from = 0, 0, None
     for it in range(iters):
-        picks = rng.sample(starts0, batch // 2) + rng.sample(starts, batch - batch // 2)
+        if max_transitions is not None and transitions >= max_transitions:
+            break
+        picks = rng.sample(starts0, n_start) + rng.sample(starts, batch - n_start)
         X, M, A, ADV, full_costs, quals = [], [], [], [], [], []
         for snap in picks:
             base = harness.restore(snap)
@@ -213,6 +229,7 @@ def train_cgrpo(episodes: list[Episode], harness: Harness, budget: float, iters:
                     a, _ = pol.act(x, legal, rng, use_mix=False)          # sampled as served (eps included)
                     traj.append((x, pol.mask(legal), a))
                     s, _, _, _ = harness.step(s, pol.actions[a])
+                    transitions += 1
                 q = harness.expected_quality(s) if reward == "expected" else harness.quality(s)
                 c_rem = s.cost_so_far - base.cost_so_far
                 rs.append(q - lam * c_rem)
@@ -227,20 +244,34 @@ def train_cgrpo(episodes: list[Episode], harness: Harness, budget: float, iters:
         X, M, A, ADV = np.asarray(X), np.asarray(M), np.asarray(A), np.asarray(ADV)
         g = pol.grad_logits_batch(X, M, A, ADV * pol.eps_score_weights(X, M, A, serve_eps))
         pol.W += lr * g / (batch * group)
-        c_batch = float(np.mean(full_costs))
-        cost_ema = c_batch if cost_ema is None else ema * cost_ema + (1 - ema) * c_batch
-        lam_i, lam = _dual_step(lam_i, cost_ema, budget, lr_lam, kp)
-        if it >= iters // 2:                                          # iterate averaging
+        c_batch = float(np.mean(full_costs)) if full_costs else float("nan")
+        if full_costs:                    # restart_mix = 1 can draw no episode start: keep the dual state
+            cost_ema = c_batch if cost_ema is None else ema * cost_ema + (1 - ema) * c_batch
+            lam_i, lam = _dual_step(lam_i, cost_ema, budget, lr_lam, kp)
+        it_done = it + 1
+        if max_transitions is None:
+            in_avg = it >= iters // 2
+            k = it - iters // 2
+        else:                                                         # second half of the transition budget
+            if avg_from is None and transitions >= max_transitions / 2:
+                avg_from = it
+            in_avg = avg_from is not None
+            k = 0 if avg_from is None else it - avg_from
+        if in_avg:                                                    # iterate averaging
             lam_sum += lam; n_avg += 1
-            if (it - iters // 2) % snap_every == 0:
+            if k % snap_every == 0:
                 snaps.append(pol.W.copy())
         if log is not None:
-            log.append({"iter": it, "lambda": round(lam, 4), "cost_ema": round(cost_ema, 4),
-                        "cost_batch": round(c_batch, 4), "quality_batch": round(float(np.mean(quals)), 4)})
+            log.append({"iter": it, "lambda": round(lam, 4),
+                        "cost_ema": None if cost_ema is None else round(cost_ema, 4),
+                        "cost_batch": None if not full_costs else round(c_batch, 4),
+                        "quality_batch": round(float(np.mean(quals)), 4), "transitions": transitions})
     pol.mix = snaps
     lam_bar = lam_sum / max(n_avg, 1)
     pol.meta.update({"method": "cgrpo", "budget": budget, "lambda": lam_bar, "lambda_final": lam,
-                     "iters": iters, "group": group, "batch": batch, "n_snapshots": len(snaps),
+                     "iters": it_done, "group": group, "batch": batch, "n_snapshots": len(snaps),
+                     "restart_mix": restart_mix, "n_start_per_batch": n_start, "transitions": transitions,
+                     "max_transitions": max_transitions,
                      "serve_eps": serve_eps, "harness_version": harness.version,
                      "price_factor": dict(harness.price_factor)})
     return pol, lam_bar
@@ -270,6 +301,10 @@ def main(argv: list[str] | None = None) -> None:
                     help="eps exploration mass of the SERVED policy (part of what is trained and gated)")
     ap.add_argument("--reward", choices=["realized", "expected"], default="realized",
                     help="cgrpo (sim): 0/1 outcome or the harness's expected success probability")
+    ap.add_argument("--restart-mix", type=float, default=0.5,
+                    help="cgrpo (sim): fraction of each batch restarted from any logged state (rest: episode starts)")
+    ap.add_argument("--max-transitions", type=int, default=None,
+                    help="cgrpo (sim): stop after this many simulator transitions (matched-budget comparisons)")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--out", required=True, help="policy JSON to write")
     ap.add_argument("--log", default=None, help="training log JSONL (default: <out>.log.jsonl)")
@@ -301,7 +336,8 @@ def main(argv: list[str] | None = None) -> None:
     else:   # cgrpo on the simulator
         h = make_sim(version, seed=a.seed + 101, reprice=parse_reprice(a.reprice))
         pol, lam = train_cgrpo(eps_, h, a.budget, iters=a.iters, init=init, serve_eps=a.serve_eps,
-                               reward=a.reward, seed=a.seed, log=log)
+                               reward=a.reward, seed=a.seed, log=log, restart_mix=a.restart_mix,
+                               max_transitions=a.max_transitions)
         msg = f"budget={a.budget:.2f} learned lambda={lam:.3f} final cost_ema={log[-1]['cost_ema']:.3f}"
     pol.meta["traces"] = a.traces
     pol.save(a.out)

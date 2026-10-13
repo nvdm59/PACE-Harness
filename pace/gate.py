@@ -27,6 +27,8 @@ recorded when the incumbent was itself promoted (use this after a repricing that
 incumbent over budget: otherwise an over-budget incumbent sets a bar no budget-respecting
 candidate can pass).
 
+Gate v2 (`gate(..., version="v2")`, CLI `--gate v2`; v1 stays the default): see GATE_V2_DOC / `gate_v2`.
+
 CRMArena-Pro logs (harness version crmarena-pro-*) are a contextual bandit at the first step:
 the tier is chosen with propensity 1/3 and the continuation is fixed (propensity 1).
 `estimate_bandit` scores a tier policy pi(tier | x0) there:
@@ -285,12 +287,21 @@ def on_policy(episodes: list[Episode], boot: int = 200, seed: int = 0) -> dict:
 
 def gate(episodes: list[Episode], candidate: Controller, incumbent: Controller | str, budget: float,
          eps_q: float = 0.03, tol: float = 0.02, boot: int = 200, clip: float = 50.0, seed: int = 0,
-         q_prev: float | None = None) -> dict:
+         q_prev: float | None = None, version: str = "v1", ess_floor: float = 0.2, clip_frac_max: float = 0.1) -> dict:
     """The promotion decision. `incumbent` is "behavior" (bar = on-policy log mean) or a Controller
     (bar = its DR quality on this log). `q_prev` overrides the bar (e.g. the incumbent's DR quality
     recorded when IT was promoted, within budget): after a repricing the incumbent may be over
     budget on the new log, and a bar set by an over-budget policy would block every
-    budget-respecting candidate."""
+    budget-respecting candidate.
+
+    `version="v2"` dispatches to `gate_v2` (joint-bootstrap quality difference, total-cost bound
+    against the full budget, overlap guard); there `budget` is the FULL budget. v1 is the default
+    and is unchanged."""
+    if version == "v2":
+        return gate_v2(episodes, candidate, incumbent, budget, eps_q, tol, boot, clip, seed,
+                       ess_floor=ess_floor, clip_frac_max=clip_frac_max, q_prev=q_prev)
+    if version != "v1":
+        raise ValueError(f"unknown gate version {version!r}")
     cand = estimate(episodes, candidate, boot, clip, seed)
     if isinstance(incumbent, str) and incumbent == "behavior":
         inc = on_policy(episodes, boot, seed)
@@ -306,6 +317,129 @@ def gate(episodes: list[Episode], candidate: Controller, incumbent: Controller |
     return {"candidate": cand, "incumbent": inc, "incumbent_desc": inc_desc, "q_prev": q_prev, "q_prev_source": q_src,
             "budget": budget, "eps_q": eps_q, "tol": tol, "quality_ok": bool(ok_q), "cost_ok": bool(ok_c),
             "decision": "PROMOTE" if (ok_q and ok_c) else "REVERT"}
+
+
+def _ess(w: np.ndarray) -> float:
+    """Kish effective sample size (sum w)^2 / sum w^2."""
+    w = np.asarray(w, float)
+    return float(w.sum() ** 2 / max((w ** 2).sum(), 1e-300)) if w.size else 0.0
+
+
+def _dr_only(valid, kid, a, P, rho, r, nA, T) -> float:
+    """The DR point estimate of `_all_estimates` alone (the v2 bootstrap needs nothing else)."""
+    Qsa, V = _fit_dm(valid, kid, a, P, r, nA, T)
+    Vnext = np.zeros_like(V)
+    Vnext[:, :-1] = V[:, 1:]
+    return float((V[:, 0] + (rho * (r + Vnext - Qsa) * valid).sum(1)).mean())
+
+
+def _aligned_target_probs(log: _Log, actions: list[str], policy: Controller) -> np.ndarray:
+    """(n, T, A) probabilities of `policy` at every logged decision, columns in the order `actions`
+    (the order the log was built with), whatever order `policy` keeps its own actions in."""
+    pol = policy.copy()
+    pol.ensure_actions(actions)
+    perm = np.array([pol.index(x) for x in actions])
+    M = np.zeros((len(log.X), len(pol.actions)), bool)
+    M[:, perm] = log.M
+    P = np.zeros((log.n, log.T, log.nA))
+    P[log.idx[:, 0], log.idx[:, 1]] = pol.probs_batch(log.X, M)[:, perm]
+    return P
+
+
+GATE_V2_DOC = """Gate v2 (opt-in; v1 above stays the default):
+  (i)   candidate and incumbent are bootstrapped JOINTLY on the same resampled episodes, and the test
+        is on the lower 5% bound of the quality DIFFERENCE  q_cand - q_inc >= -eps_q
+        (q_inc: the incumbent's DR on the log, or the on-policy log mean if it is the behavior);
+  (ii)  the candidate's TOTAL episode cost (the policy-independent prefix of each resampled episode
+        plus the DR decision cost) is estimated inside the same resampling, and its upper 95% bound
+        is tested against the full budget:  cost_hi <= B + tol;
+  (iii) overlap guard on the candidate: per-decision ESS of the single-step ratios pi/mu over the
+        logged decisions, the fraction of logged decisions whose cumulative ratio reaches the clip,
+        and the max cumulative ratio. ESS/n < ess_floor or clip fraction > clip_frac_max returns
+        UNEVALUABLE (serve the incumbent, as for REVERT; logged separately)."""
+
+
+def gate_v2(episodes: list[Episode], candidate: Controller, incumbent: Controller | str, budget: float,
+            eps_q: float = 0.03, tol: float = 0.02, boot: int = 200, clip: float = 50.0, seed: int = 0,
+            ess_floor: float = 0.2, clip_frac_max: float = 0.1, q_prev: float | None = None,
+            pool_steps: bool = True) -> dict:
+    """See GATE_V2_DOC. `budget` is the FULL per-episode budget B (not net of the prefix). With
+    `q_prev` given, criterion (i) falls back to the candidate's DR lower bound against q_prev - eps_q
+    (no incumbent on the log to difference against). Sequential (simulator) logs only."""
+    if is_bandit_log(episodes):
+        raise NotImplementedError("gate v2 is implemented for sequential logs only")
+    cand = candidate.copy()
+    log = _Log(episodes, cand, pool_steps)
+    actions = list(cand.actions)
+    Pc = log.target_probs(cand)
+    behavior = isinstance(incumbent, str)
+    if behavior and incumbent != "behavior":
+        raise ValueError(incumbent)
+    Pi = None if behavior else _aligned_target_probs(log, actions, incumbent)
+    prefix = log.cost - (log.rc * log.valid).sum(1)          # policy-independent part of each episode's cost
+
+    def ratios(P):
+        pa = np.take_along_axis(P, log.a[:, :, None], axis=2)[:, :, 0]
+        step = np.where(log.valid, pa / log.mu, 1.0)
+        raw = np.cumprod(step, axis=1)
+        return step, raw, np.minimum(raw, clip)
+
+    step_c, raw_c, rho_c = ratios(Pc)
+    if Pi is not None:
+        step_i, raw_i, rho_i = ratios(Pi)
+
+    def one(ix):
+        args = lambda P, rho, r: (log.valid[ix], log.kid[ix], log.a[ix], P[ix], rho[ix], r[ix], log.nA, log.T)
+        qc = _dr_only(*args(Pc, rho_c, log.rq))
+        dc = _dr_only(*args(Pc, rho_c, log.rc))
+        pf = float(prefix[ix].mean())
+        if Pi is None:
+            qi, ci = float(log.quality[ix].mean()), float(log.cost[ix].mean())
+        else:
+            qi = _dr_only(*args(Pi, rho_i, log.rq))
+            ci = _dr_only(*args(Pi, rho_i, log.rc)) + pf
+        return qc, qi, qc - qi, dc, dc + pf, ci
+
+    names = ("cand_quality", "inc_quality", "diff_quality", "cand_decision_cost", "cand_total_cost", "inc_total_cost")
+    pt = one(slice(None))
+    B = np.random.default_rng(seed).integers(0, log.n, size=(boot, log.n))
+    bs = np.array([one(b) for b in B])
+    est = {k: (pt[j],) + _ci(bs[:, j]) for j, k in enumerate(names)}
+
+    # overlap diagnostics (candidate against the logged behavior)
+    v = log.valid
+    w = step_c[v]
+    ess_dec = _ess(w)
+    clip_frac = float((raw_c[v] >= clip).mean())
+    ess_cum = [(_ess(raw_c[v[:, t], t]) / max(int(v[:, t].sum()), 1)) for t in range(log.T) if v[:, t].any()]
+    diag = {"n_decisions": int(v.sum()), "ess_decision": ess_dec, "ess_frac": ess_dec / max(int(v.sum()), 1),
+            "clip_frac": clip_frac, "max_rho": float(raw_c[v].max()), "max_step_ratio": float(w.max()),
+            "ess_cum_min_frac": float(min(ess_cum)) if ess_cum else 0.0,
+            "ess_episode_frac": _ess(np.minimum(raw_c[np.arange(log.n), v.sum(1) - 1], clip)) / log.n}
+    if Pi is not None:
+        wi = step_i[v]
+        diag["incumbent"] = {"ess_frac": _ess(wi) / max(len(wi), 1), "clip_frac": float((raw_i[v] >= clip).mean()),
+                             "max_rho": float(raw_i[v].max())}
+
+    if q_prev is None:
+        q_lo, bar, q_rule = est["diff_quality"][1], -eps_q, "diff_lo >= -eps_q"
+    else:
+        q_lo, bar, q_rule = est["cand_quality"][1], float(q_prev) - eps_q, "cand_lo >= q_prev - eps_q"
+    ok_q = bool(q_lo >= bar)
+    ok_c = bool(est["cand_total_cost"][2] <= budget + tol)
+    reasons = []
+    if diag["ess_frac"] < ess_floor:
+        reasons.append(f"ess_frac {diag['ess_frac']:.3f} < {ess_floor}")
+    if clip_frac > clip_frac_max:
+        reasons.append(f"clip_frac {clip_frac:.3f} > {clip_frac_max}")
+    would = "PROMOTE" if (ok_q and ok_c) else "REVERT"
+    decision = "UNEVALUABLE" if reasons else would
+    return {"version": "v2", "decision": decision, "decision_without_guard": would, "quality_ok": ok_q, "cost_ok": ok_c,
+            "overlap_ok": not reasons, "guard_reasons": reasons, "quality_rule": q_rule, "quality_bar": bar,
+            "estimates": est, "prefix_mean": float(prefix.mean()), "budget": budget, "eps_q": eps_q, "tol": tol,
+            "clip": clip, "boot": boot, "ess_floor": ess_floor, "clip_frac_max": clip_frac_max, "n": log.n,
+            "incumbent_desc": "behavior (on-policy log mean)" if Pi is None else "incumbent (DR, joint bootstrap)",
+            "diagnostics": diag}
 
 
 def format_table(res: dict, title: str = "Promotion gate", cost_digits: int = 3) -> str:
@@ -347,6 +481,11 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--q-prev", type=float, default=None, help="explicit quality bar")
     ap.add_argument("--q-prev-from", default=None,
                     help="gate JSON that promoted the incumbent; its candidate DR quality becomes the bar")
+    ap.add_argument("--gate", default="v1", choices=("v1", "v2"),
+                    help="v1 (default): candidate DR lower bound vs incumbent point, cost net of prefix. "
+                         "v2: joint-bootstrap quality difference, total cost vs the full budget, overlap guard")
+    ap.add_argument("--ess-floor", type=float, default=0.2, help="v2 overlap guard: minimum per-decision ESS / n")
+    ap.add_argument("--clip-frac-max", type=float, default=0.1, help="v2 overlap guard: max fraction of clipped cumulative ratios")
     ap.add_argument("--title", default="Promotion gate")
     ap.add_argument("--json-out", default=None, help="write the full result as JSON")
     a = ap.parse_args(argv)
@@ -356,8 +495,19 @@ def main(argv: list[str] | None = None) -> None:
     q_prev = a.q_prev
     if a.q_prev_from:
         q_prev = json.loads(Path(a.q_prev_from).read_text())["candidate"]["quality"]["dr"][0]
-    res = gate(eps_, cand, inc, a.budget, a.eps, a.tol, a.boot, a.clip, a.seed, q_prev=q_prev)
-    print(format_table(res, a.title, cost_digits=4 if is_bandit_log(eps_) else 3))
+    res = gate(eps_, cand, inc, a.budget, a.eps, a.tol, a.boot, a.clip, a.seed, q_prev=q_prev,
+               version=a.gate, ess_floor=a.ess_floor, clip_frac_max=a.clip_frac_max)
+    if a.gate == "v2":
+        e, dg = res["estimates"], res["diagnostics"]
+        f = lambda t: f"{t[0]:.4f} [{t[1]:.4f}, {t[2]:.4f}]"
+        print(f"### {a.title} (gate v2)\n")
+        for k, v in e.items():
+            print(f"- {k}: {f(v)}")
+        print(f"- overlap: ESS/n {dg['ess_frac']:.3f}, clip fraction {dg['clip_frac']:.3f}, max cumulative ratio {dg['max_rho']:.1f}")
+        print(f"\n**DECISION: {res['decision']}** (quality_ok {res['quality_ok']}, cost_ok {res['cost_ok']}, "
+              f"overlap_ok {res['overlap_ok']} {res['guard_reasons']})")
+    else:
+        print(format_table(res, a.title, cost_digits=4 if is_bandit_log(eps_) else 3))
     if a.json_out:
         Path(a.json_out).parent.mkdir(parents=True, exist_ok=True)
         Path(a.json_out).write_text(json.dumps({k: v for k, v in res.items()}, indent=1, default=float))

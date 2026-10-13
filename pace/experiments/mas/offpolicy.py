@@ -20,6 +20,32 @@ per_decision   each logged decision point is one contextual-bandit sample (conte
                of the trajectory stays as logged (a one-step policy-improvement quantity), not
                the value of the full policy: it is biased by the downstream decisions the
                candidate would also change, in exchange for ratios bounded by |legal| / eps.
+               Unit of the per-decision estimators (`unit=`):
+               "decision"  (default, the historical behaviour) every logged decision row has weight 1,
+                           so an episode with n decisions counts n times and its terminal quality is
+                           repeated n times. Estimands:
+                             quality:    E_{decisions}[ Q(x_t, pi) ], a decision-weighted mean over
+                                         the logged decision distribution, which over-weights long
+                                         episodes (a 10-decision episode weighs 10x a 1-decision one);
+                             cost_to_go: the mean, over decision rows, of the cost-to-go from the
+                                         intervened decision. Cost-to-go values of one episode
+                                         overlap (step k's cost is in every row t <= k), so this is
+                                         NOT a cost per task.
+               "task"      each episode's rows are weighted 1 / n_decisions(episode), so every task
+                           counts once (rows of an episode jointly carry unit mass). Estimands:
+                             quality:    E_{tasks}[ mean_{t in episode} Q(x_t, pi) ], the task-average
+                                         of the one-decision-intervention value; lengthening an
+                                         episode without changing its outcome leaves it unchanged;
+                             cost_to_go: the TOTAL episode cost per task under the intervention,
+                                         prefix_t + cost-to-go(x_t, pi), where prefix_t is everything
+                                         the episode spent before decision t (including any cost not
+                                         attributed to a logged step, e.g. the policy-independent
+                                         planner prefix: total_cost - sum of step costs). The direct
+                                         model is fitted on the cost-to-go; the logged prefix is a
+                                         known offset. Averaged task-weighted as for quality.
+               Task-unit forms: SNIPS sum_t u_t w_t r_t / sum_t u_t w_t, DR (1/N_tasks) sum_t u_t
+               [prefix_t + sum_a pi Qhat + w_t (r_t - Qhat_t)], u_t = 1/n_decisions; ESS is Kish over
+               tasks on the per-task weight sum_t u_t w_t (n = n_tasks for this unit).
 episode_level  self-normalised IPS with the per-step ratio clipped at `clip` (default 5) before
                the product, i.e. a bounded-variance, biased estimate of the full-policy value.
 
@@ -88,32 +114,85 @@ def _dm(K, A, R, nA: int):
     return Q
 
 
-def _point_per_decision(ix, W, R, P, K, A, nA):
+UNITS = ("decision", "task")
+
+
+def unit_weights(episodes: list[Episode], unit: str = "decision") -> np.ndarray:
+    """Row weight of every flattened decision (decision_table order): 1 per row ("decision") or
+    1 / n_decisions of its episode ("task", every episode carries total mass 1)."""
+    if unit not in UNITS:
+        raise ValueError(f"unit must be one of {UNITS}, got {unit!r}")
+    return np.array([1.0 if unit == "decision" else 1.0 / len(e.steps) for e in episodes for _ in e.steps])
+
+
+def cost_prefix(episodes: list[Episode]) -> np.ndarray:
+    """Per decision row: everything the episode spent before that decision, i.e. the costs of the
+    earlier logged steps plus any episode cost not attributed to a step (total_cost - sum of step
+    costs, e.g. a policy-independent planner prefix). prefix_t + cost_to_go_t = total_cost."""
+    out = []
+    for e in episodes:
+        c = [s.cost for s in e.steps]
+        extra = float(e.total_cost) - float(sum(c))
+        out += list(extra + np.concatenate([[0.0], np.cumsum(c)[:-1]])) if c else []
+    return np.array(out, float)
+
+
+def _point_per_decision(ix, W, R, P, K, A, nA, U=None, OFF=None, n_units=None):
     w, r = W[ix], R[ix]
-    snips = float((w * r).sum() / max(w.sum(), 1e-12))
     Q = _dm([K[i] for i in ix], A[ix], r, nA)
-    dr = float((( P[ix] * Q).sum(1) + w * (r - Q[np.arange(len(ix)), A[ix]])).mean())
+    terms = (P[ix] * Q).sum(1) + w * (r - Q[np.arange(len(ix)), A[ix]])
+    if U is None:                                   # decision unit: every row weight 1
+        snips = float((w * r).sum() / max(w.sum(), 1e-12))
+        dr = float(terms.mean())
+        return snips, dr
+    u, off = U[ix], OFF[ix]
+    snips = float((u * w * (r + off)).sum() / max((u * w).sum(), 1e-12))
+    dr = float((u * (off + terms)).sum() / n_units)
     return snips, dr
 
 
-def per_decision(episodes: list[Episode], policy: Controller, reward="quality", boot: int = 200, seed: int = 0) -> dict:
+def per_decision(episodes: list[Episode], policy: Controller, reward="quality", boot: int = 200, seed: int = 0,
+                 unit: str = "decision") -> dict:
+    """Per-decision SNIPS / DR with episode-bootstrap 90% CIs. `unit` = "decision" (rows weighted
+    equally; historical default) or "task" (each episode's rows weighted 1/n_decisions; with
+    reward="cost_to_go" the estimand becomes total episode cost = prefix + cost-to-go). See the
+    module docstring for the estimand of each."""
+    U = unit_weights(episodes, unit)
     ei, W, R, P, K, A, pol = decision_table(episodes, policy, reward)
     nA = len(pol.actions)
     n = len(W)
+    n_ep = len(episodes)
+    if unit == "task":
+        OFF = cost_prefix(episodes) if reward == "cost_to_go" else np.zeros(n)
+        kw = lambda: {"U": U, "OFF": OFF, "n_units": n_ep}
+    else:
+        OFF = np.zeros(n)
+        kw = lambda: {}
     ix_all = np.arange(n)
-    pt = _point_per_decision(ix_all, W, R, P, K, A, nA)
+    pt = _point_per_decision(ix_all, W, R, P, K, A, nA, **kw())
     rows_of = defaultdict(list)
     for j, i in enumerate(ei):
         rows_of[i].append(j)
     rng = np.random.default_rng(seed)
-    n_ep = len(episodes)
     bs = []
     for _ in range(boot):
         ix = np.concatenate([rows_of[i] for i in rng.integers(0, n_ep, n_ep)])
-        bs.append(_point_per_decision(ix, W, R, P, K, A, nA))
+        bs.append(_point_per_decision(ix, W, R, P, K, A, nA, **kw()))
     bs = np.array(bs)
-    return {"n": n, "unit": "decision", "ess": ess(W), "max_ratio": float(W.max()),
-            "behavior": float(R.mean()),
+    if unit == "task":
+        behavior = float((U * (R + OFF)).sum() / n_ep)
+        estimand = ("task-weighted one-decision-intervention quality" if reward == "quality" else
+                    "total episode cost per task (prefix + cost-to-go)" if reward == "cost_to_go" else
+                    "task-weighted mean of the custom reward")
+        w_eff = np.bincount(ei, weights=U * W, minlength=n_ep)      # per-task weight sum_t u_t w_t
+    else:
+        behavior = float(R.mean())
+        estimand = ("decision-weighted one-decision-intervention quality" if reward == "quality" else
+                    "mean cost-to-go over decision rows (not a per-task cost)" if reward == "cost_to_go" else
+                    "decision-weighted mean of the custom reward")
+        w_eff = W
+    return {"n": n if unit == "decision" else n_ep, "n_decisions": n, "n_tasks": n_ep, "unit": unit, "estimand": estimand, "ess": ess(w_eff),
+            "max_ratio": float(W.max()), "behavior": behavior,
             "snips": (pt[0],) + _ci(bs[:, 0]), "dr": (pt[1],) + _ci(bs[:, 1])}
 
 

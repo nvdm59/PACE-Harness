@@ -150,3 +150,21 @@ EvoHarnessBench (Salesforce AI Research) is a hosted service that holds the gyms
 ## License
 
 No license file for the code has been added yet. Benchmark-derived logs carry the terms of their source benchmark, as listed above.
+## Review-driven analyses (October 2026)
+
+After an external technical review, these scripts were added; each reproduces or bounds one concern and writes its own result file (none overwrite the committed results):
+
+| concern | script | output |
+|---|---|---|
+| Table 1 rows at one evaluation price; served vs greedy constrained policy; training λ̄ per fold | `scripts/crmarena_table1.py` | `results/crmarena_{300,b2c}/table1_common_price.{md,json}` |
+| exact-gradient trainer and a budgeted per-category LP on the fully observed table | `scripts/crmarena_exact_vs_sampled.py`, `pace/train_exact.py` | `results/crmarena_{300,b2c}/exact_vs_sampled.{md,json}` |
+| end-to-end gate: candidate trained on training folds, gated on the held-out fold's one-arm log | `scripts/crmarena_cv_gate.py` | `results/crmarena_{300,b2c}/cv_gate.{md,json}` |
+| hindsight component of the realised-outcome oracle | `scripts/crmarena_hindsight_oracle.py` | `results/crmarena/hindsight_oracle.md` |
+| audit of the committed continual run's gate records; served-mixture cost; new-action mass | `pace/experiments/mas_continual/gate_audit.py` | `results/mas_continual/{gate_audit,new_action_mass}.md` |
+| paired-difference gate with overlap guard (v2), held-out gate slice, lifecycle error rates over 5 seeds | `pace/experiments/mas_continual/gate_lifecycle.py` (`pace/gate.py --gate v2`) | `results/mas_continual/gate_v2/` |
+| logit-saturation diagnostic over every saved policy | `scripts/saturation_report.py` | `results/saturation_report.md` |
+| per-decision estimator units (decision vs task) | `scripts/mas_perdecision_units.py` | `results/mas/perdecision_units.md` |
+| start-only vs mixed anchoring under matched transitions | `scripts/restart_ablation.py` | `results/sim_seeds/restart_ablation.md` |
+| what the NumPy trainer is (group-baseline policy gradient, no clip, no KL) | — | `results/trainer_naming.md` |
+
+Regression tests for the review's counterexamples: `tests/test_mixture_semantics.py`, `tests/test_retention_counterexample.py`, `tests/test_saturation.py`, `tests/test_perdecision_units.py`, `tests/test_train_exact.py`.

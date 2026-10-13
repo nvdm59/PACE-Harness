@@ -157,6 +157,39 @@ class Controller:
         p_eps = (1.0 - eps) * p + eps / M.sum(axis=1)
         return (1.0 - eps) * p / p_eps
 
+    # ------------------------------------------------------- saturation
+    SAT_THRESHOLD = 2.5      # |Wx| / L above this: sech^2 < 0.027, the soft clip passes < 3% of the gradient
+
+    def saturation_stats(self, X: np.ndarray, M: np.ndarray | None = None, use_mix: bool = True,
+                         threshold: float | None = None) -> dict:
+        """How far the soft logit clip z = L tanh(Wx / L) is driven into its flat region.
+
+        dz / d(Wx) = sech^2(Wx / L) -> 0 as |Wx| / L grows, so a policy can have bounded, non-degenerate
+        probabilities (z is within [-L, L]) while its weights no longer respond to the gradient: a
+        low-probability action whose raw logit is deep in the flat region cannot be steered back up by
+        a Lagrange multiplier or by new data. Bounded probabilities do NOT imply steerable weights.
+
+        X: (n, d) inputs; M: optional (n, A) legal mask (only legal (action, input) pairs count).
+        With `use_mix` and an iterate mix, every snapshot's (action, input) pairs are pooled.
+        Returns max |Wx|/L, the fraction of pairs with |Wx|/L > threshold (default 2.5, split by the
+        sign of Wx), the mean and min sech^2 factor, and the fraction of pairs whose sech^2 < 1e-3."""
+        thr = self.SAT_THRESHOLD if threshold is None else float(threshold)
+        X = np.atleast_2d(np.asarray(X, float))
+        M = np.ones((len(X), len(self.actions)), bool) if M is None else np.asarray(M, bool)
+        Ws = self.mix if (use_mix and self.mix) else [self.W]
+        U = np.concatenate([((X @ Wk.T) / self.logit_clip)[M] for Wk in Ws])     # signed Wx / L over legal pairs
+        a = np.abs(U)
+        sech2 = 1.0 - np.tanh(a) ** 2
+        return {"n_pairs": int(a.size), "n_inputs": int(len(X)), "n_weight_sets": len(Ws),
+                "max_abs_u": float(a.max()) if a.size else 0.0,
+                "frac_saturated": float((a > thr).mean()) if a.size else 0.0,
+                "frac_saturated_low": float((U < -thr).mean()) if a.size else 0.0,
+                "frac_saturated_high": float((U > thr).mean()) if a.size else 0.0,
+                "mean_sech2": float(sech2.mean()) if a.size else 1.0,
+                "min_sech2": float(sech2.min()) if a.size else 1.0,
+                "frac_sech2_below_1e-3": float((sech2 < 1e-3).mean()) if a.size else 0.0,
+                "threshold": thr}
+
     # ------------------------------------------------------------- mixing
     def start_mix(self) -> None:
         self.mix = []

@@ -1,0 +1,137 @@
+{
+ "run": "results/mas_continual/gate_v2/v2/seed0",
+ "seed": 0,
+ "gate": "v2",
+ "gate_holdout": 0.0,
+ "runtime_s": 340.3,
+ "regret_6_40": {
+  "continual": 0.46613115273876193,
+  "continual_awr": 3.80547781145596,
+  "never_verify": 0.5585559111176789,
+  "always_verify": 1.98837916694901
+ },
+ "arms": {
+  "continual": {
+   "n_gates": 40,
+   "PROMOTE": 23,
+   "REVERT": 17,
+   "UNEVALUABLE": 0,
+   "unacceptable_promotions": [
+    {
+     "day": 32,
+     "stage": "g3-tools",
+     "criteria": [
+      "over budget"
+     ],
+     "cand_true_quality": 0.5184832476905604,
+     "cand_true_cost": 0.09690301999999996,
+     "inc_true_quality": 0.49863803897092185
+    }
+   ],
+   "n_unacceptable_promotions": 1,
+   "days_in_unacceptable_state": 3,
+   "days_serving_over_budget": 3,
+   "days_serving_over_budget_6_40": 3,
+   "false_rejections_revert": [
+    1,
+    9,
+    15,
+    17,
+    19,
+    25,
+    26,
+    27,
+    28,
+    30,
+    36,
+    37
+   ],
+   "n_false_rejections_revert": 12,
+   "unevaluable_of_acceptable": [],
+   "n_unevaluable_of_acceptable": 0,
+   "n_rejections_of_unacceptable": 5,
+   "n_acceptable_candidates": 34,
+   "first_promotion_day": 4,
+   "v1_quality_ci_width": 0.13960280229516772,
+   "v1_quality_ci_coverage": 0.825,
+   "v1_decision_cost_ci_coverage": 0.5,
+   "v2_record": "acted on",
+   "diff_ci_width": 0.06825457436948076,
+   "diff_ci_coverage": 0.725,
+   "total_cost_ci_coverage": 0.5,
+   "joint_coverage": 0.35,
+   "mean_ess_frac": 0.7681125586649549,
+   "mean_clip_frac": 0.00015671418444210855,
+   "v2_rule_decisions": {
+    "PROMOTE": 23,
+    "REVERT": 17,
+    "UNEVALUABLE": 0
+   },
+   "regret_6_40": 0.46613115273876193
+  },
+  "continual_awr": {
+   "n_gates": 40,
+   "PROMOTE": 12,
+   "REVERT": 3,
+   "UNEVALUABLE": 25,
+   "unacceptable_promotions": [],
+   "n_unacceptable_promotions": 0,
+   "days_in_unacceptable_state": 0,
+   "days_serving_over_budget": 0,
+   "days_serving_over_budget_6_40": 0,
+   "false_rejections_revert": [
+    1,
+    5,
+    6
+   ],
+   "n_false_rejections_revert": 3,
+   "unevaluable_of_acceptable": [
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    25,
+    26,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40
+   ],
+   "n_unevaluable_of_acceptable": 25,
+   "n_rejections_of_unacceptable": 0,
+   "n_acceptable_candidates": 40,
+   "first_promotion_day": 2,
+   "v1_quality_ci_width": 0.5102894127940665,
+   "v1_quality_ci_coverage": 0.0,
+   "v1_decision_cost_ci_coverage": 0.625,
+   "v2_record": "acted on",
+   "diff_ci_width": 0.46061707226075566,
+   "diff_ci_coverage": 0.125,
+   "total_cost_ci_coverage": 0.625,
+   "joint_coverage": 0.025,
+   "mean_ess_frac": 0.21188876758328928,
+   "mean_clip_frac": 0.007752329939958838,
+   "v2_rule_decisions": {
+    "PROMOTE": 12,
+    "REVERT": 3,
+    "UNEVALUABLE": 25
+   },
+   "regret_6_40": 3.80547781145596
+  }
+ }
+}
