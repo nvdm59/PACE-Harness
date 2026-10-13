@@ -150,9 +150,9 @@ EvoHarnessBench (Salesforce AI Research) is a hosted service that holds the gyms
 ## License
 
 No license file for the code has been added yet. Benchmark-derived logs carry the terms of their source benchmark, as listed above.
-## Review-driven analyses (October 2026)
+## Robustness analyses
 
-After an external technical review, these scripts were added; each reproduces or bounds one concern and writes its own result file (none overwrite the committed results):
+These scripts test assumptions made in the paper or bound quantities it reports as upper bounds; each writes its own result file and none overwrites a committed result:
 
 | concern | script | output |
 |---|---|---|
